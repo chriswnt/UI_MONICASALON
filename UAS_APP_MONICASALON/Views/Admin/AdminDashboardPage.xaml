@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<uranium:UraniumContentPage
+    x:Class="UAS_APP_MONICASALON.Views.Admin.AdminDashboardPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
+    xmlns:admin="clr-namespace:UAS_APP_MONICASALON.Controls.Admin"
+    xmlns:icons="clr-namespace:UAS_APP_MONICASALON.Icons"
+    BackgroundColor="{StaticResource Background}"
+    NavigationPage.HasNavigationBar="False"
+    Shell.NavBarIsVisible="False">
+
+    <admin:AdminLayout
+        PageTitle="Dashboard"
+        ActiveRoute="AdminDashboardPage">
+
+        <admin:AdminLayout.PageContent>
+            <ScrollView>
+                <VerticalStackLayout Padding="20,6,20,20" Spacing="14">
+
+                    <!-- Welcome / overview -->
+                    <Border Style="{StaticResource AdminSoftCard}">
+                        <VerticalStackLayout Spacing="6">
+                            <Label
+                                Text="{Binding GreetingText}"
+                                FontFamily="OpenSansSemibold"
+                                FontSize="17"
+                                FontAttributes="Bold"
+                                TextColor="{StaticResource PrimaryDark}" />
+                            <Label
+                                Text="{Binding WelcomeSummary}"
+                                FontSize="12"
+                                TextColor="{StaticResource TextSecondary}"
+                                LineBreakMode="WordWrap" />
+
+                            <Button
+                                Text="Kelola Booking"
+                                Style="{StaticResource AdminPrimaryButton}"
+                                Command="{Binding OpenBookingsCommand}"
+                                SemanticProperties.Description="Kelola booking, buka halaman Booking"
+                                SemanticProperties.Hint="Ketuk dua kali untuk membuka daftar booking"
+                                HorizontalOptions="Fill"
+                                Margin="0,4,0,0" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Summary statistics -->
+                    <Grid
+                        ColumnDefinitions="*,*"
+                        RowDefinitions="Auto,Auto"
+                        ColumnSpacing="10"
+                        RowSpacing="10">
+                        <admin:StatCard
+                            Title="Booking Hari Ini"
+                            Value="{Binding TodayBookingsText}"
+                            Caption="{Binding TodayBookingsCaption}"
+                            IconGlyph="{x:Static icons:AdminIcons.Bookings}" />
+
+                        <admin:StatCard
+                            Grid.Column="1"
+                            Title="Pendapatan Hari Ini"
+                            Value="{Binding RevenueTodayText}"
+                            Caption="{Binding RevenueCaption}"
+                            IconGlyph="{x:Static icons:AdminIcons.Revenue}" />
+
+                        <admin:StatCard
+                            Grid.Row="1"
+                            Title="Booking Menunggu"
+                            Value="{Binding PendingBookingsText}"
+                            Caption="{Binding PendingBookingsCaption}"
+                            IconGlyph="{x:Static icons:AdminIcons.Pending}" />
+
+                        <admin:StatCard
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Title="Pelanggan Baru"
+                            Value="{Binding NewCustomersText}"
+                            Caption="{Binding NewCustomersCaption}"
+                            IconGlyph="{x:Static icons:AdminIcons.NewCustomers}" />
+                    </Grid>
+
+                    <!-- Weekly booking overview -->
+                    <admin:SectionCard
+                        Title="Booking Minggu Ini"
+                        Subtitle="{Binding WeekSummary}">
+                        <admin:SectionCard.CardContent>
+                            <VerticalStackLayout Spacing="8">
+                                <HorizontalStackLayout
+                                    Spacing="6"
+                                    HorizontalOptions="Center"
+                                    BindableLayout.ItemsSource="{Binding WeeklyStats}">
+                                    <BindableLayout.ItemTemplate>
+                                        <DataTemplate>
+                                            <VerticalStackLayout
+                                                WidthRequest="30"
+                                                Spacing="3"
+                                                HorizontalOptions="Center">
+                                                <Label
+                                                    Text="{Binding Count}"
+                                                    FontFamily="OpenSansSemibold"
+                                                    FontSize="9"
+                                                    FontAttributes="Bold"
+                                                    TextColor="{StaticResource TextPrimary}"
+                                                    HorizontalTextAlignment="Center" />
+
+                                                <Grid HeightRequest="64">
+                                                    <Border
+                                                        WidthRequest="14"
+                                                        HeightRequest="{Binding BarHeight}"
+                                                        BackgroundColor="{StaticResource Secondary}"
+                                                        StrokeThickness="0"
+                                                        StrokeShape="RoundRectangle 7"
+                                                        HorizontalOptions="Center"
+                                                        VerticalOptions="End"
+                                                        AutomationProperties.IsInAccessibleTree="False">
+                                                        <Border.Triggers>
+                                                            <DataTrigger
+                                                                TargetType="Border"
+                                                                Binding="{Binding IsToday}"
+                                                                Value="True">
+                                                                <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
+                                                            </DataTrigger>
+                                                        </Border.Triggers>
+                                                    </Border>
+                                                </Grid>
+
+                                                <Label
+                                                    Text="{Binding DayLabel}"
+                                                    FontSize="9"
+                                                    TextColor="{StaticResource TextSecondary}"
+                                                    HorizontalTextAlignment="Center">
+                                                    <Label.Triggers>
+                                                        <DataTrigger
+                                                            TargetType="Label"
+                                                            Binding="{Binding IsToday}"
+                                                            Value="True">
+                                                            <Setter Property="TextColor" Value="{StaticResource Primary}" />
+                                                            <Setter Property="FontAttributes" Value="Bold" />
+                                                        </DataTrigger>
+                                                    </Label.Triggers>
+                                                </Label>
+                                            </VerticalStackLayout>
+                                        </DataTemplate>
+                                    </BindableLayout.ItemTemplate>
+                                </HorizontalStackLayout>
+
+                                <Label
+                                    Text="Booking aktif per hari, tidak termasuk yang dibatalkan."
+                                    Style="{StaticResource AdminCaption}"
+                                    HorizontalTextAlignment="Center" />
+                            </VerticalStackLayout>
+                        </admin:SectionCard.CardContent>
+                    </admin:SectionCard>
+
+                    <!-- Revenue overview -->
+                    <admin:SectionCard
+                        Title="Pendapatan Bulan Ini"
+                        Subtitle="{Binding MonthRevenueLabel}">
+                        <admin:SectionCard.CardContent>
+                            <VerticalStackLayout Spacing="12">
+                                <Label
+                                    Text="{Binding MonthRevenueText}"
+                                    FontFamily="OpenSansSemibold"
+                                    FontSize="24"
+                                    FontAttributes="Bold"
+                                    TextColor="{StaticResource TextPrimary}" />
+
+                                <VerticalStackLayout Spacing="6">
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <Label Text="Layanan" Style="{StaticResource AdminCaption}" />
+                                        <Label
+                                            Grid.Column="1"
+                                            Text="{Binding ServiceRevenueText}"
+                                            Style="{StaticResource AdminCaption}"
+                                            FontAttributes="Bold"
+                                            TextColor="{StaticResource TextPrimary}" />
+                                    </Grid>
+                                    <ProgressBar
+                                        Progress="{Binding ServiceRevenueShare}"
+                                        ProgressColor="{StaticResource Primary}"
+                                        HeightRequest="6" />
+                                </VerticalStackLayout>
+
+                                <VerticalStackLayout Spacing="6">
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <Label Text="Produk" Style="{StaticResource AdminCaption}" />
+                                        <Label
+                                            Grid.Column="1"
+                                            Text="{Binding ProductRevenueText}"
+                                            Style="{StaticResource AdminCaption}"
+                                            FontAttributes="Bold"
+                                            TextColor="{StaticResource TextPrimary}" />
+                                    </Grid>
+                                    <ProgressBar
+                                        Progress="{Binding ProductRevenueShare}"
+                                        ProgressColor="{StaticResource Accent}"
+                                        HeightRequest="6" />
+                                </VerticalStackLayout>
+
+                                <BoxView HeightRequest="1" BackgroundColor="{StaticResource Outline}" />
+
+                                <Label
+                                    Text="Total dari layanan dan penjualan produk."
+                                    Style="{StaticResource AdminCaption}"
+                                    LineBreakMode="WordWrap" />
+                            </VerticalStackLayout>
+                        </admin:SectionCard.CardContent>
+                    </admin:SectionCard>
+
+                    <!-- Recent bookings -->
+                    <admin:SectionCard
+                        Title="Booking Terbaru"
+                        Subtitle="Aktivitas terbaru di Monica Salon"
+                        ActionText="Lihat Semua"
+                        ActionCommand="{Binding OpenBookingsCommand}">
+                        <admin:SectionCard.CardContent>
+                            <VerticalStackLayout
+                                Spacing="0"
+                                BindableLayout.ItemsSource="{Binding RecentBookings}">
+                                <BindableLayout.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid RowDefinitions="Auto,1">
+                                            <Grid
+                                                ColumnDefinitions="Auto,*,Auto"
+                                                ColumnSpacing="10"
+                                                Padding="0,8"
+                                                SemanticProperties.Description="{Binding ScreenReaderText}">
+                                                <Border
+                                                    WidthRequest="32"
+                                                    HeightRequest="32"
+                                                    BackgroundColor="{StaticResource Secondary}"
+                                                    StrokeThickness="0"
+                                                    StrokeShape="RoundRectangle 16"
+                                                    VerticalOptions="Center"
+                                                    AutomationProperties.IsInAccessibleTree="False">
+                                                    <Label
+                                                        Text="{Binding CustomerInitials}"
+                                                        FontFamily="OpenSansSemibold"
+                                                        FontSize="10"
+                                                        FontAttributes="Bold"
+                                                        TextColor="{StaticResource Primary}"
+                                                        HorizontalOptions="Center"
+                                                        VerticalOptions="Center" />
+                                                </Border>
+
+                                                <VerticalStackLayout
+                                                    Grid.Column="1"
+                                                    Spacing="1"
+                                                    VerticalOptions="Center"
+                                                    AutomationProperties.IsInAccessibleTree="False">
+                                                    <Label
+                                                        Text="{Binding CustomerName}"
+                                                        Style="{StaticResource AdminCellTitle}"
+                                                        FontSize="12.5" />
+                                                    <Label
+                                                        Text="{Binding ServiceName}"
+                                                        Style="{StaticResource AdminCellMeta}" />
+                                                    <Label
+                                                        Text="{Binding ScheduleText}"
+                                                        Style="{StaticResource AdminCellMeta}" />
+                                                </VerticalStackLayout>
+
+                                                <VerticalStackLayout
+                                                    Grid.Column="2"
+                                                    Spacing="4"
+                                                    HorizontalOptions="End"
+                                                    VerticalOptions="Center"
+                                                    AutomationProperties.IsInAccessibleTree="False">
+                                                    <admin:StatusBadge
+                                                        Text="{Binding StatusText}"
+                                                        Status="{Binding Status}"
+                                                        HorizontalOptions="End"
+                                                        AutomationProperties.IsInAccessibleTree="False" />
+                                                    <Label
+                                                        Text="{Binding PriceText}"
+                                                        FontFamily="OpenSansSemibold"
+                                                        FontSize="10"
+                                                        FontAttributes="Bold"
+                                                        TextColor="{StaticResource Primary}"
+                                                        HorizontalTextAlignment="End" />
+                                                </VerticalStackLayout>
+                                            </Grid>
+
+                                            <BoxView
+                                                Grid.Row="1"
+                                                HeightRequest="1"
+                                                BackgroundColor="{StaticResource Outline}"
+                                                AutomationProperties.IsInAccessibleTree="False" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </BindableLayout.ItemTemplate>
+                            </VerticalStackLayout>
+                        </admin:SectionCard.CardContent>
+                    </admin:SectionCard>
+
+                </VerticalStackLayout>
+            </ScrollView>
+        </admin:AdminLayout.PageContent>
+    </admin:AdminLayout>
+
+</uranium:UraniumContentPage>

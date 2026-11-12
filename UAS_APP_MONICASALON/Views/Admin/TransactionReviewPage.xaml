@@ -1,0 +1,410 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<uranium:UraniumContentPage
+    x:Class="UAS_APP_MONICASALON.Views.Admin.TransactionReviewPage"
+    x:Name="ReviewRoot"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
+    xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
+    xmlns:admin="clr-namespace:UAS_APP_MONICASALON.Controls.Admin"
+    xmlns:icons="clr-namespace:UAS_APP_MONICASALON.Icons"
+    BackgroundColor="{StaticResource Background}"
+    NavigationPage.HasNavigationBar="False"
+    Shell.NavBarIsVisible="False">
+
+    <admin:AdminLayout
+        PageTitle="Review Transaksi"
+        ActiveRoute="CashierPage">
+
+        <admin:AdminLayout.PageContent>
+            <Grid RowDefinitions="Auto,*" RowSpacing="12">
+
+                <!-- Step indicator -->
+                <Grid
+                    Padding="20,6,20,0"
+                    ColumnDefinitions="*,*,*,*"
+                    ColumnSpacing="6"
+                    SemanticProperties.Description="Langkah 2 dari 4: review transaksi">
+                    <VerticalStackLayout Spacing="3" AutomationProperties.IsInAccessibleTree="False">
+                        <BoxView Style="{StaticResource AdminStepTrackActive}" />
+                        <Label Text="Kasir" Style="{StaticResource AdminStepLabelActive}" />
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Column="1" Spacing="3" AutomationProperties.IsInAccessibleTree="False">
+                        <BoxView Style="{StaticResource AdminStepTrackActive}" />
+                        <Label Text="Review" Style="{StaticResource AdminStepLabelActive}" />
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Column="2" Spacing="3" AutomationProperties.IsInAccessibleTree="False">
+                        <BoxView Style="{StaticResource AdminStepTrack}" />
+                        <Label Text="Bayar" Style="{StaticResource AdminStepLabel}" />
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Column="3" Spacing="3" AutomationProperties.IsInAccessibleTree="False">
+                        <BoxView Style="{StaticResource AdminStepTrack}" />
+                        <Label Text="Selesai" Style="{StaticResource AdminStepLabel}" />
+                    </VerticalStackLayout>
+                </Grid>
+
+                <ScrollView Grid.Row="1">
+                    <VerticalStackLayout Padding="20,0,20,20" Spacing="12">
+
+                        <!-- Validation / confirmation banners -->
+                        <Border
+                            Style="{StaticResource AdminErrorBanner}"
+                            IsVisible="{Binding HasError}"
+                            SemanticProperties.Description="{Binding ErrorMessage}">
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                                <Image
+                                    WidthRequest="16"
+                                    HeightRequest="16"
+                                    VerticalOptions="Start"
+                                    Style="{StaticResource AdminDecorativeIcon}">
+                                    <Image.Source>
+                                        <FontImageSource
+                                            FontFamily="MaterialOutlined"
+                                            Glyph="{x:Static icons:AdminIcons.Warning}"
+                                            Color="{StaticResource Error}"
+                                            Size="16" />
+                                    </Image.Source>
+                                </Image>
+                                <Label
+                                    Grid.Column="1"
+                                    Text="{Binding ErrorMessage}"
+                                    Style="{StaticResource AdminBannerText}"
+                                    AutomationProperties.IsInAccessibleTree="False" />
+                            </Grid>
+                        </Border>
+
+                        <Border
+                            Style="{StaticResource AdminSuccessBanner}"
+                            IsVisible="{Binding HasInfo}"
+                            SemanticProperties.Description="{Binding InfoMessage}">
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                                <Image
+                                    WidthRequest="16"
+                                    HeightRequest="16"
+                                    VerticalOptions="Start"
+                                    Style="{StaticResource AdminDecorativeIcon}">
+                                    <Image.Source>
+                                        <FontImageSource
+                                            FontFamily="MaterialOutlined"
+                                            Glyph="{x:Static icons:AdminIcons.Success}"
+                                            Color="{StaticResource Success}"
+                                            Size="16" />
+                                    </Image.Source>
+                                </Image>
+                                <Label
+                                    Grid.Column="1"
+                                    Text="{Binding InfoMessage}"
+                                    Style="{StaticResource AdminBannerText}"
+                                    AutomationProperties.IsInAccessibleTree="False" />
+                            </Grid>
+                        </Border>
+
+                        <!-- Customer details -->
+                        <Border Style="{StaticResource AdminCard}">
+                            <VerticalStackLayout Spacing="12">
+                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                                    <Image
+                                        WidthRequest="16"
+                                        HeightRequest="16"
+                                        VerticalOptions="Center"
+                                        Style="{StaticResource AdminDecorativeIcon}">
+                                        <Image.Source>
+                                            <FontImageSource
+                                                FontFamily="MaterialOutlined"
+                                                Glyph="{x:Static icons:AdminIcons.Customer}"
+                                                Color="{StaticResource Primary}"
+                                                Size="16" />
+                                        </Image.Source>
+                                    </Image>
+                                    <Label
+                                        Grid.Column="1"
+                                        Text="Data Pelanggan"
+                                        Style="{StaticResource AdminSectionTitle}"
+                                        FontSize="14" />
+                                </Grid>
+
+                                <Border Style="{StaticResource AdminInputShell}">
+                                    <material:TextField
+                                        Title="Nama pelanggan (opsional)"
+                                        Text="{Binding Session.CustomerName}"
+                                        Style="{StaticResource AdminTextField}"
+                                        SemanticProperties.Description="Nama pelanggan"
+                                        SemanticProperties.Hint="Kosongkan untuk pelanggan umum" />
+                                </Border>
+
+                                <Border Style="{StaticResource AdminInputShell}">
+                                    <material:TextField
+                                        Title="No. HP (opsional)"
+                                        Text="{Binding Session.CustomerPhone}"
+                                        Keyboard="Telephone"
+                                        Style="{StaticResource AdminTextField}"
+                                        SemanticProperties.Description="Nomor HP pelanggan" />
+                                </Border>
+
+                                <VerticalStackLayout Spacing="3">
+                                    <Label Text="Stylist" Style="{StaticResource AdminFilterLabel}" />
+                                    <Border Style="{StaticResource AdminInputShell}">
+                                        <uranium:Dropdown
+                                            ItemsSource="{Binding StaffNames}"
+                                            SelectedItem="{Binding Session.StaffName, Mode=TwoWay}"
+                                            Placeholder="Pilih stylist"
+                                            Style="{StaticResource AdminDropdown}"
+                                            SemanticProperties.Description="Stylist yang menangani"
+                                            SemanticProperties.Hint="Buka daftar untuk memilih stylist" />
+                                    </Border>
+                                </VerticalStackLayout>
+
+                                <Border Style="{StaticResource AdminInputShell}">
+                                    <material:TextField
+                                        Title="Catatan (opsional)"
+                                        Text="{Binding Session.Notes}"
+                                        Style="{StaticResource AdminTextField}"
+                                        SemanticProperties.Description="Catatan transaksi"
+                                        SemanticProperties.Hint="{Binding NotesHintText}" />
+                                </Border>
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <!-- Items -->
+                        <Border Style="{StaticResource AdminCard}">
+                            <VerticalStackLayout Spacing="12">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label
+                                        Text="Item Transaksi"
+                                        Style="{StaticResource AdminSectionTitle}"
+                                        FontSize="14" />
+                                    <Label
+                                        Grid.Column="1"
+                                        Text="{Binding Session.ItemCountText}"
+                                        Style="{StaticResource AdminCaption}"
+                                        VerticalTextAlignment="Center" />
+                                </Grid>
+
+                                <VerticalStackLayout
+                                    Spacing="8"
+                                    BindableLayout.ItemsSource="{Binding Session.Cart}">
+                                    <BindableLayout.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border
+                                                Style="{StaticResource AdminListRow}"
+                                                SemanticProperties.Description="{Binding ScreenReaderText}">
+                                                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                                                    <VerticalStackLayout Spacing="2" VerticalOptions="Center">
+                                                        <Label
+                                                            Text="{Binding Service.Name}"
+                                                            Style="{StaticResource AdminCellTitle}"
+                                                            FontSize="12.5"
+                                                            AutomationProperties.IsInAccessibleTree="False" />
+                                                        <Label
+                                                            Text="{Binding UnitPriceText}"
+                                                            Style="{StaticResource AdminCellMeta}"
+                                                            AutomationProperties.IsInAccessibleTree="False" />
+                                                        <Label
+                                                            Text="{Binding LineTotalText}"
+                                                            Style="{StaticResource AdminAmountPrimary}"
+                                                            FontSize="12"
+                                                            AutomationProperties.IsInAccessibleTree="False" />
+                                                    </VerticalStackLayout>
+
+                                                    <HorizontalStackLayout
+                                                        Grid.Column="1"
+                                                        Spacing="6"
+                                                        VerticalOptions="Center">
+                                                        <Button
+                                                            Text="−"
+                                                            Style="{StaticResource AdminQtyButton}"
+                                                            Command="{Binding BindingContext.DecreaseCommand, Source={x:Reference ReviewRoot}}"
+                                                            CommandParameter="{Binding .}"
+                                                            SemanticProperties.Description="Kurangi jumlah"
+                                                            SemanticProperties.Hint="{Binding Service.Name}" />
+                                                        <Label
+                                                            Text="{Binding QuantityText}"
+                                                            Style="{StaticResource AdminSummaryValue}"
+                                                            WidthRequest="26"
+                                                            HorizontalTextAlignment="Center"
+                                                            LineBreakMode="NoWrap"
+                                                            SemanticProperties.Description="{Binding QuantityText}" />
+                                                        <Button
+                                                            Text="+"
+                                                            Style="{StaticResource AdminQtyButton}"
+                                                            Command="{Binding BindingContext.IncreaseCommand, Source={x:Reference ReviewRoot}}"
+                                                            CommandParameter="{Binding .}"
+                                                            SemanticProperties.Description="Tambah jumlah"
+                                                            SemanticProperties.Hint="{Binding Service.Name}" />
+                                                        <Button
+                                                            Style="{StaticResource AdminDangerLinkButton}"
+                                                            WidthRequest="30"
+                                                            HeightRequest="32"
+                                                            Padding="0"
+                                                            MinimumWidthRequest="30"
+                                                            Command="{Binding BindingContext.RemoveLineCommand, Source={x:Reference ReviewRoot}}"
+                                                            CommandParameter="{Binding .}"
+                                                            SemanticProperties.Description="Hapus item dari keranjang"
+                                                            SemanticProperties.Hint="{Binding Service.Name}">
+                                                            <Button.ImageSource>
+                                                                <FontImageSource
+                                                                    FontFamily="MaterialOutlined"
+                                                                    Glyph="{x:Static icons:AdminIcons.Remove}"
+                                                                    Color="{StaticResource Error}"
+                                                                    Size="16" />
+                                                            </Button.ImageSource>
+                                                        </Button>
+                                                    </HorizontalStackLayout>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </BindableLayout.ItemTemplate>
+                                </VerticalStackLayout>
+
+                                <VerticalStackLayout
+                                    Spacing="6"
+                                    Padding="12,16"
+                                    IsVisible="{Binding Session.IsCartEmpty}"
+                                    SemanticProperties.Description="Keranjang kosong">
+                                    <Image Style="{StaticResource AdminEmptyStateIcon}">
+                                        <Image.Source>
+                                            <FontImageSource
+                                                FontFamily="MaterialOutlined"
+                                                Glyph="{x:Static icons:AdminIcons.EmptyCart}"
+                                                Color="{StaticResource TextSecondary}"
+                                                Size="36" />
+                                        </Image.Source>
+                                    </Image>
+                                    <Label
+                                        Text="Belum ada item"
+                                        Style="{StaticResource AdminCardTitle}"
+                                        FontSize="14"
+                                        HorizontalTextAlignment="Center" />
+                                    <Label
+                                        Text="Tambahkan layanan dari halaman Kasir."
+                                        Style="{StaticResource AdminCaption}"
+                                        HorizontalTextAlignment="Center" />
+                                </VerticalStackLayout>
+
+                                <Button
+                                    Text="Tambah Layanan"
+                                    Style="{StaticResource AdminCompactButton}"
+                                    Command="{Binding AddMoreCommand}"
+                                    SemanticProperties.Description="Kembali ke katalog kasir untuk menambah layanan"
+                                    HorizontalOptions="Center" />
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <!-- Promo code -->
+                        <Border Style="{StaticResource AdminCard}">
+                            <VerticalStackLayout Spacing="12">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label
+                                        Text="Kode Promo"
+                                        Style="{StaticResource AdminSectionTitle}"
+                                        FontSize="14" />
+                                    <Button
+                                        Grid.Column="1"
+                                        Text="Hapus Kode"
+                                        Style="{StaticResource AdminLinkButton}"
+                                        Command="{Binding RemoveDiscountCommand}"
+                                        IsVisible="{Binding Session.HasDiscount}"
+                                        SemanticProperties.Description="Hapus kode promo yang dipakai" />
+                                </Grid>
+
+                                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                    <Border Style="{StaticResource AdminInputShell}">
+                                        <material:TextField
+                                            Title="Kode promo"
+                                            Text="{Binding DiscountCodeInput}"
+                                            Style="{StaticResource AdminTextField}"
+                                            SemanticProperties.Description="Kode promo"
+                                            SemanticProperties.Hint="{Binding DiscountHintText}" />
+                                    </Border>
+                                    <Button
+                                        Grid.Column="1"
+                                        Text="Terapkan"
+                                        Style="{StaticResource AdminSoftButton}"
+                                        Command="{Binding ApplyDiscountCommand}"
+                                        SemanticProperties.Description="Terapkan kode promo"
+                                        VerticalOptions="Center" />
+                                </Grid>
+
+                                <Label
+                                    Text="{Binding DiscountHintText}"
+                                    Style="{StaticResource AdminCaption}"
+                                    LineBreakMode="WordWrap" />
+
+                                <Grid ColumnDefinitions="*,Auto" IsVisible="{Binding Session.HasDiscount}">
+                                    <Label Text="Potongan" Style="{StaticResource AdminSummaryLabel}" />
+                                    <Label
+                                        Grid.Column="1"
+                                        Text="{Binding Session.DiscountText}"
+                                        Style="{StaticResource AdminSummaryValue}"
+                                        TextColor="{StaticResource Success}" />
+                                </Grid>
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <!-- Totals -->
+                        <Border Style="{StaticResource AdminCard}">
+                            <VerticalStackLayout Spacing="8">
+                                <Label
+                                    Text="Ringkasan Pembayaran"
+                                    Style="{StaticResource AdminSectionTitle}"
+                                    FontSize="14" />
+
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label Text="Subtotal" Style="{StaticResource AdminSummaryLabel}" />
+                                    <Label
+                                        Grid.Column="1"
+                                        Text="{Binding Session.SubtotalText}"
+                                        Style="{StaticResource AdminSummaryValue}" />
+                                </Grid>
+
+                                <Grid ColumnDefinitions="*,Auto" IsVisible="{Binding Session.HasDiscount}">
+                                    <Label Text="Diskon" Style="{StaticResource AdminSummaryLabel}" />
+                                    <Label
+                                        Grid.Column="1"
+                                        Text="{Binding Session.DiscountText}"
+                                        Style="{StaticResource AdminSummaryValue}"
+                                        TextColor="{StaticResource Success}" />
+                                </Grid>
+
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label Text="{Binding Session.TaxLabelText}" Style="{StaticResource AdminSummaryLabel}" />
+                                    <Label
+                                        Grid.Column="1"
+                                        Text="{Binding Session.TaxText}"
+                                        Style="{StaticResource AdminSummaryValue}" />
+                                </Grid>
+
+                                <BoxView Style="{StaticResource AdminReceiptRule}" />
+
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label Text="Total" Style="{StaticResource AdminAmountMedium}" />
+                                    <Label
+                                        Grid.Column="1"
+                                        Text="{Binding Session.TotalText}"
+                                        Style="{StaticResource AdminAmountPrimary}"
+                                        FontSize="18" />
+                                </Grid>
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <Button
+                            Text="Lanjut ke Pembayaran"
+                            Style="{StaticResource AdminPrimaryButton}"
+                            Command="{Binding ContinueCommand}"
+                            SemanticProperties.Description="Lanjut ke langkah pembayaran"
+                            SemanticProperties.Hint="Ketuk dua kali untuk memilih metode pembayaran"
+                            HorizontalOptions="Fill" />
+
+                        <Button
+                            Text="Kembali ke Kasir"
+                            Style="{StaticResource AdminSecondaryButton}"
+                            Command="{Binding AddMoreCommand}"
+                            SemanticProperties.Description="Kembali ke halaman kasir"
+                            HorizontalOptions="Fill" />
+                    </VerticalStackLayout>
+                </ScrollView>
+            </Grid>
+        </admin:AdminLayout.PageContent>
+    </admin:AdminLayout>
+
+</uranium:UraniumContentPage>

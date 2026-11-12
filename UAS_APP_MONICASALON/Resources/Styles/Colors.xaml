@@ -102,6 +102,13 @@
     <Color x:Key="DisabledText">#B0757575</Color>
     <Color x:Key="DisabledBackground">#80EFE6E4</Color>
 
+    <!-- Status feedback tokens (Admin) -->
+    <Color x:Key="Success">#2E7D5B</Color>
+    <Color x:Key="SuccessContainer">#E6F4EC</Color>
+    <Color x:Key="Warning">#9A6400</Color>
+    <Color x:Key="Info">#2F6F9F</Color>
+    <Color x:Key="InfoContainer">#E7F1F8</Color>
+
     <!-- MAUI template compatibility -->
     <Color x:Key="White">#FFFFFF</Color>
     <Color x:Key="Black">#000000</Color>

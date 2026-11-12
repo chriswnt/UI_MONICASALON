@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+    x:Class="UAS_APP_MONICASALON.Controls.Admin.StatCard"
+    x:Name="CardRoot"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <Border Style="{StaticResource AdminCard}" Padding="14">
+        <Grid
+            RowDefinitions="Auto,Auto,Auto"
+            ColumnDefinitions="Auto,*"
+            RowSpacing="3"
+            ColumnSpacing="8">
+
+            <Border
+                WidthRequest="30"
+                HeightRequest="30"
+                BackgroundColor="{StaticResource Secondary}"
+                StrokeThickness="0"
+                StrokeShape="RoundRectangle 15"
+                VerticalOptions="Center">
+                <Image
+                    WidthRequest="16"
+                    HeightRequest="16"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center">
+                    <Image.Source>
+                        <FontImageSource
+                            FontFamily="MaterialOutlined"
+                            Glyph="{Binding IconGlyph, Source={x:Reference CardRoot}}"
+                            Color="{StaticResource Primary}"
+                            Size="16" />
+                    </Image.Source>
+                </Image>
+            </Border>
+
+            <Label
+                Grid.Column="1"
+                Text="{Binding Title, Source={x:Reference CardRoot}}"
+                FontFamily="OpenSansRegular"
+                FontSize="10"
+                TextColor="{StaticResource TextSecondary}"
+                LineBreakMode="WordWrap"
+                MaxLines="2"
+                VerticalTextAlignment="Center" />
+
+            <Label
+                Grid.Row="1"
+                Grid.ColumnSpan="2"
+                Text="{Binding Value, Source={x:Reference CardRoot}}"
+                FontFamily="OpenSansSemibold"
+                FontSize="18"
+                FontAttributes="Bold"
+                TextColor="{StaticResource TextPrimary}"
+                LineBreakMode="TailTruncation"
+                MaxLines="1"
+                Margin="0,4,0,0" />
+
+            <Label
+                Grid.Row="2"
+                Grid.ColumnSpan="2"
+                Text="{Binding Caption, Source={x:Reference CardRoot}}"
+                FontFamily="OpenSansRegular"
+                FontSize="10"
+                TextColor="{StaticResource TextSecondary}"
+                LineBreakMode="TailTruncation"
+                MaxLines="1" />
+        </Grid>
+    </Border>
+
+</ContentView>

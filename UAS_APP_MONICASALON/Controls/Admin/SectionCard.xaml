@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+    x:Class="UAS_APP_MONICASALON.Controls.Admin.SectionCard"
+    x:Name="CardRoot"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <Border Style="{StaticResource AdminCard}">
+        <Grid RowDefinitions="Auto,Auto" RowSpacing="12">
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                <VerticalStackLayout Spacing="2" VerticalOptions="Center">
+                    <Label
+                        Text="{Binding Title, Source={x:Reference CardRoot}}"
+                        Style="{StaticResource AdminSectionTitle}" />
+                    <Label
+                        Text="{Binding Subtitle, Source={x:Reference CardRoot}}"
+                        IsVisible="{Binding HasSubtitle, Source={x:Reference CardRoot}}"
+                        Style="{StaticResource AdminSectionSubtitle}"
+                        LineBreakMode="WordWrap" />
+                </VerticalStackLayout>
+
+                <Button
+                    Grid.Column="1"
+                    Text="{Binding ActionText, Source={x:Reference CardRoot}}"
+                    IsVisible="{Binding HasAction, Source={x:Reference CardRoot}}"
+                    Command="{Binding ActionCommand, Source={x:Reference CardRoot}}"
+                    Style="{StaticResource AdminLinkButton}"
+                    VerticalOptions="Center" />
+            </Grid>
+
+            <ContentView
+                x:Name="SectionContentHost"
+                Grid.Row="1" />
+        </Grid>
+    </Border>
+
+</ContentView>
