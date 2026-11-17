@@ -127,28 +127,56 @@
     </ScrollView>
 
     <!-- Register navigation (pinned so it stays reachable on short windows) -->
-    <HorizontalStackLayout
+    <VerticalStackLayout
         Grid.Row="1"
-        HorizontalOptions="Center"
         Spacing="2"
-        Padding="0,8,0,12"
-        BackgroundColor="#FAF7F5">
-        <Label
-            Text="Belum punya akun? "
-            TextColor="#757575"
-            FontSize="14"
-            VerticalTextAlignment="Center" />
-        <Label
-            Text="Daftar"
-            TextColor="#D9534F"
-            FontSize="14"
-            FontAttributes="Bold"
-            VerticalTextAlignment="Center">
-            <Label.GestureRecognizers>
-                <TapGestureRecognizer Command="{Binding GoToRegisterCommand}" />
-            </Label.GestureRecognizers>
-        </Label>
-    </HorizontalStackLayout>
+        Padding="0,8,0,10"
+        BackgroundColor="{StaticResource Background}">
+        <HorizontalStackLayout HorizontalOptions="Center" Spacing="2">
+            <Label
+                Text="Belum punya akun? "
+                TextColor="#757575"
+                FontSize="14"
+                VerticalTextAlignment="Center" />
+            <Label
+                Text="Daftar"
+                TextColor="#D9534F"
+                FontSize="14"
+                FontAttributes="Bold"
+                VerticalTextAlignment="Center">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding GoToRegisterCommand}" />
+                </Label.GestureRecognizers>
+            </Label>
+        </HorizontalStackLayout>
+
+        <!-- Additive admin entry point; the customer flow above is unchanged. -->
+        <Button
+            Text="Masuk sebagai Admin"
+            Clicked="OnAdminAccessClicked"
+            BackgroundColor="Transparent"
+            TextColor="{StaticResource TextSecondary}"
+            FontFamily="OpenSansRegular"
+            FontSize="11"
+            FontAttributes="None"
+            BorderWidth="0"
+            CornerRadius="0"
+            Padding="0"
+            HeightRequest="24"
+            MinimumHeightRequest="24"
+            MinimumWidthRequest="44"
+            ContentLayout="Left,4"
+            HorizontalOptions="Center"
+            SemanticProperties.Description="Masuk sebagai Admin">
+            <Button.ImageSource>
+                <FontImageSource
+                    FontFamily="MaterialOutlined"
+                    Glyph="{x:Static m:AdminIcons.AdminAccess}"
+                    Color="{StaticResource TextSecondary}"
+                    Size="13" />
+            </Button.ImageSource>
+        </Button>
+    </VerticalStackLayout>
 
     </Grid>
 

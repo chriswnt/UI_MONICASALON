@@ -2,7 +2,7 @@
 
 Aplikasi **UI-only** untuk Monica Salon, dibangun dengan **.NET MAUI 10** dan **UraniumUI 3.0** sebagai framework presentasi UI. Proyek ini adalah tugas UAS mata kuliah Pemrograman Visual.
 
-> **Scope Phase 1:** hanya 3 halaman Customer UI. **Tidak ada** koneksi database, backend, halaman admin, atau alur checkout. Semua data masih *mock data* (hardcoded di ViewModel).
+> **Scope:** Phase 1 mencakup 3 halaman Customer UI. Phase 2 (Admin) menambahkan **Admin Dashboard** dan **Admin Booking** sebagai perluasan aplikasi. Tidak ada koneksi database/backend; semua data masih *mock data*.
 
 ---
 
@@ -13,8 +13,31 @@ Aplikasi **UI-only** untuk Monica Salon, dibangun dengan **.NET MAUI 10** dan **
 | Login | `Views/LoginPage.xaml` | Onboarding + form login (email & password) dengan validasi |
 | Register | `Views/RegisterPage.xaml` | Form pendaftaran customer (nama, email, telepon, password, konfirmasi, checkbox S&K) |
 | Home Customer | `Views/HomeCustomerPage.xaml` | Dashboard customer: header, search, banner promo, kategori layanan, daftar layanan, bottom navigation, bottom sheet detail layanan |
+| Admin Dashboard | `Views/Admin/AdminDashboardPage.xaml` | Ringkasan operasional: statistik, booking mingguan, pendapatan, booking terbaru |
+| Admin Booking | `Views/Admin/AdminBookingsPage.xaml` | Manajemen booking: pencarian, filter tanggal/status, kartu booking, bottom sheet detail & jadwal ulang |
+| Admin Booking Baru | `Views/Admin/AdminCreateBookingPage.xaml` | Form booking baru: pelanggan, layanan, stylist, tanggal/jam, catatan, cek ketersediaan slot |
+| Admin Detail Booking | `Views/Admin/AdminBookingDetailsPage.xaml` | Detail booking satu halaman penuh + aksi konfirmasi / tolak / selesai / batal / jadwal ulang / bayar di kasir |
+| Admin Jadwal Ulang | `Views/Admin/AdminReschedulePage.xaml` | Pindahkan jadwal: kalender, pilih jam, cek bentrok slot stylist |
+| Kasir | `Views/Admin/CashierPage.xaml` | Katalog layanan & produk, pencarian, filter kategori, keranjang (bottom sheet) |
+| Review Transaksi | `Views/Admin/TransactionReviewPage.xaml` | Data pelanggan & stylist, ubah jumlah item, kode promo, ringkasan total |
+| Pembayaran | `Views/Admin/PaymentPage.xaml` | Metode bayar (Tunai/EDC/QRIS/E-Wallet), nominal cepat, kembalian, status "memproses" |
+| Pembayaran Berhasil | `Views/Admin/TransactionSuccessPage.xaml` | Status sukses + ringkasan struk + aksi lanjutan |
+| Riwayat Transaksi | `Views/Admin/TransactionHistoryPage.xaml` | Statistik hari ini, filter cari/periode/metode, tombol kembali ke Kasir, daftar transaksi |
+| Detail Transaksi | `Views/Admin/TransactionDetailsPage.xaml` | Struk lengkap, cetak/bagikan (stub), pengembalian dana |
 
-Alur navigasi: `LoginPage` → (Login / Daftar) → `RegisterPage` / `HomeCustomerPage`.
+Alur navigasi customer: `LoginPage` → (Login / Daftar) → `RegisterPage` / `HomeCustomerPage`.
+
+Alur navigasi Admin: `LoginPage` → tautan **Masuk sebagai Admin** → bottom navigation 5 tab:
+**Dashboard ↔ Booking ↔ Kasir ↔ Reports ↔ Settings** (Reports & Settings masih placeholder).
+Tab `Kasir` menggantikan tab placeholder `Customers` yang sebelumnya belum punya halaman.
+
+Alur modul Booking: `AdminBookingsPage` → tombol **+** → `AdminCreateBookingPage` (kembali ke daftar),
+atau kartu booking → bottom sheet detail → **Buka Halaman Detail** → `AdminBookingDetailsPage` →
+**Jadwal Ulang** → `AdminReschedulePage`.
+
+Alur modul Kasir: `CashierPage` → keranjang / **Review** → `TransactionReviewPage` → `PaymentPage` →
+`TransactionSuccessPage` → **Lihat Struk** → `TransactionDetailsPage`, atau **Riwayat Transaksi** →
+`TransactionHistoryPage` → kartu transaksi → `TransactionDetailsPage`.
 
 ---
 
@@ -139,6 +162,64 @@ public class ButtonView : UraniumUI.Material.Controls.ButtonView { }
 ```
 
 Shim ini didaftarkan lewat `AssemblyInfo.cs` (`XmlnsDefinition`) dan handler-nya didaftarkan di `MauiProgram.cs`. Karena mewarisi (`inherit`) kontrol Uranium asli, seluruh perilaku dan tampilan tetap milik UraniumUI.
+
+### Admin UI (Phase 2)
+
+- Layout **mobile-first**: header admin, konten bertumpuk, dan bottom navigation Dashboard / Booking.
+- Komponen bersama di `Controls/Admin/`: `AdminLayout`, `AdminNavigationItem`, `StatCard`, `SectionCard`, `StatusBadge`.
+- Style bersama di `Resources/Styles/AdminStyles.xaml`; warna tetap memakai token dari `Colors.xaml`.
+- Data mock di `Models/Admin/AdminMockData.cs`; ViewModel di `ViewModels/Admin/`.
+- Alur login/register customer tidak diubah; hanya ditambahkan tautan admin di footer login.
+
+### Modul Kasir & Booking (Phase 3)
+
+**Kasir (UI-only, tanpa backend):**
+
+- Katalog layanan & produk dari `Models/Admin/CashierMockData.cs`; keranjang dan riwayat transaksi disimpan di
+  `Models/Admin/CashierSession.cs` (singleton), karena Shell membuat instance halaman baru setiap navigasi.
+- Harga: subtotal → diskon (kode promo demo `MONICA10`, `HEMAT20`, `NEWCUST15`) → PPN 11% → total
+  (aturan di `Models/Admin/CashierPricing.cs`). Semua nominal diformat lewat `Models/Admin/Rupiah.cs`.
+- Metode pembayaran: Tunai, Kartu Debit, Kartu Kredit, QRIS, E-Wallet (`Models/Admin/PaymentMethod.cs`).
+  Tunai memakai nominal cepat dan menghitung kembalian; non-tunai hanya mencatat nomor referensi (tanpa gateway).
+
+**Booking:**
+
+- Booking baru / jadwal ulang memakai `Models/Admin/AdminBookingStore.cs`, store in-memory bersama
+  `AdminMockData`, sehingga booking yang baru dibuat langsung terlihat di daftar Booking dan Dashboard.
+- Pengecekan bentrok slot memakai aturan yang sama dengan bottom sheet yang sudah ada
+  (slot terkunci + status Dikonfirmasi + stylist sama + jadwal bertumpuk).
+- Detail booking tetap tersedia sebagai bottom sheet (pintasan) **dan** halaman penuh
+  `AdminBookingDetailsPage`; tidak ada kode lama yang dihapus.
+
+**State UI:**
+
+- *Loading*: `RefreshView` di katalog kasir & riwayat transaksi, `ActivityIndicator` saat memproses pembayaran.
+- *Empty*: katalog tanpa hasil, keranjang kosong, riwayat tanpa hasil, booking/transaksi tidak ditemukan.
+- *Success*: halaman Pembayaran Berhasil, banner sukses (kode promo, booking dibuat, status booking berubah).
+- *Error*: banner galat untuk uang diterima kurang, kode promo salah, field wajib kosong, slot bentrok,
+  waktu sudah lewat, dan nomor transaksi/booking tidak ditemukan.
+
+**Aksesibilitas:**
+
+- `SemanticProperties.Description` + `SemanticProperties.Hint` pada semua kontrol interaktif
+  (tombol, tombol ikon `ButtonView`, chip kategori, kartu katalog, dropdown, field teks).
+- `SemanticProperties.HeadingLevel` (Level 1 untuk judul halaman, Level 2 untuk judul kartu/seksi) di
+  `AdminStyles.xaml`, jadi urutan heading konsisten di seluruh layar admin.
+- Setiap kartu daftar (booking & transaksi) punya satu kalimat ringkas untuk pembaca layar, dan label
+  di dalamnya ditandai `AutomationProperties.IsInAccessibleTree="False"` supaya satu item = satu swipe.
+- Ikon dekoratif dikeluarkan dari pohon aksesibilitas; `SemanticScreenReader.Default.Announce` dipakai untuk
+  mengumumkan perubahan penting (item masuk keranjang, hasil pembayaran, galat validasi, perubahan status booking).
+- Bottom sheet yang tertutup ditandai tidak terlihat oleh pembaca layar, sehingga konten tersembunyi tidak
+  ikut terbaca.
+
+**Catatan teknis: `uranium:CalendarView` dan navigasi kembali**
+
+UraniumUI `CalendarView` tidak boleh dipakai di halaman yang akan ditutup dengan `GoToAsync("..")`:
+menutup halaman yang berisi `CalendarView` (walaupun kalendernya tidak pernah dibuka) membuat proses
+aplikasi mati mendadak di Windows. Karena itu semua halaman yang bisa di-back memakai `DatePicker` biasa
+(atau dropdown periode), dan tidak ada lagi `CalendarView` di proyek ini. Tombol aksi yang penting
+(tombol kembali, tombol **+** Booking Baru, shortcut Riwayat) juga memakai `Button` asli, bukan
+`ButtonView`/gesture, supaya bisa diaktifkan pembaca layar.
 
 ### Palet Warna
 

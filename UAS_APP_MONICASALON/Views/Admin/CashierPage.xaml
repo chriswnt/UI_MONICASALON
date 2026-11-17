@@ -1,0 +1,557 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<uranium:UraniumContentPage
+    x:Class="UAS_APP_MONICASALON.Views.Admin.CashierPage"
+    x:Name="CashierRoot"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
+    xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
+    xmlns:admin="clr-namespace:UAS_APP_MONICASALON.Controls.Admin"
+    xmlns:icons="clr-namespace:UAS_APP_MONICASALON.Icons"
+    BackgroundColor="{StaticResource Background}"
+    NavigationPage.HasNavigationBar="False"
+    Shell.NavBarIsVisible="False">
+
+    <admin:AdminLayout
+        PageTitle="Kasir"
+        ActiveRoute="CashierPage">
+
+        <admin:AdminLayout.PageContent>
+            <Grid
+                Padding="20,6,20,20"
+                RowDefinitions="Auto,Auto,Auto,*,Auto"
+                RowSpacing="10">
+
+                <!-- Search + quick actions -->
+                <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
+                    <Border Style="{StaticResource AdminInputShell}">
+                        <material:TextField
+                            Title="Cari layanan atau produk..."
+                            Text="{Binding SearchText}"
+                            Style="{StaticResource AdminTextField}"
+                            SemanticProperties.Description="Cari layanan atau produk di katalog kasir"
+                            SemanticProperties.Hint="Ketik nama layanan, misalnya potong rambut" />
+                    </Border>
+
+                    <Button
+                        Grid.Column="1"
+                        Style="{StaticResource AdminIconGlyphButton}"
+                        Command="{Binding OpenHistoryCommand}"
+                        VerticalOptions="Center"
+                        SemanticProperties.Description="Riwayat transaksi"
+                        SemanticProperties.Hint="Ketuk dua kali untuk membuka riwayat transaksi">
+                        <Button.ImageSource>
+                            <FontImageSource
+                                FontFamily="MaterialOutlined"
+                                Glyph="{x:Static icons:AdminIcons.History}"
+                                Color="{StaticResource TextSecondary}"
+                                Size="18" />
+                        </Button.ImageSource>
+                    </Button>
+
+                    <Grid Grid.Column="2" VerticalOptions="Center">
+                        <uranium:ButtonView
+                            Style="{StaticResource AdminIconButton}"
+                            WidthRequest="42"
+                            HeightRequest="42"
+                            StrokeShape="RoundRectangle 12"
+                            BackgroundColor="{StaticResource Primary}"
+                            StrokeThickness="0"
+                            SemanticProperties.Description="{Binding Session.CartScreenReaderText}"
+                            SemanticProperties.Hint="Ketuk dua kali untuk membuka keranjang"
+                            TappedCommand="{Binding OpenCartCommand}">
+                            <Image
+                                WidthRequest="18"
+                                HeightRequest="18"
+                                InputTransparent="True"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center"
+                                Style="{StaticResource AdminDecorativeIcon}">
+                                <Image.Source>
+                                    <FontImageSource
+                                        FontFamily="MaterialOutlined"
+                                        Glyph="{x:Static icons:AdminIcons.Cart}"
+                                        Color="{StaticResource OnPrimary}"
+                                        Size="18" />
+                                </Image.Source>
+                            </Image>
+                        </uranium:ButtonView>
+
+                        <Border
+                            Style="{StaticResource AdminCounterBadge}"
+                            Margin="0,-4,-4,0"
+                            IsVisible="{Binding Session.HasItems}"
+                            AutomationProperties.IsInAccessibleTree="False">
+                            <Label
+                                Text="{Binding Session.ItemCount}"
+                                Style="{StaticResource AdminCounterBadgeText}"
+                                AutomationProperties.IsInAccessibleTree="False" />
+                        </Border>
+                    </Grid>
+                </Grid>
+
+                <!-- Category chips -->
+                <ScrollView
+                    Grid.Row="1"
+                    Orientation="Horizontal"
+                    HorizontalScrollBarVisibility="Never"
+                    SemanticProperties.Description="Filter kategori katalog"
+                    Padding="0,0,0,2">
+                    <HorizontalStackLayout
+                        Spacing="8"
+                        BindableLayout.ItemsSource="{Binding Categories}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <uranium:ButtonView
+                                    Style="{StaticResource AdminChipButton}"
+                                    TappedCommand="{Binding BindingContext.SelectCategoryCommand, Source={x:Reference CashierRoot}}"
+                                    CommandParameter="{Binding .}"
+                                    SemanticProperties.Description="{Binding ScreenReaderText}"
+                                    SemanticProperties.Hint="{Binding ScreenReaderHint}">
+                                    <HorizontalStackLayout Spacing="6" InputTransparent="True">
+                                        <Image
+                                            WidthRequest="14"
+                                            HeightRequest="14"
+                                            VerticalOptions="Center"
+                                            Style="{StaticResource AdminDecorativeIcon}">
+                                            <Image.Source>
+                                                <FontImageSource
+                                                    FontFamily="MaterialOutlined"
+                                                    Glyph="{Binding IconGlyph}"
+                                                    Color="{StaticResource Primary}"
+                                                    Size="14" />
+                                            </Image.Source>
+                                        </Image>
+                                        <Label
+                                            Text="{Binding Name}"
+                                            Style="{StaticResource AdminChipLabel}" />
+                                    </HorizontalStackLayout>
+                                    <uranium:ButtonView.Triggers>
+                                        <DataTrigger
+                                            TargetType="uranium:ButtonView"
+                                            Binding="{Binding IsSelected}"
+                                            Value="True">
+                                            <Setter Property="BackgroundColor" Value="{StaticResource Secondary}" />
+                                            <Setter Property="Stroke" Value="{StaticResource Primary}" />
+                                        </DataTrigger>
+                                    </uranium:ButtonView.Triggers>
+                                </uranium:ButtonView>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </HorizontalStackLayout>
+                </ScrollView>
+
+                <!-- Result summary -->
+                <Grid
+                    Grid.Row="2"
+                    ColumnDefinitions="*,Auto"
+                    ColumnSpacing="8">
+                    <Label
+                        Text="{Binding ResultsText}"
+                        Style="{StaticResource AdminCaption}"
+                        VerticalTextAlignment="Center"
+                        SemanticProperties.HeadingLevel="Level2" />
+                    <Label
+                        Grid.Column="1"
+                        Text="{Binding SyncText}"
+                        Style="{StaticResource AdminCaption}"
+                        HorizontalTextAlignment="End"
+                        VerticalTextAlignment="Center" />
+                </Grid>
+
+                <!-- Service catalogue -->
+                <RefreshView
+                    Grid.Row="3"
+                    IsRefreshing="{Binding IsLoading}"
+                    Command="{Binding RefreshCommand}"
+                    RefreshColor="{StaticResource Primary}"
+                    SemanticProperties.Description="Katalog kasir">
+                    <CollectionView
+                        ItemsSource="{Binding FilteredServices}"
+                        SelectionMode="None"
+                        ItemSizingStrategy="MeasureAllItems"
+                        VerticalScrollBarVisibility="Default">
+                        <CollectionView.ItemsLayout>
+                            <GridItemsLayout
+                                Orientation="Vertical"
+                                Span="2"
+                                HorizontalItemSpacing="10"
+                                VerticalItemSpacing="10" />
+                        </CollectionView.ItemsLayout>
+
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Border
+                                    Style="{StaticResource AdminCard}"
+                                    Padding="12"
+                                    SemanticProperties.Description="{Binding ScreenReaderText}"
+                                    SemanticProperties.Hint="{Binding ScreenReaderAddHint}">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer
+                                            Command="{Binding BindingContext.AddServiceCommand, Source={x:Reference CashierRoot}}"
+                                            CommandParameter="{Binding .}" />
+                                    </Border.GestureRecognizers>
+
+                                    <VerticalStackLayout Spacing="8" InputTransparent="True">
+                                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
+                                            <Border
+                                                WidthRequest="32"
+                                                HeightRequest="32"
+                                                BackgroundColor="{StaticResource Secondary}"
+                                                StrokeThickness="0"
+                                                StrokeShape="RoundRectangle 11"
+                                                VerticalOptions="Center"
+                                                AutomationProperties.IsInAccessibleTree="False">
+                                                <Image
+                                                    WidthRequest="17"
+                                                    HeightRequest="17"
+                                                    HorizontalOptions="Center"
+                                                    VerticalOptions="Center"
+                                                    Style="{StaticResource AdminDecorativeIcon}">
+                                                    <Image.Source>
+                                                        <FontImageSource
+                                                            FontFamily="MaterialOutlined"
+                                                            Glyph="{Binding IconGlyph}"
+                                                            Color="{StaticResource Primary}"
+                                                            Size="17" />
+                                                    </Image.Source>
+                                                </Image>
+                                            </Border>
+
+                                            <Border
+                                                Grid.Column="2"
+                                                WidthRequest="24"
+                                                HeightRequest="24"
+                                                BackgroundColor="{StaticResource Primary}"
+                                                StrokeThickness="0"
+                                                StrokeShape="RoundRectangle 12"
+                                                HorizontalOptions="End"
+                                                VerticalOptions="Center"
+                                                AutomationProperties.IsInAccessibleTree="False">
+                                                <Label
+                                                    Text="+"
+                                                    FontFamily="OpenSansSemibold"
+                                                    FontSize="13"
+                                                    FontAttributes="Bold"
+                                                    TextColor="{StaticResource OnPrimary}"
+                                                    HorizontalOptions="Center"
+                                                    VerticalOptions="Center"
+                                                    AutomationProperties.IsInAccessibleTree="False" />
+                                            </Border>
+                                        </Grid>
+
+                                        <Label
+                                            Text="{Binding Name}"
+                                            Style="{StaticResource AdminCellTitle}"
+                                            FontSize="12.5"
+                                            AutomationProperties.IsInAccessibleTree="False" />
+                                        <Label
+                                            Text="{Binding DurationText}"
+                                            Style="{StaticResource AdminCellMeta}"
+                                            AutomationProperties.IsInAccessibleTree="False" />
+                                        <Label
+                                            Text="{Binding PriceText}"
+                                            Style="{StaticResource AdminAmountPrimary}"
+                                            FontSize="13"
+                                            AutomationProperties.IsInAccessibleTree="False" />
+                                    </VerticalStackLayout>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+
+                        <CollectionView.EmptyView>
+                            <VerticalStackLayout
+                                Padding="24"
+                                Spacing="6"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center"
+                                SemanticProperties.Description="Katalog kosong">
+                                <Image Style="{StaticResource AdminEmptyStateIcon}">
+                                    <Image.Source>
+                                        <FontImageSource
+                                            FontFamily="MaterialOutlined"
+                                            Glyph="{x:Static icons:AdminIcons.EmptyCart}"
+                                            Color="{StaticResource TextSecondary}"
+                                            Size="36" />
+                                    </Image.Source>
+                                </Image>
+                                <Label
+                                    Text="Item tidak ditemukan"
+                                    FontFamily="OpenSansSemibold"
+                                    FontSize="15"
+                                    FontAttributes="Bold"
+                                    TextColor="{StaticResource TextPrimary}"
+                                    HorizontalTextAlignment="Center" />
+                                <Label
+                                    Text="Coba ubah kata kunci atau pilih kategori lain."
+                                    Style="{StaticResource AdminCaption}"
+                                    HorizontalTextAlignment="Center" />
+                                <Button
+                                    Text="Reset Pencarian"
+                                    Style="{StaticResource AdminCompactButton}"
+                                    Command="{Binding ResetSearchCommand}"
+                                    SemanticProperties.Description="Reset pencarian dan filter kategori"
+                                    HorizontalOptions="Center"
+                                    Margin="0,4,0,0" />
+                            </VerticalStackLayout>
+                        </CollectionView.EmptyView>
+                    </CollectionView>
+                </RefreshView>
+
+                <!-- Cart summary bar -->
+                <Border
+                    Grid.Row="4"
+                    Style="{StaticResource AdminCard}"
+                    Padding="14,10"
+                    IsVisible="{Binding Session.HasItems}">
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                        <VerticalStackLayout Spacing="1" VerticalOptions="Center">
+                            <Label
+                                Text="{Binding Session.ItemCountText}"
+                                Style="{StaticResource AdminSummaryLabel}"
+                                FontSize="10.5" />
+                            <Label
+                                Text="{Binding Session.TotalText}"
+                                Style="{StaticResource AdminAmountMedium}" />
+                        </VerticalStackLayout>
+
+                        <Button
+                            Grid.Column="1"
+                            Text="Review"
+                            Style="{StaticResource AdminPrimaryButton}"
+                            Command="{Binding OpenReviewCommand}"
+                            SemanticProperties.Description="Lanjut ke review transaksi"
+                            SemanticProperties.Hint="Ketuk dua kali untuk memeriksa keranjang"
+                            VerticalOptions="Center" />
+                    </Grid>
+                </Border>
+            </Grid>
+        </admin:AdminLayout.PageContent>
+    </admin:AdminLayout>
+
+    <uranium:UraniumContentPage.Attachments>
+        <!-- Cart sheet -->
+        <material:BottomSheetView IsPresented="{Binding IsCartOpen, Mode=TwoWay}">
+            <material:BottomSheetView.Header>
+                <BoxView HeightRequest="0" Color="Transparent" />
+            </material:BottomSheetView.Header>
+            <material:BottomSheetView.Triggers>
+                <DataTrigger
+                    TargetType="material:BottomSheetView"
+                    Binding="{Binding IsCartOpen}"
+                    Value="False">
+                    <Setter Property="InputTransparent" Value="True" />
+                    <!-- Accessibility: keep the closed sheet out of the screen-reader order. -->
+                    <Setter Property="AutomationProperties.IsInAccessibleTree" Value="False" />
+                </DataTrigger>
+            </material:BottomSheetView.Triggers>
+
+            <ScrollView MaximumHeightRequest="560">
+                <VerticalStackLayout Padding="16,4,16,16" Spacing="10">
+
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                        <VerticalStackLayout Spacing="1" VerticalOptions="Center">
+                            <Label
+                                Text="Keranjang"
+                                Style="{StaticResource AdminSectionTitle}"
+                                FontSize="14" />
+                            <Label
+                                Text="{Binding Session.ItemCountText}"
+                                Style="{StaticResource AdminCaption}" />
+                        </VerticalStackLayout>
+
+                        <uranium:ButtonView
+                            Grid.Column="1"
+                            Style="{StaticResource AdminIconButton}"
+                            WidthRequest="34"
+                            HeightRequest="34"
+                            BackgroundColor="{StaticResource Background}"
+                            StrokeThickness="0"
+                            VerticalOptions="Center"
+                            SemanticProperties.Description="Tutup keranjang"
+                            TappedCommand="{Binding CloseCartCommand}">
+                            <Image
+                                WidthRequest="17"
+                                HeightRequest="17"
+                                InputTransparent="True"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center"
+                                Style="{StaticResource AdminDecorativeIcon}">
+                                <Image.Source>
+                                    <FontImageSource
+                                        FontFamily="MaterialOutlined"
+                                        Glyph="{x:Static icons:AdminIcons.Close}"
+                                        Color="{StaticResource TextPrimary}"
+                                        Size="17" />
+                                </Image.Source>
+                            </Image>
+                        </uranium:ButtonView>
+                    </Grid>
+
+                    <!-- Empty cart state -->
+                    <VerticalStackLayout
+                        Spacing="6"
+                        Padding="12,20"
+                        IsVisible="{Binding Session.IsCartEmpty}"
+                        SemanticProperties.Description="Keranjang kosong">
+                        <Image Style="{StaticResource AdminEmptyStateIcon}">
+                            <Image.Source>
+                                <FontImageSource
+                                    FontFamily="MaterialOutlined"
+                                    Glyph="{x:Static icons:AdminIcons.EmptyCart}"
+                                    Color="{StaticResource TextSecondary}"
+                                    Size="36" />
+                            </Image.Source>
+                        </Image>
+                        <Label
+                            Text="Keranjang masih kosong"
+                            Style="{StaticResource AdminCardTitle}"
+                            FontSize="14"
+                            HorizontalTextAlignment="Center" />
+                        <Label
+                            Text="Ketuk kartu layanan di katalog untuk menambahkannya."
+                            Style="{StaticResource AdminCaption}"
+                            HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+
+                    <!-- Cart lines -->
+                    <VerticalStackLayout
+                        Spacing="8"
+                        BindableLayout.ItemsSource="{Binding Session.Cart}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <Border
+                                    Style="{StaticResource AdminListRow}"
+                                    SemanticProperties.Description="{Binding ScreenReaderText}">
+                                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                                        <VerticalStackLayout Spacing="2" VerticalOptions="Center">
+                                            <Label
+                                                Text="{Binding Service.Name}"
+                                                Style="{StaticResource AdminCellTitle}"
+                                                FontSize="12.5"
+                                                AutomationProperties.IsInAccessibleTree="False" />
+                                            <Label
+                                                Text="{Binding UnitPriceText}"
+                                                Style="{StaticResource AdminCellMeta}"
+                                                AutomationProperties.IsInAccessibleTree="False" />
+                                            <Label
+                                                Text="{Binding LineTotalText}"
+                                                Style="{StaticResource AdminAmountPrimary}"
+                                                FontSize="12"
+                                                AutomationProperties.IsInAccessibleTree="False" />
+                                        </VerticalStackLayout>
+
+                                        <HorizontalStackLayout
+                                            Grid.Column="1"
+                                            Spacing="6"
+                                            VerticalOptions="Center">
+                                            <Button
+                                                Text="−"
+                                                Style="{StaticResource AdminQtyButton}"
+                                                Command="{Binding BindingContext.DecreaseCommand, Source={x:Reference CashierRoot}}"
+                                                CommandParameter="{Binding .}"
+                                                SemanticProperties.Description="Kurangi jumlah"
+                                                SemanticProperties.Hint="{Binding Service.Name}" />
+                                            <Label
+                                                Text="{Binding QuantityText}"
+                                                Style="{StaticResource AdminSummaryValue}"
+                                                WidthRequest="26"
+                                                HorizontalTextAlignment="Center"
+                                                LineBreakMode="NoWrap"
+                                                SemanticProperties.Description="{Binding QuantityText}" />
+                                            <Button
+                                                Text="+"
+                                                Style="{StaticResource AdminQtyButton}"
+                                                Command="{Binding BindingContext.IncreaseCommand, Source={x:Reference CashierRoot}}"
+                                                CommandParameter="{Binding .}"
+                                                SemanticProperties.Description="Tambah jumlah"
+                                                SemanticProperties.Hint="{Binding Service.Name}" />
+                                            <Button
+                                                Style="{StaticResource AdminDangerLinkButton}"
+                                                WidthRequest="30"
+                                                HeightRequest="32"
+                                                Padding="0"
+                                                MinimumWidthRequest="30"
+                                                Command="{Binding BindingContext.RemoveLineCommand, Source={x:Reference CashierRoot}}"
+                                                CommandParameter="{Binding .}"
+                                                SemanticProperties.Description="Hapus item dari keranjang"
+                                                SemanticProperties.Hint="{Binding Service.Name}">
+                                                <Button.ImageSource>
+                                                    <FontImageSource
+                                                        FontFamily="MaterialOutlined"
+                                                        Glyph="{x:Static icons:AdminIcons.Remove}"
+                                                        Color="{StaticResource Error}"
+                                                        Size="16" />
+                                                </Button.ImageSource>
+                                            </Button>
+                                        </HorizontalStackLayout>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+
+                    <!-- Cart totals -->
+                    <Border
+                        Style="{StaticResource AdminListRow}"
+                        IsVisible="{Binding Session.HasItems}">
+                        <VerticalStackLayout Spacing="6">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Text="Subtotal" Style="{StaticResource AdminSummaryLabel}" />
+                                <Label
+                                    Grid.Column="1"
+                                    Text="{Binding Session.SubtotalText}"
+                                    Style="{StaticResource AdminSummaryValue}" />
+                            </Grid>
+
+                            <Grid ColumnDefinitions="*,Auto" IsVisible="{Binding Session.HasDiscount}">
+                                <Label Text="Diskon" Style="{StaticResource AdminSummaryLabel}" />
+                                <Label
+                                    Grid.Column="1"
+                                    Text="{Binding Session.DiscountText}"
+                                    Style="{StaticResource AdminSummaryValue}"
+                                    TextColor="{StaticResource Success}" />
+                            </Grid>
+
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Text="{Binding Session.TaxLabelText}" Style="{StaticResource AdminSummaryLabel}" />
+                                <Label
+                                    Grid.Column="1"
+                                    Text="{Binding Session.TaxText}"
+                                    Style="{StaticResource AdminSummaryValue}" />
+                            </Grid>
+
+                            <BoxView Style="{StaticResource AdminReceiptRule}" />
+
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Text="Total" Style="{StaticResource AdminAmountMedium}" />
+                                <Label
+                                    Grid.Column="1"
+                                    Text="{Binding Session.TotalText}"
+                                    Style="{StaticResource AdminAmountPrimary}"
+                                    FontSize="15" />
+                            </Grid>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="8" IsVisible="{Binding Session.HasItems}">
+                        <Button
+                            Text="Kosongkan"
+                            Style="{StaticResource AdminDangerButton}"
+                            Command="{Binding ClearCartCommand}"
+                            SemanticProperties.Description="Kosongkan keranjang"
+                            HorizontalOptions="Fill" />
+                        <Button
+                            Grid.Column="1"
+                            Text="Lanjut Review"
+                            Style="{StaticResource AdminPrimaryButton}"
+                            Command="{Binding OpenReviewCommand}"
+                            SemanticProperties.Description="Lanjut ke review transaksi"
+                            HorizontalOptions="Fill" />
+                    </Grid>
+                </VerticalStackLayout>
+            </ScrollView>
+        </material:BottomSheetView>
+    </uranium:UraniumContentPage.Attachments>
+
+</uranium:UraniumContentPage>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+    x:Class="UAS_APP_MONICASALON.Controls.Admin.PaymentBadge"
+    x:Name="BadgeRoot"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:models="clr-namespace:UAS_APP_MONICASALON.Models.Admin">
+
+    <Border
+        BackgroundColor="{StaticResource TertiaryContainer}"
+        StrokeThickness="0"
+        StrokeShape="RoundRectangle 10"
+        Padding="9,4"
+        HorizontalOptions="Start">
+        <Border.Triggers>
+            <DataTrigger
+                TargetType="Border"
+                Binding="{Binding Status, Source={x:Reference BadgeRoot}}"
+                Value="{x:Static models:PaymentStatus.Paid}">
+                <Setter Property="BackgroundColor" Value="{StaticResource SuccessContainer}" />
+            </DataTrigger>
+            <DataTrigger
+                TargetType="Border"
+                Binding="{Binding Status, Source={x:Reference BadgeRoot}}"
+                Value="{x:Static models:PaymentStatus.Refunded}">
+                <Setter Property="BackgroundColor" Value="{StaticResource InfoContainer}" />
+            </DataTrigger>
+        </Border.Triggers>
+
+        <Label
+            Text="{Binding Text, Source={x:Reference BadgeRoot}}"
+            FontFamily="OpenSansSemibold"
+            FontSize="10"
+            FontAttributes="Bold"
+            TextColor="{StaticResource Warning}"
+            VerticalTextAlignment="Center">
+            <Label.Triggers>
+                <DataTrigger
+                    TargetType="Label"
+                    Binding="{Binding Status, Source={x:Reference BadgeRoot}}"
+                    Value="{x:Static models:PaymentStatus.Paid}">
+                    <Setter Property="TextColor" Value="{StaticResource Success}" />
+                </DataTrigger>
+                <DataTrigger
+                    TargetType="Label"
+                    Binding="{Binding Status, Source={x:Reference BadgeRoot}}"
+                    Value="{x:Static models:PaymentStatus.Refunded}">
+                    <Setter Property="TextColor" Value="{StaticResource Info}" />
+                </DataTrigger>
+            </Label.Triggers>
+        </Label>
+    </Border>
+
+</ContentView>
