@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<uranium:UraniumContentPage
+    x:Class="UAS_APP_MONICASALON.Views.Admin.TransactionDetailsPage"
+    x:Name="DetailsRoot"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
+    xmlns:admin="clr-namespace:UAS_APP_MONICASALON.Controls.Admin"
+    xmlns:icons="clr-namespace:UAS_APP_MONICASALON.Icons"
+    BackgroundColor="{StaticResource Background}"
+    NavigationPage.HasNavigationBar="False"
+    Shell.NavBarIsVisible="False">
+
+    <admin:AdminLayout
+        PageTitle="Detail Transaksi"
+        ActiveRoute="CashierPage">
+
+        <admin:AdminLayout.PageContent>
+            <ScrollView>
+                <VerticalStackLayout Padding="20,6,20,20" Spacing="12">
+
+                    <!-- Refund confirmation banner -->
+                    <Border
+                        Style="{StaticResource AdminSuccessBanner}"
+                        IsVisible="{Binding HasBanner}"
+                        SemanticProperties.Description="{Binding BannerMessage}">
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                            <Image
+                                WidthRequest="16"
+                                HeightRequest="16"
+                                VerticalOptions="Start"
+                                Style="{StaticResource AdminDecorativeIcon}">
+                                <Image.Source>
+                                    <FontImageSource
+                                        FontFamily="MaterialOutlined"
+                                        Glyph="{x:Static icons:AdminIcons.Success}"
+                                        Color="{StaticResource Success}"
+                                        Size="16" />
+                                </Image.Source>
+                            </Image>
+                            <Label
+                                Grid.Column="1"
+                                Text="{Binding BannerMessage}"
+                                Style="{StaticResource AdminBannerText}"
+                                AutomationProperties.IsInAccessibleTree="False" />
+                        </Grid>
+                    </Border>
+
+                    <!-- Not found state -->
+                    <Border
+                        Style="{StaticResource AdminCard}"
+                        IsVisible="{Binding IsNotFound}"
+                        SemanticProperties.Description="{Binding NotFoundTitle}">
+                        <VerticalStackLayout Spacing="8" Padding="0,10">
+                            <Image Style="{StaticResource AdminEmptyStateIcon}">
+                                <Image.Source>
+                                    <FontImageSource
+                                        FontFamily="MaterialOutlined"
+                                        Glyph="{x:Static icons:AdminIcons.EventBusy}"
+                                        Color="{StaticResource Error}"
+                                        Size="36" />
+                                </Image.Source>
+                            </Image>
+                            <Label
+                                Text="{Binding NotFoundTitle}"
+                                Style="{StaticResource AdminCardTitle}"
+                                FontSize="15"
+                                HorizontalTextAlignment="Center" />
+                            <Label
+                                Text="{Binding NotFoundCaption}"
+                                Style="{StaticResource AdminCaption}"
+                                HorizontalTextAlignment="Center" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Customer header -->
+                    <Border
+                        Style="{StaticResource AdminCard}"
+                        IsVisible="{Binding HasTransaction}">
+                        <VerticalStackLayout Spacing="10">
+                            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                                <Border
+                                    WidthRequest="44"
+                                    HeightRequest="44"
+                                    BackgroundColor="{StaticResource Secondary}"
+                                    StrokeThickness="0"
+                                    StrokeShape="RoundRectangle 22"
+                                    VerticalOptions="Center"
+                                    AutomationProperties.IsInAccessibleTree="False">
+                                    <Label
+                                        Text="{Binding Transaction.CustomerInitials}"
+                                        FontFamily="OpenSansSemibold"
+                                        FontSize="13"
+                                        FontAttributes="Bold"
+                                        TextColor="{StaticResource Primary}"
+                                        HorizontalOptions="Center"
+                                        VerticalOptions="Center" />
+                                </Border>
+
+                                <VerticalStackLayout Grid.Column="1" Spacing="1" VerticalOptions="Center">
+                                    <Label
+                                        Text="{Binding Transaction.CustomerName}"
+                                        Style="{StaticResource AdminCardTitle}"
+                                        FontSize="15" />
+                                    <Label
+                                        Text="{Binding Transaction.CustomerMeta}"
+                                        Style="{StaticResource AdminCellMeta}" />
+                                </VerticalStackLayout>
+
+                                <admin:PaymentBadge
+                                    Grid.Column="2"
+                                    Text="{Binding Transaction.StatusText}"
+                                    Status="{Binding Transaction.Status}"
+                                    HorizontalOptions="End"
+                                    VerticalOptions="Center" />
+                            </Grid>
+
+                            <Label
+                                Text="{Binding Transaction.StaffText}"
+                                Style="{StaticResource AdminCaption}" />
+
+                            <Label
+                                Text="{Binding Transaction.NotesText}"
+                                Style="{StaticResource AdminCaption}"
+                                IsVisible="{Binding Transaction.HasNotes}"
+                                LineBreakMode="WordWrap" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Receipt -->
+                    <Border
+                        Style="{StaticResource AdminCard}"
+                        IsVisible="{Binding HasTransaction}">
+                        <VerticalStackLayout Spacing="8">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <VerticalStackLayout Spacing="1">
+                                    <Label
+                                        Text="Struk Transaksi"
+                                        Style="{StaticResource AdminSectionTitle}"
+                                        FontSize="14" />
+                                    <Label
+                                        Text="{Binding Transaction.Id}"
+                                        Style="{StaticResource AdminCaption}" />
+                                </VerticalStackLayout>
+                                <Label
+                                    Grid.Column="1"
+                                    Text="{Binding Transaction.ScheduleText}"
+                                    Style="{StaticResource AdminCaption}"
+                                    VerticalTextAlignment="Center" />
+                            </Grid>
+
+                            <BoxView Style="{StaticResource AdminReceiptRule}" />
+
+                            <!-- Items -->
+                            <VerticalStackLayout
+                                Spacing="8"
+                                BindableLayout.ItemsSource="{Binding Transaction.Lines}">
+                                <BindableLayout.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid
+                                            ColumnDefinitions="*,Auto"
+                                            ColumnSpacing="10"
+                                            SemanticProperties.Description="{Binding ScreenReaderText}">
+                                            <VerticalStackLayout Spacing="1" VerticalOptions="Center">
+                                                <Label
+                                                    Text="{Binding Service.Name}"
+                                                    Style="{StaticResource AdminCellTitle}"
+                                                    FontSize="12.5"
+                                                    AutomationProperties.IsInAccessibleTree="False" />
+                                                <Label
+                                                    Text="{Binding UnitPriceText}"
+                                                    Style="{StaticResource AdminCellMeta}"
+                                                    AutomationProperties.IsInAccessibleTree="False" />
+                                            </VerticalStackLayout>
+                                            <VerticalStackLayout
+                                                Grid.Column="1"
+                                                Spacing="1"
+                                                HorizontalOptions="End"
+                                                VerticalOptions="Center">
+                                                <Label
+                                                    Text="{Binding LineTotalText}"
+                                                    Style="{StaticResource AdminSummaryValue}"
+                                                    HorizontalTextAlignment="End"
+                                                    AutomationProperties.IsInAccessibleTree="False" />
+                                                <Label
+                                                    Text="{Binding QuantityText}"
+                                                    Style="{StaticResource AdminCellMeta}"
+                                                    HorizontalTextAlignment="End"
+                                                    AutomationProperties.IsInAccessibleTree="False" />
+                                            </VerticalStackLayout>
+                                        </Grid>
+                                    </DataTemplate>
+                                </BindableLayout.ItemTemplate>
+                            </VerticalStackLayout>
+
+                            <BoxView Style="{StaticResource AdminReceiptRule}" />
+
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Text="Subtotal" Style="{StaticResource AdminSummaryLabel}" />
+                                <Label
+                                    Grid.Column="1"
+                                    Text="{Binding Transaction.SubtotalText}"
+                                    Style="{StaticResource AdminSummaryValue}" />
+                            </Grid>
+
+                            <Grid ColumnDefinitions="*,Auto" IsVisible="{Binding Transaction.HasDiscount}">
+                                <Label Text="Diskon" Style="{StaticResource AdminSummaryLabel}" />
+                                <Label
+                                    Grid.Column="1"
+                                    Text="{Binding Transaction.DiscountText}"
+                                    Style="{StaticResource AdminSummaryValue}"
+                                    TextColor="{StaticResource Success}" />
+                            </Grid>
+
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Text="{Binding Transaction.TaxLabelText}" Style="{StaticResource AdminSummaryLabel}" />
+                                <Label
+                                    Grid.Column="1"
+                                    Text="{Binding Transaction.TaxText}"
+                                    Style="{StaticResource AdminSummaryValue}" />
+                            </Grid>
+
+                            <BoxView Style="{StaticResource AdminReceiptRule}" />
+
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Text="Total" Style="{StaticResource AdminAmountMedium}" />
+                                <Label
+                                    Grid.Column="1"
+                                    Text="{Binding Transaction.TotalText}"
+                                    Style="{StaticResource AdminAmountPrimary}"
+                                    FontSize="17" />
+                            </Grid>
+
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Text="Metode" Style="{StaticResource AdminSummaryLabel}" />
+                                <Label
+                                    Grid.Column="1"
+                                    Text="{Binding Transaction.MethodText}"
+                                    Style="{StaticResource AdminSummaryValue}" />
+                            </Grid>
+
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Text="Uang diterima" Style="{StaticResource AdminSummaryLabel}" />
+                                <Label
+                                    Grid.Column="1"
+                                    Text="{Binding Transaction.AmountPaidText}"
+                                    Style="{StaticResource AdminSummaryValue}" />
+                            </Grid>
+
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Text="Kembalian" Style="{StaticResource AdminSummaryLabel}" />
+                                <Label
+                                    Grid.Column="1"
+                                    Text="{Binding Transaction.ChangeText}"
+                                    Style="{StaticResource AdminSummaryValue}" />
+                            </Grid>
+
+                            <Grid
+                                ColumnDefinitions="*,Auto"
+                                IsVisible="{Binding Transaction.HasReferenceCode}">
+                                <Label Text="Nomor referensi" Style="{StaticResource AdminSummaryLabel}" />
+                                <Label
+                                    Grid.Column="1"
+                                    Text="{Binding Transaction.ReferenceCode}"
+                                    Style="{StaticResource AdminSummaryValue}" />
+                            </Grid>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <Button
+                        Text="Transaksi Baru"
+                        Style="{StaticResource AdminPrimaryButton}"
+                        Command="{Binding StartNewTransactionCommand}"
+                        SemanticProperties.Description="Mulai transaksi baru di halaman kasir"
+                        HorizontalOptions="Fill" />
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="8" IsVisible="{Binding HasTransaction}">
+                        <Button
+                            Text="Cetak Struk"
+                            Style="{StaticResource AdminSecondaryButton}"
+                            Command="{Binding PrintCommand}"
+                            SemanticProperties.Description="Cetak struk transaksi"
+                            HorizontalOptions="Fill" />
+                        <Button
+                            Grid.Column="1"
+                            Text="Bagikan"
+                            Style="{StaticResource AdminSecondaryButton}"
+                            Command="{Binding ShareCommand}"
+                            SemanticProperties.Description="Bagikan struk transaksi"
+                            HorizontalOptions="Fill" />
+                    </Grid>
+
+                    <Button
+                        Text="Kembalikan Dana"
+                        Style="{StaticResource AdminDangerButton}"
+                        Command="{Binding RefundCommand}"
+                        IsVisible="{Binding CanRefund}"
+                        SemanticProperties.Description="Kembalikan dana transaksi ini"
+                        SemanticProperties.Hint="Ketuk dua kali untuk konfirmasi pengembalian dana"
+                        HorizontalOptions="Fill" />
+
+                    <Button
+                        Text="Riwayat Transaksi"
+                        Style="{StaticResource AdminLinkButton}"
+                        Command="{Binding OpenHistoryCommand}"
+                        SemanticProperties.Description="Buka riwayat transaksi"
+                        HorizontalOptions="Center" />
+                </VerticalStackLayout>
+            </ScrollView>
+        </admin:AdminLayout.PageContent>
+    </admin:AdminLayout>
+
+</uranium:UraniumContentPage>

@@ -1,4 +1,5 @@
 using UAS_APP_MONICASALON.ViewModels;
+using UAS_APP_MONICASALON.Views.Admin;
 using UraniumUI.Pages;
 
 namespace UAS_APP_MONICASALON.Views;
@@ -16,6 +17,7 @@ public partial class LoginPage : UraniumContentPage
         BindingContext = viewModel;
     }
 
+<<<<<<< HEAD
     protected override void OnSizeAllocated(double width, double height)
     {
         base.OnSizeAllocated(width, height);
@@ -50,5 +52,10 @@ public partial class LoginPage : UraniumContentPage
         {
             HeroHost.HeightRequest = heroHeight;
         }
+=======
+    private async void OnAdminAccessClicked(object? sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync(nameof(AdminDashboardPage));
+>>>>>>> 4fb551ee537c1081a19e131aa6999af24d715ac3
     }
 }

@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<uranium:UraniumContentPage
+    x:Class="UAS_APP_MONICASALON.Views.Admin.AdminBookingDetailsPage"
+    x:Name="BookingDetailsRoot"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
+    xmlns:admin="clr-namespace:UAS_APP_MONICASALON.Controls.Admin"
+    xmlns:icons="clr-namespace:UAS_APP_MONICASALON.Icons"
+    BackgroundColor="{StaticResource Background}"
+    NavigationPage.HasNavigationBar="False"
+    Shell.NavBarIsVisible="False">
+
+    <admin:AdminLayout
+        PageTitle="Detail Booking"
+        ActiveRoute="AdminBookingsPage">
+
+        <admin:AdminLayout.PageContent>
+            <ScrollView>
+                <VerticalStackLayout Padding="20,6,20,20" Spacing="12">
+
+                    <!-- Error state -->
+                    <Border
+                        Style="{StaticResource AdminErrorBanner}"
+                        IsVisible="{Binding HasError}"
+                        SemanticProperties.Description="{Binding ErrorMessage}">
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                            <Image
+                                WidthRequest="16"
+                                HeightRequest="16"
+                                VerticalOptions="Start"
+                                Style="{StaticResource AdminDecorativeIcon}">
+                                <Image.Source>
+                                    <FontImageSource
+                                        FontFamily="MaterialOutlined"
+                                        Glyph="{x:Static icons:AdminIcons.Warning}"
+                                        Color="{StaticResource Error}"
+                                        Size="16" />
+                                </Image.Source>
+                            </Image>
+                            <Label
+                                Grid.Column="1"
+                                Text="{Binding ErrorMessage}"
+                                Style="{StaticResource AdminBannerText}"
+                                AutomationProperties.IsInAccessibleTree="False" />
+                        </Grid>
+                    </Border>
+
+                    <!-- Status-change feedback -->
+                    <Border
+                        Style="{StaticResource AdminSuccessBanner}"
+                        IsVisible="{Binding HasInfo}"
+                        SemanticProperties.Description="{Binding InfoMessage}">
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                            <Image
+                                WidthRequest="16"
+                                HeightRequest="16"
+                                VerticalOptions="Start"
+                                Style="{StaticResource AdminDecorativeIcon}">
+                                <Image.Source>
+                                    <FontImageSource
+                                        FontFamily="MaterialOutlined"
+                                        Glyph="{x:Static icons:AdminIcons.Success}"
+                                        Color="{StaticResource Success}"
+                                        Size="16" />
+                                </Image.Source>
+                            </Image>
+                            <Label
+                                Grid.Column="1"
+                                Text="{Binding InfoMessage}"
+                                Style="{StaticResource AdminBannerText}"
+                                AutomationProperties.IsInAccessibleTree="False" />
+                        </Grid>
+                    </Border>
+
+                    <!-- Not found state -->
+                    <Border
+                        Style="{StaticResource AdminCard}"
+                        IsVisible="{Binding IsNotFound}"
+                        SemanticProperties.Description="{Binding NotFoundTitle}">
+                        <VerticalStackLayout Spacing="8" Padding="0,10">
+                            <Image Style="{StaticResource AdminEmptyStateIcon}">
+                                <Image.Source>
+                                    <FontImageSource
+                                        FontFamily="MaterialOutlined"
+                                        Glyph="{x:Static icons:AdminIcons.EventBusy}"
+                                        Color="{StaticResource Error}"
+                                        Size="36" />
+                                </Image.Source>
+                            </Image>
+                            <Label
+                                Text="{Binding NotFoundTitle}"
+                                Style="{StaticResource AdminCardTitle}"
+                                FontSize="15"
+                                HorizontalTextAlignment="Center" />
+                            <Label
+                                Text="{Binding NotFoundCaption}"
+                                Style="{StaticResource AdminCaption}"
+                                HorizontalTextAlignment="Center" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Customer header -->
+                    <Border
+                        Style="{StaticResource AdminCard}"
+                        IsVisible="{Binding HasBooking}">
+                        <VerticalStackLayout Spacing="10">
+                            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                                <Border
+                                    WidthRequest="44"
+                                    HeightRequest="44"
+                                    BackgroundColor="{StaticResource Secondary}"
+                                    StrokeThickness="0"
+                                    StrokeShape="RoundRectangle 22"
+                                    VerticalOptions="Center"
+                                    AutomationProperties.IsInAccessibleTree="False">
+                                    <Label
+                                        Text="{Binding Booking.CustomerInitials}"
+                                        FontFamily="OpenSansSemibold"
+                                        FontSize="13"
+                                        FontAttributes="Bold"
+                                        TextColor="{StaticResource Primary}"
+                                        HorizontalOptions="Center"
+                                        VerticalOptions="Center" />
+                                </Border>
+
+                                <VerticalStackLayout Grid.Column="1" Spacing="1" VerticalOptions="Center">
+                                    <Label
+                                        Text="{Binding Booking.CustomerName}"
+                                        Style="{StaticResource AdminCardTitle}"
+                                        FontSize="15" />
+                                    <Label
+                                        Text="{Binding Booking.CustomerMeta}"
+                                        Style="{StaticResource AdminCellMeta}" />
+                                </VerticalStackLayout>
+
+                                <admin:StatusBadge
+                                    Grid.Column="2"
+                                    Text="{Binding Booking.StatusText}"
+                                    Status="{Binding Booking.Status}"
+                                    HorizontalOptions="End"
+                                    VerticalOptions="Center" />
+                            </Grid>
+
+                            <Label
+                                Text="{Binding Booking.ScheduleText}"
+                                Style="{StaticResource AdminAmountPrimary}"
+                                FontSize="14" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Booking information -->
+                    <Border
+                        Style="{StaticResource AdminCard}"
+                        IsVisible="{Binding HasBooking}">
+                        <VerticalStackLayout Spacing="8">
+                            <Label
+                                Text="Informasi Booking"
+                                Style="{StaticResource AdminSectionTitle}"
+                                FontSize="14" />
+
+                            <Grid ColumnDefinitions="100,*" ColumnSpacing="10">
+                                <Label Text="Layanan" Style="{StaticResource AdminSummaryLabel}" />
+                                <Label
+                                    Grid.Column="1"
+                                    Text="{Binding Booking.ServiceName}"
+                                    Style="{StaticResource AdminSummaryValue}" />
+                            </Grid>
+
+                            <Grid ColumnDefinitions="100,*" ColumnSpacing="10">
+                                <Label Text="Stylist" Style="{StaticResource AdminSummaryLabel}" />
+                                <Label
+                                    Grid.Column="1"
+                                    Text="{Binding Booking.StaffName}"
+                                    Style="{StaticResource AdminSummaryValue}" />
+                            </Grid>
+
+                            <Grid ColumnDefinitions="100,*" ColumnSpacing="10">
+                                <Label Text="Jadwal" Style="{StaticResource AdminSummaryLabel}" />
+                                <VerticalStackLayout Grid.Column="1" Spacing="3">
+                                    <Label
+                                        Text="{Binding Booking.ScheduleText}"
+                                        Style="{StaticResource AdminSummaryValue}" />
+                                    <HorizontalStackLayout Spacing="4" IsVisible="{Binding Booking.IsSlotLocked}">
+                                        <Image
+                                            WidthRequest="11"
+                                            HeightRequest="11"
+                                            VerticalOptions="Center"
+                                            Style="{StaticResource AdminDecorativeIcon}">
+                                            <Image.Source>
+                                                <FontImageSource
+                                                    FontFamily="MaterialOutlined"
+                                                    Glyph="{x:Static icons:AdminIcons.SlotLocked}"
+                                                    Color="{StaticResource Success}"
+                                                    Size="11" />
+                                            </Image.Source>
+                                        </Image>
+                                        <Label
+                                            Text="Slot waktu terkunci"
+                                            Style="{StaticResource AdminCaption}"
+                                            TextColor="{StaticResource Success}"
+                                            VerticalTextAlignment="Center" />
+                                    </HorizontalStackLayout>
+                                </VerticalStackLayout>
+                            </Grid>
+
+                            <Grid ColumnDefinitions="100,*" ColumnSpacing="10">
+                                <Label Text="Durasi" Style="{StaticResource AdminSummaryLabel}" />
+                                <Label
+                                    Grid.Column="1"
+                                    Text="{Binding Booking.DurationText}"
+                                    Style="{StaticResource AdminSummaryValue}" />
+                            </Grid>
+
+                            <Grid ColumnDefinitions="100,*" ColumnSpacing="10">
+                                <Label Text="Status" Style="{StaticResource AdminSummaryLabel}" />
+                                <admin:StatusBadge
+                                    Grid.Column="1"
+                                    Text="{Binding Booking.StatusText}"
+                                    Status="{Binding Booking.Status}"
+                                    HorizontalOptions="Start" />
+                            </Grid>
+
+                            <Grid ColumnDefinitions="100,*" ColumnSpacing="10">
+                                <Label Text="Pembayaran" Style="{StaticResource AdminSummaryLabel}" />
+                                <admin:PaymentBadge
+                                    Grid.Column="1"
+                                    Text="{Binding Booking.PaymentStatusText}"
+                                    Status="{Binding Booking.PaymentStatus}"
+                                    HorizontalOptions="Start" />
+                            </Grid>
+
+                            <Grid ColumnDefinitions="100,*" ColumnSpacing="10">
+                                <Label Text="Harga" Style="{StaticResource AdminSummaryLabel}" />
+                                <Label
+                                    Grid.Column="1"
+                                    Text="{Binding Booking.PriceText}"
+                                    Style="{StaticResource AdminAmountPrimary}"
+                                    FontSize="13" />
+                            </Grid>
+
+                            <Grid ColumnDefinitions="100,*" ColumnSpacing="10">
+                                <Label Text="Catatan" Style="{StaticResource AdminSummaryLabel}" />
+                                <Label
+                                    Grid.Column="1"
+                                    Text="{Binding Booking.NotesText}"
+                                    Style="{StaticResource AdminSummaryValue}"
+                                    LineBreakMode="WordWrap" />
+                            </Grid>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Pending actions -->
+                    <VerticalStackLayout Spacing="8" IsVisible="{Binding ShowPendingActions}">
+                        <Button
+                            Text="Konfirmasi Booking"
+                            Style="{StaticResource AdminPrimaryButton}"
+                            Command="{Binding ConfirmCommand}"
+                            SemanticProperties.Description="Konfirmasi booking ini"
+                            HorizontalOptions="Fill" />
+                        <Button
+                            Text="Tolak Booking"
+                            Style="{StaticResource AdminDangerButton}"
+                            Command="{Binding RejectCommand}"
+                            SemanticProperties.Description="Tolak booking ini"
+                            HorizontalOptions="Fill" />
+                    </VerticalStackLayout>
+
+                    <!-- Confirmed actions -->
+                    <VerticalStackLayout Spacing="8" IsVisible="{Binding ShowConfirmedActions}">
+                        <Button
+                            Text="Selesaikan Booking"
+                            Style="{StaticResource AdminPrimaryButton}"
+                            Command="{Binding CompleteCommand}"
+                            SemanticProperties.Description="Tandai booking selesai"
+                            HorizontalOptions="Fill" />
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                            <Button
+                                Text="Jadwal Ulang"
+                                Style="{StaticResource AdminSecondaryButton}"
+                                Command="{Binding OpenRescheduleCommand}"
+                                SemanticProperties.Description="Buka halaman jadwal ulang"
+                                HorizontalOptions="Fill" />
+                            <Button
+                                Grid.Column="1"
+                                Text="Batalkan"
+                                Style="{StaticResource AdminDangerButton}"
+                                Command="{Binding CancelCommand}"
+                                SemanticProperties.Description="Batalkan booking ini"
+                                HorizontalOptions="Fill" />
+                        </Grid>
+                        <Button
+                            Text="Bayar di Kasir"
+                            Style="{StaticResource AdminSoftButton}"
+                            Command="{Binding PayAtCashierCommand}"
+                            IsVisible="{Binding CanPayAtCashier}"
+                            SemanticProperties.Description="Kirim layanan booking ini ke keranjang kasir"
+                            HorizontalOptions="Fill" />
+                    </VerticalStackLayout>
+
+                    <Button
+                        Text="Hubungi Pelanggan"
+                        Style="{StaticResource AdminSecondaryButton}"
+                        Command="{Binding ContactCustomerCommand}"
+                        IsVisible="{Binding HasBooking}"
+                        SemanticProperties.Description="Hubungi pelanggan booking ini"
+                        HorizontalOptions="Fill" />
+
+                    <Button
+                        Text="Kembali ke Daftar Booking"
+                        Style="{StaticResource AdminLinkButton}"
+                        Command="{Binding BackCommand}"
+                        SemanticProperties.Description="Kembali ke daftar booking"
+                        HorizontalOptions="Center" />
+                </VerticalStackLayout>
+            </ScrollView>
+        </admin:AdminLayout.PageContent>
+    </admin:AdminLayout>
+
+</uranium:UraniumContentPage>
