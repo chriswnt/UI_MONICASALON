@@ -13,16 +13,13 @@
             var window = new Window(new AppShell());
 
 #if WINDOWS
-            // Open at a comfortable desktop size that keeps the whole login
-            // screen (including the forgot-password link) above the taskbar.
-            var display = DeviceDisplay.Current.MainDisplayInfo;
-            var screenWidth = display.Width / display.Density;
-            var screenHeight = display.Height / display.Density;
+            // Keep the mobile-first layout usable when the desktop window is
+            // resized by hand; below this width the form becomes unreadable.
+            window.MinimumWidth = 360;
 
-            window.Width = Math.Min(1150, screenWidth - 80);
-            window.Height = Math.Min(760, screenHeight - 100);
-            window.X = (screenWidth - window.Width) / 2;
-            window.Y = (screenHeight - window.Height) / 2;
+            // Use the native work area so the window fits above the taskbar at
+            // any display scaling, while keeping the mobile-first layout narrow.
+            window.Created += (_, _) => DesktopWindowSizer.Apply(window);
 #endif
 
             return window;

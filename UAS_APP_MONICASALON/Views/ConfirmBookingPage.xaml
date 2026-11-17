@@ -1,0 +1,477 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<uranium:UraniumContentPage
+    x:Class="UAS_APP_MONICASALON.Views.ConfirmBookingPage"
+    x:Name="ConfirmBookingView"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
+    xmlns:m="clr-namespace:UAS_APP_MONICASALON.Icons"
+    BackgroundColor="#FAF7F5"
+    NavigationPage.HasNavigationBar="False"
+    Shell.NavBarIsVisible="False">
+
+    <Grid RowDefinitions="*,Auto">
+
+        <ScrollView Grid.Row="0">
+            <VerticalStackLayout Padding="20,16,20,20" Spacing="16">
+
+                <uranium:ButtonView
+                    HorizontalOptions="Start"
+                    BackgroundColor="Transparent"
+                    StrokeThickness="0"
+                    Padding="0"
+                    TappedCommand="{Binding BackCommand}"
+                    SemanticProperties.Description="Kembali">
+                    <HorizontalStackLayout Spacing="4" InputTransparent="True">
+                        <Image WidthRequest="17" HeightRequest="17" VerticalOptions="Center">
+                            <Image.Source>
+                                <FontImageSource
+                                    FontFamily="MaterialOutlined"
+                                    Glyph="{x:Static m:MaterialRegular.Arrow_back}"
+                                    Color="#8B2626"
+                                    Size="17" />
+                            </Image.Source>
+                        </Image>
+                        <Label
+                            Text="Kembali"
+                            FontSize="13"
+                            FontAttributes="Bold"
+                            TextColor="#8B2626"
+                            VerticalTextAlignment="Center" />
+                    </HorizontalStackLayout>
+                </uranium:ButtonView>
+
+                <VerticalStackLayout Spacing="4">
+                    <Label Text="LANGKAH 2 DARI 3" Style="{StaticResource PageKickerStyle}" />
+                    <Label Text="Konfirmasi Booking" Style="{StaticResource PageHeadingStyle}" />
+                    <Label
+                        Text="Periksa kembali layanan, jadwal, dan referensi gaya sebelum slot diamankan."
+                        FontSize="12"
+                        TextColor="#757575"
+                        LineHeight="1.35" />
+                </VerticalStackLayout>
+
+                <HorizontalStackLayout Spacing="6">
+                    <Border BackgroundColor="#FFFFFF" Stroke="#EFE6E4" StrokeThickness="1" StrokeShape="RoundRectangle 10" Padding="10,5">
+                        <Label Text="1 Waktu" FontSize="10" TextColor="#A79A96" />
+                    </Border>
+                    <Border BackgroundColor="#D9534F" StrokeThickness="0" StrokeShape="RoundRectangle 10" Padding="10,5">
+                        <Label Text="2 Konfirmasi" FontSize="10" FontAttributes="Bold" TextColor="#FFFFFF" />
+                    </Border>
+                    <Border BackgroundColor="#FFFFFF" Stroke="#EFE6E4" StrokeThickness="1" StrokeShape="RoundRectangle 10" Padding="10,5">
+                        <Label Text="3 Selesai" FontSize="10" TextColor="#A79A96" />
+                    </Border>
+                </HorizontalStackLayout>
+
+                <!-- ============ SCHEDULE ============ -->
+                <Border Style="{StaticResource CardStyle}">
+                    <VerticalStackLayout Spacing="10">
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                            <VerticalStackLayout Spacing="2" VerticalOptions="Center">
+                                <Label Text="Jadwal Kunjungan" Style="{StaticResource SectionTitleStyle}" />
+                                <Label
+                                    Text="Slot sudah tersedia dan akan langsung dikunci saat kamu konfirmasi."
+                                    Style="{StaticResource SectionCaptionStyle}" />
+                            </VerticalStackLayout>
+
+                            <Border
+                                Grid.Column="1"
+                                BackgroundColor="#FDECEC"
+                                StrokeThickness="0"
+                                StrokeShape="RoundRectangle 12"
+                                Padding="12,6"
+                                VerticalOptions="Center">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding EditScheduleCommand}" />
+                                </Border.GestureRecognizers>
+                                <Label
+                                    Text="Ubah"
+                                    FontSize="11"
+                                    FontAttributes="Bold"
+                                    TextColor="#D9534F" />
+                            </Border>
+                        </Grid>
+
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                            <Border
+                                BackgroundColor="#FAF7F5"
+                                Stroke="#F2E8E5"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 12"
+                                Padding="12,10">
+                                <VerticalStackLayout Spacing="3">
+                                    <HorizontalStackLayout Spacing="5">
+                                        <Image WidthRequest="14" HeightRequest="14" VerticalOptions="Center">
+                                            <Image.Source>
+                                                <FontImageSource
+                                                    FontFamily="MaterialOutlined"
+                                                    Glyph="{x:Static m:MaterialRegular.Calendar_month}"
+                                                    Color="#D9534F"
+                                                    Size="14" />
+                                            </Image.Source>
+                                        </Image>
+                                        <Label Text="Tanggal" FontSize="10" TextColor="#A79A96" VerticalTextAlignment="Center" />
+                                    </HorizontalStackLayout>
+                                    <Label
+                                        Text="{Binding DateText}"
+                                        FontSize="12"
+                                        FontAttributes="Bold"
+                                        TextColor="#8B2626"
+                                        LineBreakMode="WordWrap"
+                                        MaxLines="2" />
+                                </VerticalStackLayout>
+                            </Border>
+
+                            <Border
+                                Grid.Column="1"
+                                BackgroundColor="#FAF7F5"
+                                Stroke="#F2E8E5"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 12"
+                                Padding="12,10">
+                                <VerticalStackLayout Spacing="3">
+                                    <HorizontalStackLayout Spacing="5">
+                                        <Image WidthRequest="14" HeightRequest="14" VerticalOptions="Center">
+                                            <Image.Source>
+                                                <FontImageSource
+                                                    FontFamily="MaterialOutlined"
+                                                    Glyph="{x:Static m:MaterialRegular.Schedule}"
+                                                    Color="#D9534F"
+                                                    Size="14" />
+                                            </Image.Source>
+                                        </Image>
+                                        <Label Text="Jam" FontSize="10" TextColor="#A79A96" VerticalTextAlignment="Center" />
+                                    </HorizontalStackLayout>
+                                    <Label
+                                        Text="{Binding TimeText}"
+                                        FontSize="15"
+                                        FontAttributes="Bold"
+                                        TextColor="#8B2626" />
+                                </VerticalStackLayout>
+                            </Border>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- ============ CONTACT ============ -->
+                <Border Style="{StaticResource CardStyle}">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Kontak Pemesan" Style="{StaticResource SectionTitleStyle}" />
+
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                            <Border
+                                WidthRequest="42"
+                                HeightRequest="42"
+                                BackgroundColor="#FDECEC"
+                                StrokeThickness="0"
+                                StrokeShape="RoundRectangle 21"
+                                VerticalOptions="Center">
+                                <Label
+                                    Text="{Binding CustomerInitials}"
+                                    FontSize="14"
+                                    FontAttributes="Bold"
+                                    TextColor="#8B2626"
+                                    HorizontalTextAlignment="Center"
+                                    VerticalTextAlignment="Center" />
+                            </Border>
+
+                            <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                <Label
+                                    Text="{Binding CustomerName}"
+                                    FontSize="13"
+                                    FontAttributes="Bold"
+                                    TextColor="#8B2626" />
+                                <Label
+                                    Text="{Binding CustomerPhone}"
+                                    FontSize="11"
+                                    TextColor="#757575" />
+                                <Label
+                                    Text="{Binding CustomerEmail}"
+                                    FontSize="10"
+                                    TextColor="#A79A96" />
+                            </VerticalStackLayout>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- ============ SERVICES ============ -->
+                <Border Style="{StaticResource CardStyle}">
+                    <VerticalStackLayout Spacing="8">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Text="Layanan Dipilih" Style="{StaticResource SectionTitleStyle}" />
+                            <Label
+                                Grid.Column="1"
+                                Text="{Binding SelectedCountText}"
+                                FontSize="10"
+                                TextColor="#A79A96"
+                                VerticalTextAlignment="Center" />
+                        </Grid>
+
+                        <VerticalStackLayout Spacing="6" BindableLayout.ItemsSource="{Binding SelectedServices}">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                                        <VerticalStackLayout Spacing="1">
+                                            <Label
+                                                Text="{Binding Name}"
+                                                FontSize="13"
+                                                TextColor="#8B2626" />
+                                            <Label
+                                                Text="{Binding MetaText}"
+                                                FontSize="10"
+                                                TextColor="#A79A96" />
+                                        </VerticalStackLayout>
+                                        <Label
+                                            Grid.Column="1"
+                                            Text="{Binding FormattedPrice}"
+                                            FontSize="12"
+                                            FontAttributes="Bold"
+                                            TextColor="#8B2626"
+                                            VerticalTextAlignment="Center" />
+                                    </Grid>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout
+                            Spacing="6"
+                            IsVisible="{Binding HasAddOns}"
+                            Margin="0,4,0,0"
+                            BindableLayout.ItemsSource="{Binding SelectedAddOns}">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                                        <HorizontalStackLayout Spacing="6">
+                                            <Border
+                                                WidthRequest="16"
+                                                HeightRequest="16"
+                                                BackgroundColor="#FDECEC"
+                                                StrokeThickness="0"
+                                                StrokeShape="RoundRectangle 8"
+                                                VerticalOptions="Center">
+                                                <Label
+                                                    Text="+"
+                                                    FontSize="10"
+                                                    FontAttributes="Bold"
+                                                    TextColor="#D9534F"
+                                                    HorizontalTextAlignment="Center"
+                                                    VerticalTextAlignment="Center" />
+                                            </Border>
+                                            <Label
+                                                Text="{Binding Name}"
+                                                FontSize="12"
+                                                TextColor="#757575"
+                                                VerticalTextAlignment="Center" />
+                                        </HorizontalStackLayout>
+                                        <Label
+                                            Grid.Column="1"
+                                            Text="{Binding FormattedPrice}"
+                                            FontSize="11"
+                                            TextColor="#757575"
+                                            VerticalTextAlignment="Center" />
+                                    </Grid>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- ============ HAIRSTYLE ============ -->
+                <Border Style="{StaticResource CardStyle}">
+                    <VerticalStackLayout Spacing="10">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Text="Referensi Gaya" Style="{StaticResource SectionTitleStyle}" />
+                            <Label
+                                Grid.Column="1"
+                                Text="Opsional"
+                                FontSize="9"
+                                TextColor="#A79A96"
+                                VerticalTextAlignment="Center" />
+                        </Grid>
+
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                            <Border
+                                WidthRequest="54"
+                                HeightRequest="54"
+                                BackgroundColor="#FDECEC"
+                                StrokeThickness="0"
+                                StrokeShape="RoundRectangle 12"
+                                VerticalOptions="Center">
+                                <Image
+                                    Source="{Binding HairstyleImage}"
+                                    Aspect="AspectFill"
+                                    WidthRequest="54"
+                                    HeightRequest="54" />
+                            </Border>
+
+                            <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                <Label
+                                    Text="{Binding HairstyleName}"
+                                    FontSize="13"
+                                    FontAttributes="Bold"
+                                    TextColor="#8B2626" />
+                                <Label
+                                    Text="{Binding HairstyleSummary}"
+                                    FontSize="10"
+                                    TextColor="#A79A96"
+                                    MaxLines="2"
+                                    LineBreakMode="TailTruncation" />
+                            </VerticalStackLayout>
+                        </Grid>
+
+                        <Label
+                            Text="Tidak apa-apa jika belum ada referensi — stylist akan membantu konsultasi."
+                            FontSize="10"
+                            TextColor="#A79A96" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- ============ NOTES ============ -->
+                <Border Style="{StaticResource CardStyle}">
+                    <VerticalStackLayout Spacing="6">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Text="Catatan untuk Stylist" Style="{StaticResource SectionTitleStyle}" />
+                            <Label
+                                Grid.Column="1"
+                                Text="{Binding NotesCountText}"
+                                FontSize="10"
+                                TextColor="#A79A96"
+                                VerticalTextAlignment="Center" />
+                        </Grid>
+
+                        <Border
+                            BackgroundColor="#FAF7F5"
+                            Stroke="#EFE6E4"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 10"
+                            Padding="10,6">
+                            <Editor
+                                Text="{Binding Notes, Mode=TwoWay}"
+                                Placeholder="Contoh: warna cokelat natural, kulit sensitif, minta potongan tidak terlalu pendek..."
+                                PlaceholderColor="#B7A8A3"
+                                TextColor="#1E1E1E"
+                                BackgroundColor="Transparent"
+                                FontSize="12"
+                                MaxLength="180"
+                                AutoSize="Disabled"
+                                HeightRequest="78" />
+                        </Border>
+                        <Label
+                            Text="Catatan dibaca stylist sebelum layanan dimulai."
+                            FontSize="10"
+                            TextColor="#A79A96" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- ============ PRICE ============ -->
+                <Border Style="{StaticResource CardStyle}">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="Rincian Harga" Style="{StaticResource SectionTitleStyle}" />
+
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Text="Biaya layanan" FontSize="12" TextColor="#757575" />
+                            <Label
+                                Grid.Column="1"
+                                Text="{Binding ServicesTotalText}"
+                                FontSize="12"
+                                TextColor="#757575" />
+                        </Grid>
+
+                        <Grid ColumnDefinitions="*,Auto" IsVisible="{Binding HasAddOns}">
+                            <Label Text="Tambahan" FontSize="12" TextColor="#757575" />
+                            <Label
+                                Grid.Column="1"
+                                Text="{Binding AddOnsTotalText}"
+                                FontSize="12"
+                                TextColor="#757575" />
+                        </Grid>
+
+                        <BoxView HeightRequest="1" BackgroundColor="#F2E8E5" Margin="0,2" />
+
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label
+                                Text="Total (dibayar di salon)"
+                                FontSize="12"
+                                FontAttributes="Bold"
+                                TextColor="#8B2626"
+                                VerticalTextAlignment="Center" />
+                            <Label
+                                Grid.Column="1"
+                                Text="{Binding TotalText}"
+                                FontSize="17"
+                                FontAttributes="Bold"
+                                TextColor="#8B2626" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- ============ POLICY ============ -->
+                <Border BackgroundColor="#FFFFFF" Stroke="#EFE6E4" StrokeThickness="1" StrokeShape="RoundRectangle 16" Padding="16">
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="Kebijakan Keterlambatan" Style="{StaticResource SectionTitleStyle}" />
+                        <Label
+                            Text="• Terlambat 1–10 menit: booking tetap aktif, silakan tetap datang."
+                            FontSize="11"
+                            TextColor="#757575"
+                            LineHeight="1.35" />
+                        <Label
+                            Text="• Terlambat 10–15 menit: hubungi salon. Admin menentukan layanan masih bisa dilakukan atau perlu dijadwalkan ulang."
+                            FontSize="11"
+                            TextColor="#757575"
+                            LineHeight="1.35" />
+                        <Label
+                            Text="• Waktu layanan sudah tidak memungkinkan: admin menawarkan jadwal baru sesuai ketersediaan."
+                            FontSize="11"
+                            TextColor="#757575"
+                            LineHeight="1.35" />
+                    </VerticalStackLayout>
+                </Border>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- ============ STICKY SUBMIT ============ -->
+        <Grid Grid.Row="1" RowDefinitions="1,Auto" BackgroundColor="#FFFFFF">
+            <BoxView HeightRequest="1" BackgroundColor="#EFE6E4" />
+            <VerticalStackLayout Grid.Row="1" Padding="20,12,20,16" Spacing="8">
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                    <VerticalStackLayout Spacing="1" VerticalOptions="Center">
+                        <Label Text="Total pembayaran" FontSize="11" TextColor="#757575" />
+                        <Label Text="Dibayar langsung di salon" FontSize="10" TextColor="#A79A96" />
+                    </VerticalStackLayout>
+                    <Label
+                        Grid.Column="1"
+                        Text="{Binding TotalText}"
+                        FontSize="18"
+                        FontAttributes="Bold"
+                        TextColor="#8B2626"
+                        VerticalTextAlignment="Center" />
+                </Grid>
+
+                <Label
+                    Text="{Binding ErrorMessage}"
+                    IsVisible="{Binding HasError}"
+                    TextColor="#B3261E"
+                    FontSize="11"
+                    HorizontalTextAlignment="Center" />
+
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                    <Button
+                        Text="{Binding SubmitButtonText}"
+                        Command="{Binding SubmitBookingCommand}"
+                        IsEnabled="{Binding IsNotSubmitting}"
+                        Style="{StaticResource PrimaryActionStyle}" />
+                    <ActivityIndicator
+                        Grid.Column="1"
+                        IsVisible="{Binding IsSubmitting}"
+                        IsRunning="{Binding IsSubmitting}"
+                        Color="#D9534F"
+                        WidthRequest="24"
+                        HeightRequest="24"
+                        VerticalOptions="Center" />
+                </Grid>
+            </VerticalStackLayout>
+        </Grid>
+    </Grid>
+
+</uranium:UraniumContentPage>

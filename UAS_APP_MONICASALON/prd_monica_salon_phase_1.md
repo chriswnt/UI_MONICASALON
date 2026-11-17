@@ -43,8 +43,10 @@ public static class MauiProgram
             .UseUraniumUIMaterial()
             .ConfigureFonts(fonts =>
             {
-                fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
-                fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+                fonts.AddFont("PlusJakartaSans-Regular.ttf", "PlusJakartaSansRegular");
+                fonts.AddFont("PlusJakartaSans-Medium.ttf", "PlusJakartaSansMedium");
+                fonts.AddFont("PlusJakartaSans-SemiBold.ttf", "PlusJakartaSansSemiBold");
+                fonts.AddFont("PlusJakartaSans-Bold.ttf", "PlusJakartaSansBold");
                 fonts.AddMaterialSymbolsFonts(); // Mandatory for UraniumUI Material Symbols
             });
 

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<uranium:UraniumContentPage
+    x:Class="UAS_APP_MONICASALON.Views.ServiceDetailPage"
+    x:Name="ServiceDetailView"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
+    xmlns:m="clr-namespace:UAS_APP_MONICASALON.Icons"
+    BackgroundColor="#FAF7F5"
+    NavigationPage.HasNavigationBar="False"
+    Shell.NavBarIsVisible="False">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="0">
+
+            <!-- Hero visual -->
+            <Grid HeightRequest="300">
+                <Image
+                    Source="{Binding Service.ImageSource}"
+                    Aspect="AspectFill"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Fill" />
+
+                <uranium:ButtonView
+                    HorizontalOptions="Start"
+                    VerticalOptions="Start"
+                    Margin="16,16,0,0"
+                    HeightRequest="36"
+                    BackgroundColor="#FBF5F1"
+                    Stroke="#EFE6E4"
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 18"
+                    Padding="12,0"
+                    TappedCommand="{Binding BackCommand}"
+                    SemanticProperties.Description="Kembali">
+                    <HorizontalStackLayout Spacing="4" InputTransparent="True" VerticalOptions="Center">
+                        <Image WidthRequest="16" HeightRequest="16" VerticalOptions="Center">
+                            <Image.Source>
+                                <FontImageSource
+                                    FontFamily="MaterialOutlined"
+                                    Glyph="{x:Static m:MaterialRegular.Arrow_back}"
+                                    Color="#8B2626"
+                                    Size="16" />
+                            </Image.Source>
+                        </Image>
+                        <Label
+                            Text="Kembali"
+                            FontSize="12"
+                            FontAttributes="Bold"
+                            TextColor="#8B2626"
+                            VerticalTextAlignment="Center" />
+                    </HorizontalStackLayout>
+                </uranium:ButtonView>
+            </Grid>
+
+            <VerticalStackLayout Padding="20,18,20,28" Spacing="14">
+
+                <Border
+                    HorizontalOptions="Start"
+                    BackgroundColor="#FDECEC"
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 10"
+                    Padding="10,4">
+                    <Label
+                        Text="{Binding Service.BadgeText}"
+                        FontSize="11"
+                        FontAttributes="Bold"
+                        TextColor="#8B2626" />
+                </Border>
+
+                <Label
+                    Text="{Binding Service.Name}"
+                    FontSize="26"
+                    FontAttributes="Bold"
+                    TextColor="#8B2626" />
+
+                <HorizontalStackLayout Spacing="10">
+                    <Label
+                        Text="{Binding Service.FormattedPrice}"
+                        FontSize="18"
+                        FontAttributes="Bold"
+                        TextColor="#D9534F"
+                        VerticalTextAlignment="Center" />
+                    <Label
+                        Text="{Binding Service.Duration}"
+                        FontSize="13"
+                        TextColor="#757575"
+                        VerticalTextAlignment="Center" />
+                </HorizontalStackLayout>
+
+                <Border
+                    BackgroundColor="#FFFFFF"
+                    Stroke="#EFE6E4"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 14"
+                    Padding="16">
+                    <VerticalStackLayout Spacing="6">
+                        <Label
+                            Text="Tentang layanan"
+                            FontSize="14"
+                            FontAttributes="Bold"
+                            TextColor="#8B2626" />
+                        <Label
+                            Text="{Binding Service.Description}"
+                            FontSize="13"
+                            TextColor="#757575"
+                            LineHeight="1.35"
+                            LineBreakMode="WordWrap" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Button
+                    Text="Booking Layanan Ini"
+                    Command="{Binding BookServiceCommand}"
+                    Style="{StaticResource PrimaryActionStyle}"
+                    Margin="0,4,0,0" />
+
+                <Button
+                    Text="Lihat Buku Gaya"
+                    Command="{Binding ViewStyleBookCommand}"
+                    Style="{StaticResource SecondaryActionStyle}" />
+
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+
+</uranium:UraniumContentPage>

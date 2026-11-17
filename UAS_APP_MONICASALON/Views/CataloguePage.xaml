@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<uranium:UraniumContentPage
+    x:Class="UAS_APP_MONICASALON.Views.CataloguePage"
+    x:Name="CatalogueView"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
+    xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
+    xmlns:controls="clr-namespace:UAS_APP_MONICASALON.Controls"
+    xmlns:m="clr-namespace:UAS_APP_MONICASALON.Icons"
+    BackgroundColor="#FAF7F5"
+    NavigationPage.HasNavigationBar="False"
+    Shell.NavBarIsVisible="False">
+
+    <Grid RowDefinitions="*,Auto">
+
+        <ScrollView Grid.Row="0">
+            <VerticalStackLayout Padding="20,18,20,20" Spacing="14">
+
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                    <uranium:ButtonView
+                        WidthRequest="40"
+                        HeightRequest="40"
+                        BackgroundColor="#FFFFFF"
+                        Stroke="#EFE6E4"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 20"
+                        Padding="0"
+                        VerticalOptions="Center"
+                        SemanticProperties.Description="Kembali"
+                        TappedCommand="{Binding BackCommand}">
+                        <Image
+                            WidthRequest="20"
+                            HeightRequest="20"
+                            InputTransparent="True"
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center">
+                            <Image.Source>
+                                <FontImageSource
+                                    FontFamily="MaterialOutlined"
+                                    Glyph="{x:Static m:MaterialRegular.Arrow_back}"
+                                    Color="#8B2626"
+                                    Size="20" />
+                            </Image.Source>
+                        </Image>
+                    </uranium:ButtonView>
+
+                    <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                        <Label Text="KATALOG" Style="{StaticResource PageKickerStyle}" />
+                        <Label Text="Daftar Layanan" Style="{StaticResource PageHeadingStyle}" />
+                        <Label
+                            Text="Harga dan durasi resmi dari admin salon."
+                            FontSize="11"
+                            TextColor="#757575" />
+                    </VerticalStackLayout>
+                </Grid>
+
+                <material:TextField
+                    Title="Cari layanan..."
+                    Text="{Binding SearchText, Mode=TwoWay}"
+                    AccentColor="#D9534F"
+                    BorderColor="#EFE6E4"
+                    CornerRadius="12"
+                    BackgroundColor="#FFFFFF"
+                    TextColor="#1E1E1E"
+                    TitleColor="#757575"
+                    FontSize="13"
+                    TitleFontSize="13"
+                    HeightRequest="52"
+                    AllowClear="True">
+                    <material:TextField.Icon>
+                        <FontImageSource
+                            FontFamily="MaterialOutlined"
+                            Glyph="{x:Static m:MaterialRegular.Search}"
+                            Color="#757575"
+                            Size="20" />
+                    </material:TextField.Icon>
+                </material:TextField>
+
+                <uranium:ButtonView
+                    HeightRequest="52"
+                    BackgroundColor="#FFFFFF"
+                    Stroke="#EFE6E4"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 12"
+                    Padding="14,0"
+                    TappedCommand="{Binding ChooseCategoryCommand}"
+                    SemanticProperties.Description="Filter kategori layanan">
+                    <Grid ColumnDefinitions="*,Auto" InputTransparent="True">
+                        <Label
+                            Text="{Binding SelectedCategory}"
+                            FontSize="13"
+                            TextColor="#1E1E1E"
+                            VerticalTextAlignment="Center" />
+                        <Image
+                            Grid.Column="1"
+                            WidthRequest="18"
+                            HeightRequest="18"
+                            VerticalOptions="Center">
+                            <Image.Source>
+                                <FontImageSource
+                                    FontFamily="MaterialOutlined"
+                                    Glyph="{x:Static m:MaterialRegular.Expand_more}"
+                                    Color="#757575"
+                                    Size="18" />
+                            </Image.Source>
+                        </Image>
+                    </Grid>
+                </uranium:ButtonView>
+
+                <VerticalStackLayout
+                    Spacing="10"
+                    BindableLayout.ItemsSource="{Binding FilteredServices}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate>
+                            <uranium:ButtonView
+                                BackgroundColor="#FFFFFF"
+                                Stroke="#EFE6E4"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 14"
+                                Padding="8"
+                                SemanticProperties.Description="{Binding Name}"
+                                TappedCommand="{Binding BindingContext.OpenServiceCommand, Source={x:Reference CatalogueView}}"
+                                CommandParameter="{Binding .}">
+                                <Grid ColumnDefinitions="68,*" ColumnSpacing="12" InputTransparent="True">
+                                    <Border
+                                        WidthRequest="68"
+                                        HeightRequest="68"
+                                        StrokeThickness="0"
+                                        StrokeShape="RoundRectangle 10">
+                                        <Grid IsClippedToBounds="True">
+                                            <Image
+                                                Source="{Binding ImageSource}"
+                                                Aspect="AspectFill"
+                                                WidthRequest="68"
+                                                HeightRequest="68" />
+                                        </Grid>
+                                    </Border>
+
+                                    <VerticalStackLayout
+                                        Grid.Column="1"
+                                        Spacing="2"
+                                        VerticalOptions="Center">
+                                        <Label
+                                            Text="{Binding Name}"
+                                            FontSize="14"
+                                            FontAttributes="Bold"
+                                            TextColor="#8B2626"
+                                            LineBreakMode="TailTruncation"
+                                            MaxLines="1" />
+                                        <Label
+                                            Text="{Binding FormattedPrice}"
+                                            FontSize="13"
+                                            FontAttributes="Bold"
+                                            TextColor="#D9534F" />
+                                        <Label
+                                            Text="{Binding MetaText}"
+                                            FontSize="11"
+                                            TextColor="#757575"
+                                            LineBreakMode="TailTruncation"
+                                            MaxLines="1" />
+                                    </VerticalStackLayout>
+                                </Grid>
+                            </uranium:ButtonView>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+
+                <VerticalStackLayout
+                    IsVisible="{Binding IsEmpty}"
+                    Padding="0,36,0,0"
+                    Spacing="8"
+                    HorizontalOptions="Center">
+                    <Image
+                        WidthRequest="34"
+                        HeightRequest="34"
+                        HorizontalOptions="Center">
+                        <Image.Source>
+                            <FontImageSource
+                                FontFamily="MaterialOutlined"
+                                Glyph="{x:Static m:MaterialRegular.Search}"
+                                Color="#D7C9C5"
+                                Size="34" />
+                        </Image.Source>
+                    </Image>
+                    <Label
+                        Text="Layanan tidak ditemukan."
+                        FontSize="13"
+                        TextColor="#757575"
+                        HorizontalTextAlignment="Center" />
+                </VerticalStackLayout>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- Shared bottom navigation -->
+        <controls:BottomNavBar Grid.Row="1" ActiveTab="Layanan" />
+    </Grid>
+
+</uranium:UraniumContentPage>

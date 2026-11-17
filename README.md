@@ -1,8 +1,8 @@
 # Monica Salon — Aplikasi Mobile UI (Phase 1)
 
-Aplikasi **UI-only** untuk Monica Salon, dibangun dengan **.NET MAUI 10** dan **UraniumUI 3.0** sebagai framework presentasi UI. Proyek ini adalah tugas UAS mata kuliah Pemrograman Visual.
+Aplikasi **UI-only** untuk Monica Salon, dibangun dengan **.NET MAUI 10** dan **UraniumUI 3.0**. Proyek ini adalah tugas UAS mata kuliah Pemrograman Visual.
 
-> **Scope Phase 1:** hanya 3 halaman Customer UI. **Tidak ada** koneksi database, backend, halaman admin, atau alur checkout. Semua data masih *mock data* (hardcoded di ViewModel).
+> **Scope Phase 1:** aplikasi **UI-only**. Belum ada backend, database, halaman admin, atau pembayaran nyata. Data salon, jadwal, booking, dan ulasan disediakan oleh **mock API layer** (`IBookingApi`, `IFeedbackApi`, `IScheduleApi`) yang disimpan di memori melalui `MockSalonDatabase`. Layer ini bisa diganti dengan HTTP API tanpa mengubah halaman atau ViewModel. Booking baru langsung berstatus **Terkonfirmasi** — tidak ada status "Menunggu Konfirmasi".
 
 ---
 
@@ -10,11 +10,25 @@ Aplikasi **UI-only** untuk Monica Salon, dibangun dengan **.NET MAUI 10** dan **
 
 | Halaman | File | Isi |
 |---------|------|-----|
-| Login | `Views/LoginPage.xaml` | Onboarding + form login (email & password) dengan validasi |
+| Login | `Views/LoginPage.xaml` | Hero coral dengan ilustrasi kontur, transisi gelombang ke panel putih, form email/password, "Ingat saya", lupa password, dan tautan daftar |
 | Register | `Views/RegisterPage.xaml` | Form pendaftaran customer (nama, email, telepon, password, konfirmasi, checkbox S&K) |
-| Home Customer | `Views/HomeCustomerPage.xaml` | Dashboard customer: header, search, banner promo, kategori layanan, daftar layanan, bottom navigation, bottom sheet detail layanan |
+| Home Customer | `Views/HomeCustomerPage.xaml` | Dashboard customer: sapaan, pencarian, banner promo, kategori, daftar layanan, bottom navigation, bottom sheet detail layanan |
+| Katalog Layanan | `Views/CataloguePage.xaml` | Daftar semua layanan dengan pencarian dan filter kategori |
+| Detail Layanan | `Views/ServiceDetailPage.xaml` | Foto, kategori, harga, durasi, deskripsi, dan tombol booking |
+| Jadwal | `Views/SchedulePage.xaml` | Pilih layanan tambahan, tanggal, slot waktu bergaya bioskop, hairstyle, add-on, dan ringkasan total |
+| Konfirmasi Booking | `Views/ConfirmBookingPage.xaml` | Ringkasan layanan/jadwal, hairstyle, add-on, kontak, catatan, dan rincian harga |
+| Booking Berhasil | `Views/BookingSuccessPage.xaml` | Kode booking, status **Terkonfirmasi**, jadwal, layanan, add-on, dan total |
+| Riwayat Booking | `Views/BookingHistoryPage.xaml` | Daftar booking dengan filter status (Semua/Aktif/Selesai/Dibatalkan) dan shortcut beri ulasan |
+| Detail Booking | `Views/BookingDetailsPage.xaml` | Status, jadwal, layanan, add-on, catatan, total, dan tombol beri ulasan |
+| Ulasan | `Views/BookingFeedbackPage.xaml` | Rating bintang, tag ulasan, komentar, dan kirim ulasan |
+| Buku Gaya | `Views/HairstyleBookPage.xaml` | Katalog hairstyle dari admin dengan filter kategori |
+| Detail Hairstyle | `Views/HairstyleDetailPage.xaml` | Deskripsi gaya, rekomendasi layanan, dan tombol booking |
 
-Alur navigasi: `LoginPage` → (Login / Daftar) → `RegisterPage` / `HomeCustomerPage`.
+Alur navigasi utama:
+
+`LoginPage` → (Login / Daftar) → `RegisterPage` / `HomeCustomerPage` → `CataloguePage` / `HairstyleBookPage` → `ServiceDetailPage` / `HairstyleDetailPage` → `SchedulePage` → `ConfirmBookingPage` → `BookingSuccessPage` → `BookingHistoryPage` → `BookingDetailsPage` → `BookingFeedbackPage`.
+
+Bottom navigation (`Controls/BottomNavBar.cs`) menghubungkan **Home**, **Layanan**, **Booking**, **Riwayat**, dan **Gaya**.
 
 ---
 
@@ -72,6 +86,8 @@ dotnet build -t:Run -f net10.0-android
 
 > ⚠️ Proyek iOS/MacCatalyst **tidak bisa** di-build di Windows tanpa Mac — ini normal, abaikan saja target tersebut.
 
+> 💡 Login bersifat demo: email dan password apa pun yang tidak kosong akan membuka Home. "Ingat saya" menyimpan identifier melalui `Preferences` agar terisi otomatis pada pembukaan berikutnya.
+
 ---
 
 ## 🧱 Struktur Proyek
@@ -79,40 +95,122 @@ dotnet build -t:Run -f net10.0-android
 ```
 UAS_APP_MONICASALON/
 ├── App.xaml                    # Registrasi resource + tema UraniumUI
-├── App.xaml.cs
-├── AppShell.xaml               # Shell navigation (entry point: LoginPage)
+├── App.xaml.cs                 # Window + DesktopWindowSizer (Windows)
+├── AppShell.xaml               # Shell navigation, route, dan penyembunyian back button
 ├── MauiProgram.cs              # Registrasi UraniumUI, Material theme, font
 ├── AssemblyInfo.cs             # XmlnsDefinition untuk shim ButtonView
 ├── prd_monica_salon_phase_1.md # Dokumen spesifikasi (PRD) Phase 1
 │
 ├── Controls/
+│   ├── BottomNavBar.cs         # Bottom navigation bersama (5 tab)
 │   └── ButtonView.cs           # Shim: <uranium:ButtonView> → UraniumUI Material
 │
-├── Models/                     # Model data (dummy)
+├── Models/                     # Model data (dummy / DTO)
 │   ├── BannerItem.cs
 │   ├── CategoryItem.cs
-│   └── ServiceItem.cs
+│   ├── ServiceItem.cs
+│   ├── ServiceSelectionItem.cs
+│   ├── BookingRecord.cs
+│   ├── BookingRequest.cs
+│   ├── BookingStatus.cs
+│   ├── BookingTimeSlot.cs
+│   ├── DateOption.cs
+│   ├── DayAvailability.cs
+│   ├── HairstyleItem.cs
+│   ├── SalonAddOn.cs
+│   ├── AddOnSelectionItem.cs
+│   ├── FeedbackRecord.cs
+│   ├── FeedbackRequest.cs
+│   ├── FilterChip.cs
+│   └── RatingStarItem.cs
+│
+├── Services/                   # Mock API, session, katalog, formatter
+│   ├── AppServices.cs          # Service locator sederhana untuk halaman/VM
+│   ├── IBookingApi.cs
+│   ├── IFeedbackApi.cs
+│   ├── IScheduleApi.cs
+│   ├── MockSalonDatabase.cs    # State in-memory: booking, feedback, slot terisi
+│   ├── MockBookingApi.cs
+│   ├── MockFeedbackApi.cs
+│   ├── MockScheduleApi.cs
+│   ├── ServiceCatalog.cs
+│   ├── HairstyleCatalog.cs
+│   ├── AddOnCatalog.cs
+│   ├── BookingSession.cs       # Draft booking antar-halaman
+│   ├── UserSession.cs
+│   └── CurrencyFormatter.cs
 │
 ├── ViewModels/                 # MVVM (CommunityToolkit.Mvvm)
 │   ├── LoginViewModel.cs
 │   ├── RegisterViewModel.cs
-│   └── HomeCustomerViewModel.cs
+│   ├── HomeCustomerViewModel.cs
+│   ├── CatalogueViewModel.cs
+│   ├── ServiceDetailViewModel.cs
+│   ├── ScheduleViewModel.cs
+│   ├── ConfirmBookingViewModel.cs
+│   ├── BookingSuccessViewModel.cs
+│   ├── BookingHistoryViewModel.cs
+│   ├── BookingDetailsViewModel.cs
+│   ├── BookingFeedbackViewModel.cs
+│   ├── HairstyleBookViewModel.cs
+│   └── HairstyleDetailViewModel.cs
 │
 ├── Views/
 │   ├── LoginPage.xaml(.cs)
 │   ├── RegisterPage.xaml(.cs)
-│   └── HomeCustomerPage.xaml(.cs)
+│   ├── HomeCustomerPage.xaml(.cs)
+│   ├── CataloguePage.xaml(.cs)
+│   ├── ServiceDetailPage.xaml(.cs)
+│   ├── SchedulePage.xaml(.cs)
+│   ├── ConfirmBookingPage.xaml(.cs)
+│   ├── BookingSuccessPage.xaml(.cs)
+│   ├── BookingHistoryPage.xaml(.cs)
+│   ├── BookingDetailsPage.xaml(.cs)
+│   ├── BookingFeedbackPage.xaml(.cs)
+│   ├── HairstyleBookPage.xaml(.cs)
+│   └── HairstyleDetailPage.xaml(.cs)
 │
 ├── Icons/
 │   └── MaterialRegular.cs      # Kumpulan nama ikon Material Symbols
 │
 ├── Platforms/                  # Konfigurasi per-platform (Android/iOS/Windows/Mac)
 └── Resources/                  # Font, gambar, icon, splash, style warna
+    └── Images/
+        ├── login_hero.svg      # Ilustrasi kontur coral untuk hero login
+        ├── style_*.png         # Ilustrasi hairstyle
+        └── service_*.jpg       # Foto layanan
 ```
 
 ---
 
-## 🎨 Tentang UraniumUI
+## 🎨 Catatan UI
+
+### Login
+
+- Hero coral memakai ilustrasi kontur `login_hero.svg` dan transisi gelombang putih (`Path`) ke panel form.
+- Form dibatasi maksimal **440 px** dan tetap terpusat pada layar lebar; pada layar sempit konten dapat di-scroll.
+- Validasi login dilakukan di `LoginViewModel` dan ditampilkan sebagai banner error di atas tombol **Masuk** (bukan ikon validasi di dalam field).
+- "Ingat saya" menyimpan identifier lewat `Preferences`; password tidak pernah disimpan.
+- Warna mengikuti token coral/blush yang sudah ada (`#D9534F`, `#8B2626`, `#FDECEC`, `#FAF7F5`).
+
+### Booking
+
+- Slot waktu mengikuti pola **cinema booking**: admin/API menyediakan slot tersedia, slot terisi tidak bisa dipilih, dan tidak ada status "Menunggu Konfirmasi".
+- Halaman jadwal menggabungkan pemilihan tanggal, slot, hairstyle, add-on (mis. shampoo), dan total yang diperbarui langsung.
+- Setelah submit, booking disimpan lewat `IBookingApi` dengan status **Terkonfirmasi**.
+
+### Chip & filter
+
+Chip yang bisa dipilih (filter riwayat, tag ulasan, kategori buku gaya) memakai `Border` + `TapGestureRecognizer` dengan warna yang dihitung di model, bukan `uranium:ButtonView`. Pola ini membuat state terpilih benar-benar terlihat dan tetap konsisten di Windows/Android.
+
+### Validasi form
+
+- **Login:** validasi di ViewModel (banner error).
+- **Register:** `<input:FormView>` + `validation:RequiredValidation`, `RegexValidation`, `MinLengthValidation`, dan `DigitsOnlyValidation`.
+
+---
+
+## 🧩 Tentang UraniumUI
 
 Seluruh layout dan komponen UI memakai **UraniumUI** (bukan kontrol MAUI polos), sesuai aturan PRD:
 
@@ -121,11 +219,10 @@ Seluruh layout dan komponen UI memakai **UraniumUI** (bukan kontrol MAUI polos),
 | Root halaman | `<uranium:UraniumContentPage>` |
 | Input teks / email / telepon | `<material:TextField>` + `material:TextField.Icon` |
 | Toggle show/hide password | `material:TextFieldPasswordShowHideAttachment` |
-| Checkbox | `<material:CheckBox>` |
-| Tombol interaktif (back, notif, filter, kategori, kartu, bottom nav) | `<uranium:ButtonView>` |
+| Checkbox form | `<material:CheckBox>` (Register) / `<CheckBox>` (Login) |
 | Bottom sheet detail layanan | `<material:BottomSheetView>` |
 | CTA utama | `<Button StyleClass="FilledButton">` (style dari UraniumUI.Material) |
-| Validasi form | `<input:FormView>` + `validation:RequiredValidation` / `RegexValidation` / `MinLengthValidation` / `DigitsOnlyValidation` |
+| Validasi form Register | `<input:FormView>` + `validation:*` |
 | Tema global | `<material:StyleResource ColorsOverride="..." />` di `App.xaml` |
 
 ### Catatan: kenapa ada `Controls/ButtonView.cs`?
@@ -140,12 +237,18 @@ public class ButtonView : UraniumUI.Material.Controls.ButtonView { }
 
 Shim ini didaftarkan lewat `AssemblyInfo.cs` (`XmlnsDefinition`) dan handler-nya didaftarkan di `MauiProgram.cs`. Karena mewarisi (`inherit`) kontrol Uranium asli, seluruh perilaku dan tampilan tetap milik UraniumUI.
 
+### Catatan: `Platforms/Windows/SafeStatefulButtonHandler.cs`
+
+UraniumUI 3.0 mendaftarkan `StatefulButtonHandler` untuk setiap `Button` polos. Saat halaman di-pop dari navigation stack, handler tersebut mereset visual state setelah MAUI menghapus platform view, sehingga muncul error `PlatformView cannot be null here` dan aplikasi tertutup. Di Windows, handler diganti dengan `SafeStatefulButtonHandler` yang mempertahankan efek hover/pressed tetapi melewati reset state saat proses disconnect.
+
 ### Palet Warna
 
 | Warna | Hex | Pemakaian |
 |-------|-----|-----------|
 | Coral (primer) | `#D9534F` | Tombol utama, ikon aktif, aksen |
-| Background | `#FAF7F5` | Latar semua halaman |
+| Coral dark | `#8B2626` | Judul dan teks brand |
+| Blush | `#FDECEC` | Latar lembut, chip aktif, aksen |
+| Background | `#FAF7F5` | Latar halaman |
 | Teks utama | `#1E1E1E` | Judul, label |
 | Border / divider | `#EFE6E4` | Garis kartu dan pemisah |
 
@@ -164,6 +267,8 @@ dotnet restore
 
 **Error XAML `ButtonView tidak dikenal`** → pastikan `AssemblyInfo.cs` masih ada dan `MauiProgram.cs` masih memanggil `UseUraniumUI()` + `UseUraniumUIMaterial()`.
 
+**Build gagal karena file `.exe` terkunci** → tutup aplikasi yang sedang berjalan, lalu build ulang.
+
 **Error Android SDK / emulator** → buka **Android Device Manager** di Visual Studio, buat/boot emulator dulu sebelum `dotnet build -t:Run -f net10.0-android`.
 
 ---
@@ -173,7 +278,7 @@ dotnet restore
 | Package | Versi | Fungsi |
 |---------|-------|--------|
 | `UraniumUI` | 3.0.0 | Core framework UI |
-| `UraniumUI.Material` | 3.0.0 | Tema & komponen Material (TextField, ButtonView, BottomSheet, dll) |
+| `UraniumUI.Material` | 3.0.0 | Tema & komponen Material (TextField, BottomSheet, dll) |
 | `UraniumUI.Icons.MaterialSymbols` | 3.0.0 | Ikon Material Symbols |
 | `InputKit.Maui` | 4.6.0 | FormView & validasi form |
 | `CommunityToolkit.Mvvm` | 8.4.2 | MVVM: `ObservableObject`, `RelayCommand` |

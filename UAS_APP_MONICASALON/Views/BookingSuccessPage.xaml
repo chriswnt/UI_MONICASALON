@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<uranium:UraniumContentPage
+    x:Class="UAS_APP_MONICASALON.Views.BookingSuccessPage"
+    x:Name="BookingSuccessView"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
+    xmlns:m="clr-namespace:UAS_APP_MONICASALON.Icons"
+    BackgroundColor="#FAF7F5"
+    NavigationPage.HasNavigationBar="False"
+    Shell.NavBarIsVisible="False">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20,16,20,28" Spacing="14">
+
+            <HorizontalStackLayout Spacing="6">
+                <Border BackgroundColor="#FFFFFF" Stroke="#EFE6E4" StrokeThickness="1" StrokeShape="RoundRectangle 10" Padding="10,5">
+                    <Label Text="1 Waktu" FontSize="10" TextColor="#A79A96" />
+                </Border>
+                <Border BackgroundColor="#FFFFFF" Stroke="#EFE6E4" StrokeThickness="1" StrokeShape="RoundRectangle 10" Padding="10,5">
+                    <Label Text="2 Konfirmasi" FontSize="10" TextColor="#A79A96" />
+                </Border>
+                <Border BackgroundColor="#D9534F" StrokeThickness="0" StrokeShape="RoundRectangle 10" Padding="10,5">
+                    <Label Text="3 Selesai" FontSize="10" FontAttributes="Bold" TextColor="#FFFFFF" />
+                </Border>
+            </HorizontalStackLayout>
+
+            <Border
+                WidthRequest="76"
+                HeightRequest="76"
+                BackgroundColor="{StaticResource SuccessContainer}"
+                StrokeThickness="0"
+                StrokeShape="RoundRectangle 38"
+                HorizontalOptions="Center"
+                Margin="0,22,0,0">
+                <Image
+                    WidthRequest="40"
+                    HeightRequest="40"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center">
+                    <Image.Source>
+                        <FontImageSource
+                            FontFamily="MaterialOutlined"
+                            Glyph="{x:Static m:MaterialRegular.Check}"
+                            Color="{StaticResource Success}"
+                            Size="40" />
+                    </Image.Source>
+                </Image>
+            </Border>
+
+            <Label
+                Text="BOOKING TERKONFIRMASI"
+                FontSize="11"
+                FontAttributes="Bold"
+                TextColor="#D9534F"
+                CharacterSpacing="1"
+                HorizontalTextAlignment="Center" />
+
+            <Label
+                Text="Slot kamu sudah aman!"
+                FontSize="24"
+                FontAttributes="Bold"
+                TextColor="#8B2626"
+                HorizontalTextAlignment="Center"
+                HorizontalOptions="Center"
+                MaximumWidthRequest="300"
+                LineHeight="1.15" />
+
+            <Label
+                Text="Tidak perlu menunggu konfirmasi admin. Datang sesuai jadwal dan tunjukkan kode booking di meja resepsionis."
+                FontSize="12"
+                TextColor="#757575"
+                HorizontalTextAlignment="Center"
+                HorizontalOptions="Center"
+                MaximumWidthRequest="320"
+                LineHeight="1.4" />
+
+            <Border
+                BackgroundColor="{StaticResource SuccessContainer}"
+                StrokeThickness="0"
+                StrokeShape="RoundRectangle 10"
+                Padding="12,5"
+                HorizontalOptions="Center">
+                <HorizontalStackLayout Spacing="5">
+                    <Image WidthRequest="13" HeightRequest="13" VerticalOptions="Center">
+                        <Image.Source>
+                            <FontImageSource
+                                FontFamily="MaterialOutlined"
+                                Glyph="{x:Static m:MaterialRegular.Verified}"
+                                Color="{StaticResource Success}"
+                                Size="13" />
+                        </Image.Source>
+                    </Image>
+                    <Label
+                        Text="{Binding Booking.StatusText}"
+                        FontSize="11"
+                        FontAttributes="Bold"
+                        TextColor="{StaticResource Success}"
+                        VerticalTextAlignment="Center" />
+                </HorizontalStackLayout>
+            </Border>
+
+            <!-- ============ BOOKING SUMMARY ============ -->
+            <Border Style="{StaticResource CardStyle}" Margin="0,6,0,0">
+                <VerticalStackLayout Spacing="10">
+
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                        <VerticalStackLayout Spacing="2">
+                            <Label Text="KODE BOOKING" FontSize="9" TextColor="#A79A96" CharacterSpacing="1" />
+                            <Label
+                                Text="{Binding Booking.Code}"
+                                FontSize="16"
+                                FontAttributes="Bold"
+                                TextColor="#8B2626"
+                                CharacterSpacing="1" />
+                        </VerticalStackLayout>
+
+                        <Border
+                            Grid.Column="1"
+                            BackgroundColor="{Binding Booking.StatusBackgroundColor}"
+                            StrokeThickness="0"
+                            StrokeShape="RoundRectangle 10"
+                            Padding="10,5"
+                            VerticalOptions="Center">
+                            <Label
+                                Text="{Binding Booking.StatusText}"
+                                FontSize="10"
+                                FontAttributes="Bold"
+                                TextColor="{Binding Booking.StatusTextColor}" />
+                        </Border>
+                    </Grid>
+
+                    <BoxView HeightRequest="1" BackgroundColor="#F2E8E5" />
+
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                        <Border
+                            WidthRequest="40"
+                            HeightRequest="40"
+                            BackgroundColor="#FDECEC"
+                            StrokeThickness="0"
+                            StrokeShape="RoundRectangle 12"
+                            VerticalOptions="Center">
+                            <Image WidthRequest="20" HeightRequest="20" HorizontalOptions="Center" VerticalOptions="Center">
+                                <Image.Source>
+                                    <FontImageSource
+                                        FontFamily="MaterialOutlined"
+                                        Glyph="{x:Static m:MaterialRegular.Event}"
+                                        Color="#D9534F"
+                                        Size="20" />
+                                </Image.Source>
+                            </Image>
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                            <Label
+                                Text="{Binding Booking.DateLongText}"
+                                FontSize="13"
+                                FontAttributes="Bold"
+                                TextColor="#8B2626" />
+                            <HorizontalStackLayout Spacing="4">
+                                <Label Text="{Binding Booking.TimeText}" FontSize="12" TextColor="#757575" />
+                                <Label Text="•" FontSize="12" TextColor="#C9B8B3" />
+                                <Label Text="{Binding Booking.ItemsSummaryText}" FontSize="12" TextColor="#757575" />
+                            </HorizontalStackLayout>
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <BoxView HeightRequest="1" BackgroundColor="#F2E8E5" />
+
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Layanan" FontSize="10" TextColor="#A79A96" />
+                        <VerticalStackLayout Spacing="3" BindableLayout.ItemsSource="{Binding Booking.Services}">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <Label Text="{Binding Name}" FontSize="12" TextColor="#8B2626" />
+                                        <Label
+                                            Grid.Column="1"
+                                            Text="{Binding FormattedPrice}"
+                                            FontSize="12"
+                                            TextColor="#757575" />
+                                    </Grid>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Spacing="3" IsVisible="{Binding Booking.HasAddOns}">
+                        <Label Text="Tambahan" FontSize="10" TextColor="#A79A96" />
+                        <VerticalStackLayout Spacing="3" BindableLayout.ItemsSource="{Binding Booking.AddOns}">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <Label Text="{Binding Name}" FontSize="12" TextColor="#757575" />
+                                        <Label
+                                            Grid.Column="1"
+                                            Text="{Binding FormattedPrice}"
+                                            FontSize="12"
+                                            TextColor="#757575" />
+                                    </Grid>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10" IsVisible="{Binding Booking.HasHairstyle}">
+                        <Border
+                            WidthRequest="34"
+                            HeightRequest="34"
+                            BackgroundColor="#FDECEC"
+                            StrokeThickness="0"
+                            StrokeShape="RoundRectangle 9"
+                            VerticalOptions="Center">
+                            <Image
+                                Source="{Binding Booking.HairstyleImage}"
+                                Aspect="AspectFill"
+                                WidthRequest="34"
+                                HeightRequest="34" />
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" Spacing="1" VerticalOptions="Center">
+                            <Label Text="Referensi gaya" FontSize="9" TextColor="#A79A96" />
+                            <Label
+                                Text="{Binding Booking.HairstyleName}"
+                                FontSize="12"
+                                FontAttributes="Bold"
+                                TextColor="#8B2626" />
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <BoxView HeightRequest="1" BackgroundColor="#F2E8E5" />
+
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="Total (dibayar di salon)" FontSize="12" TextColor="#757575" VerticalTextAlignment="Center" />
+                        <Label
+                            Grid.Column="1"
+                            Text="{Binding Booking.TotalText}"
+                            FontSize="17"
+                            FontAttributes="Bold"
+                            TextColor="#8B2626" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <Border
+                BackgroundColor="#FDECEC"
+                StrokeThickness="0"
+                StrokeShape="RoundRectangle 14"
+                Padding="14">
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                    <Image WidthRequest="18" HeightRequest="18" VerticalOptions="Start" Margin="0,1,0,0">
+                        <Image.Source>
+                            <FontImageSource
+                                FontFamily="MaterialOutlined"
+                                Glyph="{x:Static m:MaterialRegular.Info}"
+                                Color="#D9534F"
+                                Size="18" />
+                        </Image.Source>
+                    </Image>
+                    <Label
+                        Grid.Column="1"
+                        Text="Datang 10 menit lebih awal. Jika perlu mengubah jadwal atau membatalkan, buka detail booking dari Riwayat."
+                        FontSize="11"
+                        TextColor="#8B2626"
+                        LineHeight="1.4"
+                        LineBreakMode="WordWrap" />
+                </Grid>
+            </Border>
+
+            <Button
+                Text="Lihat Detail Booking"
+                Command="{Binding ViewMyBookingCommand}"
+                Style="{StaticResource PrimaryActionStyle}"
+                Margin="0,6,0,0" />
+
+            <Button
+                Text="Kembali ke Beranda"
+                Command="{Binding BackToHomeCommand}"
+                Style="{StaticResource SecondaryActionStyle}" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</uranium:UraniumContentPage>

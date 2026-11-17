@@ -1,155 +1,291 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <uranium:UraniumContentPage
     x:Class="UAS_APP_MONICASALON.Views.LoginPage"
+    x:Name="LoginView"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
     xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
     xmlns:input="clr-namespace:InputKit.Shared.Controls;assembly=InputKit.Maui"
-    xmlns:validation="clr-namespace:InputKit.Shared.Validations;assembly=InputKit.Maui"
+    xmlns:drawables="clr-namespace:UAS_APP_MONICASALON.Drawables"
     xmlns:m="clr-namespace:UAS_APP_MONICASALON.Icons"
-    BackgroundColor="#FAF7F5"
+    BackgroundColor="#FFFFFF"
     NavigationPage.HasNavigationBar="False"
     Shell.NavBarIsVisible="False">
 
-    <Grid RowDefinitions="*,Auto">
+    <Grid RowDefinitions="Auto,*" RowSpacing="-1" BackgroundColor="#FFFFFF">
 
-    <ScrollView Grid.Row="0">
-        <VerticalStackLayout Padding="20,12,20,12" Spacing="12">
+        <!-- ================= HERO ================= -->
+        <Grid x:Name="HeroHost" Grid.Row="0" HeightRequest="316">
+            <Image
+                Source="login_hero.png"
+                Aspect="AspectFill"
+                HorizontalOptions="Fill"
+                VerticalOptions="Fill" />
 
-            <!-- Top salon visual -->
-            <Border
-                HeightRequest="220"
-                StrokeShape="RoundRectangle 20"
-                BackgroundColor="#FDECEC"
-                StrokeThickness="0">
-                <Image
-                    Source="banner_aplikasi.png"
-                    Aspect="AspectFit"
-                    HorizontalOptions="Fill"
-                    VerticalOptions="Fill" />
-            </Border>
-
-            <Label
-                Text="Your Ultimate Salon Booking App"
-                FontSize="24"
-                FontAttributes="Bold"
-                TextColor="#1E1E1E"
-                HorizontalTextAlignment="Center"
+            <VerticalStackLayout
+                x:Name="HeroContent"
+                Padding="0,26,0,0"
+                Spacing="20"
                 HorizontalOptions="Center"
-                Margin="0,0,0,0" />
+                VerticalOptions="Start">
 
-            <Label
-                Text="A little care, a lovely you."
-                FontSize="14"
-                TextColor="#757575"
-                HorizontalTextAlignment="Center"
+                <!-- Brand -->
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="11">
+                    <Border
+                        WidthRequest="42"
+                        HeightRequest="42"
+                        BackgroundColor="#33FFFFFF"
+                        Stroke="#59FFFFFF"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 13"
+                        VerticalOptions="Center">
+                        <Image
+                            WidthRequest="21"
+                            HeightRequest="21"
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center">
+                            <Image.Source>
+                                <FontImageSource
+                                    FontFamily="MaterialOutlined"
+                                    Glyph="{x:Static m:MaterialRegular.Content_cut}"
+                                    Color="#FFFFFF"
+                                    Size="21" />
+                            </Image.Source>
+                        </Image>
+                    </Border>
+
+                    <VerticalStackLayout Grid.Column="1" Spacing="0" VerticalOptions="Center">
+                        <Label
+                            Text="Monica Salon"
+                            FontSize="15"
+                            FontAttributes="Bold"
+                            TextColor="#FFFFFF"
+                            CharacterSpacing="0.6" />
+                        <Label
+                            Text="HAIR &amp; BEAUTY STUDIO"
+                            FontSize="8"
+                            TextColor="#D9FFFFFF"
+                            CharacterSpacing="1.7" />
+                    </VerticalStackLayout>
+                </Grid>
+
+                <!-- Greeting -->
+                <VerticalStackLayout Spacing="8">
+                    <Label
+                        Text="Rambut sehat,&#10;percaya diri baru."
+                        FontSize="26"
+                        FontAttributes="Bold"
+                        TextColor="#FFFFFF"
+                        LineHeight="1.12" />
+                    <Label
+                        Text="Perawatan rambut dan kecantikan, dibuat personal untukmu."
+                        FontSize="12"
+                        TextColor="#E8FFFFFF"
+                        LineHeight="1.35"
+                        MaximumWidthRequest="300"
+                        HorizontalOptions="Start" />
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+
+            <!-- Wave transition into the white sheet -->
+            <GraphicsView
+                HeightRequest="96"
+                HorizontalOptions="Fill"
+                VerticalOptions="End"
+                InputTransparent="True">
+                <GraphicsView.Drawable>
+                    <drawables:LoginWaveDrawable />
+                </GraphicsView.Drawable>
+            </GraphicsView>
+        </Grid>
+
+        <!-- ================= SIGN IN SHEET ================= -->
+        <ScrollView
+            Grid.Row="1"
+            VerticalScrollBarVisibility="Never"
+            BackgroundColor="#FFFFFF">
+
+            <VerticalStackLayout
+                x:Name="LoginContent"
+                Padding="0,12,0,30"
+                Spacing="0"
                 HorizontalOptions="Center"
-                Margin="0,0,0,2" />
+                VerticalOptions="Start">
 
-            <!-- Login form -->
-            <input:FormView
-                SubmitCommand="{Binding LoginCommand}"
-                Spacing="14">
-
-                <material:TextField
-                    Title="Email atau No. HP"
-                    Text="{Binding Identifier}"
-                    AccentColor="#D9534F"
-                    BorderColor="#EFE6E4"
-                    CornerRadius="12"
-                    FontSize="14">
-                    <material:TextField.Icon>
-                        <FontImageSource
-                            FontFamily="MaterialOutlined"
-                            Glyph="{x:Static m:MaterialRegular.Person}"
-                            Color="#757575"
-                            Size="22" />
-                    </material:TextField.Icon>
-                    <validation:RequiredValidation Message="Email atau Nomor HP wajib diisi" />
-                </material:TextField>
-
-                <material:TextField
-                    Title="Password"
-                    Text="{Binding Password}"
-                    IsPassword="True"
-                    AccentColor="#D9534F"
-                    BorderColor="#EFE6E4"
-                    CornerRadius="12"
-                    FontSize="14">
-                    <material:TextField.Icon>
-                        <FontImageSource
-                            FontFamily="MaterialOutlined"
-                            Glyph="{x:Static m:MaterialRegular.Lock}"
-                            Color="#757575"
-                            Size="22" />
-                    </material:TextField.Icon>
-                    <material:TextField.Attachments>
-                        <material:TextFieldPasswordShowHideAttachment />
-                    </material:TextField.Attachments>
-                    <validation:RequiredValidation Message="Password wajib diisi" />
-                </material:TextField>
-
-                <Button
-                    Text="Mulai Sekarang / Masuk"
-                    StyleClass="FilledButton"
-                    input:FormView.IsSubmitButton="True"
-                    BackgroundColor="#D9534F"
-                    TextColor="White"
-                    CornerRadius="24"
-                    HeightRequest="52"
+                <Label
+                    Text="Masuk"
+                    FontSize="30"
                     FontAttributes="Bold"
-                    FontSize="15"
-                    Margin="0,4,0,0" />
-            </input:FormView>
+                    TextColor="#8B2626" />
 
-            <Label
-                Text="Lupa Password?"
-                TextColor="#D9534F"
-                FontSize="13"
-                FontAttributes="Bold"
-                HorizontalOptions="End"
-                Margin="0,-8,0,0">
-                <Label.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding ForgotPasswordCommand}" />
-                </Label.GestureRecognizers>
-            </Label>
+                <Border
+                    WidthRequest="44"
+                    HeightRequest="4"
+                    BackgroundColor="#D9534F"
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 2"
+                    HorizontalOptions="Start"
+                    Margin="0,7,0,0" />
 
-            <Label
-                Text="{Binding ErrorMessage}"
-                IsVisible="{Binding HasError}"
-                TextColor="#B3261E"
-                FontSize="12"
-                HorizontalTextAlignment="Center"
-                Margin="0,2,0,0" />
+                <Label
+                    Text="Masuk untuk melihat jadwal, booking, dan katalog gaya."
+                    FontSize="12"
+                    TextColor="#757575"
+                    LineHeight="1.35"
+                    Margin="0,11,0,0" />
 
-        </VerticalStackLayout>
-    </ScrollView>
+                <input:FormView
+                    SubmitCommand="{Binding LoginCommand}"
+                    Margin="0,22,0,0">
 
-    <!-- Register navigation (pinned so it stays reachable on short windows) -->
-    <HorizontalStackLayout
-        Grid.Row="1"
-        HorizontalOptions="Center"
-        Spacing="2"
-        Padding="0,8,0,12"
-        BackgroundColor="#FAF7F5">
-        <Label
-            Text="Belum punya akun? "
-            TextColor="#757575"
-            FontSize="14"
-            VerticalTextAlignment="Center" />
-        <Label
-            Text="Daftar"
-            TextColor="#D9534F"
-            FontSize="14"
-            FontAttributes="Bold"
-            VerticalTextAlignment="Center">
-            <Label.GestureRecognizers>
-                <TapGestureRecognizer Command="{Binding GoToRegisterCommand}" />
-            </Label.GestureRecognizers>
-        </Label>
-    </HorizontalStackLayout>
+                    <VerticalStackLayout Spacing="0">
 
+                        <material:TextField
+                            Title="Email atau No. HP"
+                            Text="{Binding Identifier}"
+                            AccentColor="#D9534F"
+                            BorderColor="#F0DFDB"
+                            BackgroundColor="#FCF8F7"
+                            CornerRadius="14"
+                            FontSize="14"
+                            HeightRequest="56">
+                            <material:TextField.Icon>
+                                <FontImageSource
+                                    FontFamily="MaterialOutlined"
+                                    Glyph="{x:Static m:MaterialRegular.Person}"
+                                    Color="#B08A84"
+                                    Size="20" />
+                            </material:TextField.Icon>
+                        </material:TextField>
+
+                        <material:TextField
+                            Title="Password"
+                            Text="{Binding Password}"
+                            IsPassword="True"
+                            AccentColor="#D9534F"
+                            BorderColor="#F0DFDB"
+                            BackgroundColor="#FCF8F7"
+                            CornerRadius="14"
+                            FontSize="14"
+                            HeightRequest="56"
+                            Margin="0,12,0,0">
+                            <material:TextField.Icon>
+                                <FontImageSource
+                                    FontFamily="MaterialOutlined"
+                                    Glyph="{x:Static m:MaterialRegular.Lock}"
+                                    Color="#B08A84"
+                                    Size="20" />
+                            </material:TextField.Icon>
+                            <material:TextField.Attachments>
+                                <material:TextFieldPasswordShowHideAttachment />
+                            </material:TextField.Attachments>
+                        </material:TextField>
+
+                        <!-- Remember + forgot -->
+                        <Grid ColumnDefinitions="*,Auto" Margin="0,12,0,0">
+                            <HorizontalStackLayout Spacing="2" VerticalOptions="Center">
+                                <CheckBox
+                                    IsChecked="{Binding RememberMe}"
+                                    Color="#D9534F"
+                                    WidthRequest="24"
+                                    HeightRequest="24"
+                                    VerticalOptions="Center" />
+                                <Label
+                                    Text="Ingat saya"
+                                    FontSize="12"
+                                    TextColor="#757575"
+                                    VerticalOptions="Center" />
+                            </HorizontalStackLayout>
+
+                            <Label
+                                Grid.Column="1"
+                                Text="Lupa password?"
+                                FontSize="12"
+                                FontAttributes="Bold"
+                                TextColor="#D9534F"
+                                VerticalOptions="Center">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding ForgotPasswordCommand}" />
+                                </Label.GestureRecognizers>
+                            </Label>
+                        </Grid>
+
+                        <!-- Error -->
+                        <Border
+                            IsVisible="{Binding HasError}"
+                            BackgroundColor="#FDECEC"
+                            Stroke="#F5C9C7"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 12"
+                            Padding="12,9"
+                            Margin="0,14,0,0">
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                                <Label
+                                    Text="!"
+                                    FontSize="13"
+                                    FontAttributes="Bold"
+                                    TextColor="#B3261E"
+                                    VerticalOptions="Start" />
+                                <Label
+                                    Grid.Column="1"
+                                    Text="{Binding ErrorMessage}"
+                                    FontSize="11"
+                                    TextColor="#B3261E"
+                                    LineHeight="1.35" />
+                            </Grid>
+                        </Border>
+
+                        <Button
+                            Text="Masuk"
+                            input:FormView.IsSubmitButton="True"
+                            BackgroundColor="#D9534F"
+                            TextColor="#FFFFFF"
+                            CornerRadius="16"
+                            HeightRequest="54"
+                            FontAttributes="Bold"
+                            FontSize="15"
+                            Margin="0,18,0,0" />
+                    </VerticalStackLayout>
+                </input:FormView>
+
+                <HorizontalStackLayout
+                    Spacing="4"
+                    HorizontalOptions="Center"
+                    Margin="0,16,0,0">
+                    <Label
+                        Text="Belum punya akun?"
+                        FontSize="12"
+                        TextColor="#757575"
+                        VerticalOptions="Center" />
+                    <Label
+                        Text="Daftar"
+                        FontSize="12"
+                        FontAttributes="Bold"
+                        TextColor="#D9534F"
+                        VerticalOptions="Center">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding GoToRegisterCommand}" />
+                        </Label.GestureRecognizers>
+                    </Label>
+                </HorizontalStackLayout>
+
+                <Label
+                    Text="Mode demo: email dan password apa pun bisa digunakan."
+                    FontSize="10"
+                    TextColor="#A79A96"
+                    HorizontalTextAlignment="Center"
+                    Margin="0,16,0,0" />
+
+                <Label
+                    Text="Butuh bantuan? Hubungi resepsionis di +62 812-3456-7890"
+                    FontSize="10"
+                    TextColor="#A79A96"
+                    HorizontalTextAlignment="Center"
+                    Margin="0,7,0,0" />
+
+            </VerticalStackLayout>
+        </ScrollView>
     </Grid>
 
 </uranium:UraniumContentPage>

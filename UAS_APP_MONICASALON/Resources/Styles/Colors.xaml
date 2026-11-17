@@ -53,6 +53,12 @@
     <Color x:Key="OnError">#FFFFFF</Color>
     <Color x:Key="OnErrorContainer">#370B1E</Color>
 
+    <!-- Booking feedback -->
+    <Color x:Key="Success">#2E7D32</Color>
+    <Color x:Key="SuccessContainer">#E8F5E9</Color>
+    <Color x:Key="WarningText">#8A5A00</Color>
+    <Color x:Key="WarningContainer">#FEF3C7</Color>
+
     <Color x:Key="Outline">#EFE6E4</Color>
     <Color x:Key="OutlineVariant">#EFE6E4</Color>
     <Color x:Key="Shadow">#000000</Color>

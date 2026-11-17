@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<uranium:UraniumContentPage
+    x:Class="UAS_APP_MONICASALON.Views.HairstyleBookPage"
+    x:Name="BookView"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
+    xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
+    xmlns:controls="clr-namespace:UAS_APP_MONICASALON.Controls"
+    xmlns:m="clr-namespace:UAS_APP_MONICASALON.Icons"
+    BackgroundColor="#FAF7F5"
+    NavigationPage.HasNavigationBar="False"
+    Shell.NavBarIsVisible="False">
+
+    <Grid RowDefinitions="*,Auto">
+
+        <CollectionView
+            Grid.Row="0"
+            ItemsSource="{Binding Hairstyles}"
+            SelectionMode="None"
+            VerticalScrollBarVisibility="Never"
+            ItemSizingStrategy="MeasureAllItems">
+
+            <CollectionView.ItemsLayout>
+                <GridItemsLayout
+                    Orientation="Vertical"
+                    Span="2"
+                    HorizontalItemSpacing="10"
+                    VerticalItemSpacing="10" />
+            </CollectionView.ItemsLayout>
+
+            <CollectionView.Header>
+                <VerticalStackLayout Padding="20,16,20,14" Spacing="14">
+
+                    <uranium:ButtonView
+                        IsVisible="{Binding IsNotPickerMode}"
+                        HorizontalOptions="Start"
+                        BackgroundColor="Transparent"
+                        StrokeThickness="0"
+                        Padding="0"
+                        TappedCommand="{Binding BackCommand}"
+                        SemanticProperties.Description="Kembali">
+                        <HorizontalStackLayout Spacing="4" InputTransparent="True">
+                            <Image WidthRequest="17" HeightRequest="17" VerticalOptions="Center">
+                                <Image.Source>
+                                    <FontImageSource
+                                        FontFamily="MaterialOutlined"
+                                        Glyph="{x:Static m:MaterialRegular.Arrow_back}"
+                                        Color="#8B2626"
+                                        Size="17" />
+                                </Image.Source>
+                            </Image>
+                            <Label
+                                Text="Kembali"
+                                FontSize="13"
+                                FontAttributes="Bold"
+                                TextColor="#8B2626"
+                                VerticalTextAlignment="Center" />
+                        </HorizontalStackLayout>
+                    </uranium:ButtonView>
+
+                    <uranium:ButtonView
+                        IsVisible="{Binding IsPickerMode}"
+                        HorizontalOptions="Start"
+                        BackgroundColor="Transparent"
+                        StrokeThickness="0"
+                        Padding="0"
+                        TappedCommand="{Binding CancelPickerCommand}"
+                        SemanticProperties.Description="Kembali ke jadwal">
+                        <HorizontalStackLayout Spacing="4" InputTransparent="True">
+                            <Image WidthRequest="17" HeightRequest="17" VerticalOptions="Center">
+                                <Image.Source>
+                                    <FontImageSource
+                                        FontFamily="MaterialOutlined"
+                                        Glyph="{x:Static m:MaterialRegular.Arrow_back}"
+                                        Color="#8B2626"
+                                        Size="17" />
+                                </Image.Source>
+                            </Image>
+                            <Label
+                                Text="Kembali ke jadwal"
+                                FontSize="13"
+                                FontAttributes="Bold"
+                                TextColor="#8B2626"
+                                VerticalTextAlignment="Center" />
+                        </HorizontalStackLayout>
+                    </uranium:ButtonView>
+
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="MONICA STYLE BOOK" Style="{StaticResource PageKickerStyle}" />
+                        <Label Text="{Binding TitleText}" Style="{StaticResource PageHeadingStyle}" />
+                        <Label
+                            Text="{Binding SubtitleText}"
+                            FontSize="12"
+                            TextColor="#757575"
+                            LineHeight="1.35" />
+                    </VerticalStackLayout>
+
+                    <Border
+                        IsVisible="{Binding IsPickerMode}"
+                        BackgroundColor="#FDECEC"
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 14"
+                        Padding="12">
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                            <Border
+                                WidthRequest="34"
+                                HeightRequest="34"
+                                BackgroundColor="#FFFFFF"
+                                StrokeThickness="0"
+                                StrokeShape="RoundRectangle 17"
+                                VerticalOptions="Center">
+                                <Image
+                                    WidthRequest="18"
+                                    HeightRequest="18"
+                                    HorizontalOptions="Center"
+                                    VerticalOptions="Center">
+                                    <Image.Source>
+                                        <FontImageSource
+                                            FontFamily="MaterialOutlined"
+                                            Glyph="{x:Static m:MaterialRegular.Auto_awesome}"
+                                            Color="#D9534F"
+                                            Size="18" />
+                                    </Image.Source>
+                                </Image>
+                            </Border>
+                            <Label
+                                Grid.Column="1"
+                                Text="Ketuk salah satu gaya untuk dipakai sebagai referensi booking. Kamu tetap bisa menggantinya nanti."
+                                FontSize="11"
+                                TextColor="#8B2626"
+                                LineHeight="1.35"
+                                VerticalTextAlignment="Center" />
+                        </Grid>
+                    </Border>
+
+                    <material:TextField
+                        Title="Cari gaya, bentuk wajah, atau panjang..."
+                        Text="{Binding SearchText, Mode=TwoWay}"
+                        AccentColor="#D9534F"
+                        BorderColor="#EFE6E4"
+                        CornerRadius="12"
+                        BackgroundColor="#FFFFFF"
+                        TextColor="#1E1E1E"
+                        TitleColor="#757575"
+                        FontSize="13"
+                        TitleFontSize="12"
+                        HeightRequest="52"
+                        AllowClear="True">
+                        <material:TextField.Icon>
+                            <FontImageSource
+                                FontFamily="MaterialOutlined"
+                                Glyph="{x:Static m:MaterialRegular.Search}"
+                                Color="#757575"
+                                Size="20" />
+                        </material:TextField.Icon>
+                    </material:TextField>
+
+                    <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never">
+                        <HorizontalStackLayout Spacing="8" BindableLayout.ItemsSource="{Binding Categories}">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate>
+                                    <Border
+                                        HeightRequest="36"
+                                        Padding="14,0"
+                                        BackgroundColor="{Binding BackgroundColor}"
+                                        Stroke="{Binding BorderColor}"
+                                        StrokeThickness="1"
+                                        StrokeShape="RoundRectangle 18">
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer
+                                                Command="{Binding BindingContext.SelectCategoryCommand, Source={x:Reference BookView}}"
+                                                CommandParameter="{Binding .}" />
+                                        </Border.GestureRecognizers>
+                                        <Label
+                                            Text="{Binding LabelText}"
+                                            FontSize="12"
+                                            FontAttributes="{Binding LabelAttributes}"
+                                            TextColor="{Binding TextColor}"
+                                            VerticalTextAlignment="Center"
+                                            InputTransparent="True" />
+                                    </Border>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </HorizontalStackLayout>
+                    </ScrollView>
+
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label
+                            Text="Rekomendasi Gaya"
+                            FontSize="15"
+                            FontAttributes="Bold"
+                            TextColor="#8B2626" />
+                        <Label
+                            Grid.Column="1"
+                            Text="{Binding ResultCountText}"
+                            FontSize="11"
+                            TextColor="#A79A96"
+                            VerticalTextAlignment="Center" />
+                    </Grid>
+
+                </VerticalStackLayout>
+            </CollectionView.Header>
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <uranium:ButtonView
+                        Margin="10,0"
+                        Padding="9"
+                        BackgroundColor="{Binding CardBackgroundColor}"
+                        Stroke="{Binding CardBorderColor}"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 16"
+                        TappedCommand="{Binding BindingContext.OpenHairstyleCommand, Source={x:Reference BookView}}"
+                        CommandParameter="{Binding .}"
+                        SemanticProperties.Description="{Binding Name}">
+                        <VerticalStackLayout Spacing="7" InputTransparent="True">
+
+                            <Grid HeightRequest="148">
+                                <Border
+                                    StrokeThickness="0"
+                                    StrokeShape="RoundRectangle 12">
+                                    <Image
+                                        Source="{Binding ImageOrPlaceholder}"
+                                        Aspect="AspectFill"
+                                        HeightRequest="148"
+                                        WidthRequest="220" />
+                                </Border>
+
+                                <Border
+                                    BackgroundColor="#FFFFFF"
+                                    StrokeThickness="0"
+                                    StrokeShape="RoundRectangle 8"
+                                    Padding="7,3"
+                                    HorizontalOptions="Start"
+                                    VerticalOptions="Start"
+                                    Margin="7">
+                                    <Label
+                                        Text="{Binding BadgeText}"
+                                        FontSize="9"
+                                        FontAttributes="Bold"
+                                        TextColor="#D9534F" />
+                                </Border>
+
+                                <Border
+                                    IsVisible="{Binding IsSelected}"
+                                    WidthRequest="24"
+                                    HeightRequest="24"
+                                    BackgroundColor="#D9534F"
+                                    StrokeThickness="0"
+                                    StrokeShape="RoundRectangle 12"
+                                    HorizontalOptions="End"
+                                    VerticalOptions="Start"
+                                    Margin="7">
+                                    <Image
+                                        WidthRequest="13"
+                                        HeightRequest="13"
+                                        HorizontalOptions="Center"
+                                        VerticalOptions="Center">
+                                        <Image.Source>
+                                            <FontImageSource
+                                                FontFamily="MaterialOutlined"
+                                                Glyph="{x:Static m:MaterialRegular.Check}"
+                                                Color="#FFFFFF"
+                                                Size="13" />
+                                        </Image.Source>
+                                    </Image>
+                                </Border>
+                            </Grid>
+
+                            <Label
+                                Text="{Binding Name}"
+                                FontSize="13"
+                                FontAttributes="Bold"
+                                TextColor="#8B2626"
+                                MaxLines="1"
+                                LineBreakMode="TailTruncation" />
+                            <Label
+                                Text="{Binding MetaText}"
+                                FontSize="10"
+                                TextColor="#757575"
+                                MaxLines="1"
+                                LineBreakMode="TailTruncation" />
+                            <Label
+                                Text="{Binding PriceText}"
+                                FontSize="11"
+                                FontAttributes="Bold"
+                                TextColor="#D9534F"
+                                MaxLines="1"
+                                LineBreakMode="TailTruncation" />
+                        </VerticalStackLayout>
+                    </uranium:ButtonView>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+
+            <CollectionView.EmptyView>
+                <VerticalStackLayout Padding="32,40,32,24" Spacing="10" HorizontalOptions="Center">
+                    <Border
+                        WidthRequest="64"
+                        HeightRequest="64"
+                        BackgroundColor="#FDECEC"
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 32"
+                        HorizontalOptions="Center">
+                        <Image
+                            WidthRequest="30"
+                            HeightRequest="30"
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center">
+                            <Image.Source>
+                                <FontImageSource
+                                    FontFamily="MaterialOutlined"
+                                    Glyph="{x:Static m:MaterialRegular.Auto_awesome}"
+                                    Color="#D9534F"
+                                    Size="30" />
+                            </Image.Source>
+                        </Image>
+                    </Border>
+                    <Label
+                        Text="Gaya tidak ditemukan."
+                        FontSize="15"
+                        FontAttributes="Bold"
+                        TextColor="#8B2626"
+                        HorizontalTextAlignment="Center" />
+                    <Label
+                        Text="Coba kata kunci lain atau pilih kategori Semua."
+                        FontSize="12"
+                        TextColor="#757575"
+                        HorizontalTextAlignment="Center" />
+                </VerticalStackLayout>
+            </CollectionView.EmptyView>
+
+            <CollectionView.Footer>
+                <BoxView HeightRequest="10" Color="Transparent" />
+            </CollectionView.Footer>
+        </CollectionView>
+
+        <controls:BottomNavBar
+            Grid.Row="1"
+            ActiveTab="Gaya"
+            IsVisible="{Binding IsNotPickerMode}" />
+    </Grid>
+
+</uranium:UraniumContentPage>

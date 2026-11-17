@@ -9,9 +9,31 @@
     Shell.NavBarIsVisible="False"
     BackgroundColor="#FAF7F5">
 
-    <ShellContent
+    <!-- Login and Home are separate shell roots so returning home from a
+         finished booking can reset the navigation stack with a single
+         absolute route. The flyout stays disabled. -->
+    <Shell.BackButtonBehavior>
+        <BackButtonBehavior IsVisible="False" />
+    </Shell.BackButtonBehavior>
+
+    <FlyoutItem
         Title="Login"
-        Route="LoginPage"
-        ContentTemplate="{DataTemplate views:LoginPage}" />
+        Route="LoginRoot"
+        FlyoutItemIsVisible="False">
+        <ShellContent
+            Title="Login"
+            Route="LoginPage"
+            ContentTemplate="{DataTemplate views:LoginPage}" />
+    </FlyoutItem>
+
+    <FlyoutItem
+        Title="Home"
+        Route="HomeRoot"
+        FlyoutItemIsVisible="False">
+        <ShellContent
+            Title="Home"
+            Route="HomeCustomerPage"
+            ContentTemplate="{DataTemplate views:HomeCustomerPage}" />
+    </FlyoutItem>
 
 </Shell>

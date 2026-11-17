@@ -1,0 +1,434 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<uranium:UraniumContentPage
+    x:Class="UAS_APP_MONICASALON.Views.BookingDetailsPage"
+    x:Name="DetailsView"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
+    xmlns:m="clr-namespace:UAS_APP_MONICASALON.Icons"
+    BackgroundColor="#FAF7F5"
+    NavigationPage.HasNavigationBar="False"
+    Shell.NavBarIsVisible="False">
+
+    <Grid RowDefinitions="Auto,*">
+
+        <Grid Padding="20,14,20,8" ColumnDefinitions="Auto,*" ColumnSpacing="12">
+            <uranium:ButtonView
+                WidthRequest="40"
+                HeightRequest="40"
+                BackgroundColor="#FFFFFF"
+                Stroke="#EFE6E4"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 20"
+                Padding="0"
+                VerticalOptions="Center"
+                TappedCommand="{Binding BackCommand}"
+                SemanticProperties.Description="Kembali">
+                <Image
+                    WidthRequest="21"
+                    HeightRequest="21"
+                    InputTransparent="True"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center">
+                    <Image.Source>
+                        <FontImageSource
+                            FontFamily="MaterialOutlined"
+                            Glyph="{x:Static m:MaterialRegular.Arrow_back}"
+                            Color="#1E1E1E"
+                            Size="21" />
+                    </Image.Source>
+                </Image>
+            </uranium:ButtonView>
+
+            <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                <Label Text="DETAIL BOOKING" Style="{StaticResource PageKickerStyle}" />
+                <Label Text="Rincian kunjunganmu" Style="{StaticResource PageHeadingStyle}" FontSize="20" />
+            </VerticalStackLayout>
+        </Grid>
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="20,4,20,30" Spacing="14">
+
+                <Border
+                    IsVisible="{Binding HasError}"
+                    BackgroundColor="#F9DEDC"
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 12"
+                    Padding="12,9">
+                    <Label
+                        Text="{Binding ErrorMessage}"
+                        FontSize="12"
+                        TextColor="#B3261E"
+                        LineBreakMode="WordWrap" />
+                </Border>
+
+                <VerticalStackLayout IsVisible="{Binding HasBooking}" Spacing="14">
+
+                    <!-- Status hero -->
+                    <Border
+                        BackgroundColor="#8B2626"
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 20"
+                        Padding="18">
+                        <VerticalStackLayout Spacing="9">
+                            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                                <Label
+                                    Text="{Binding Booking.Code}"
+                                    FontSize="10"
+                                    TextColor="#F3C7C4"
+                                    VerticalTextAlignment="Center"
+                                    CharacterSpacing="0.5" />
+                                <Border
+                                    Grid.Column="1"
+                                    BackgroundColor="{Binding Booking.StatusBackgroundColor}"
+                                    StrokeThickness="0"
+                                    StrokeShape="RoundRectangle 10"
+                                    Padding="9,4">
+                                    <Label
+                                        Text="{Binding Booking.StatusText}"
+                                        FontSize="10"
+                                        FontAttributes="Bold"
+                                        TextColor="{Binding Booking.StatusTextColor}" />
+                                </Border>
+                            </Grid>
+
+                            <Label
+                                Text="{Binding Booking.DateLongText}"
+                                FontSize="20"
+                                FontAttributes="Bold"
+                                TextColor="#FFFFFF"
+                                LineBreakMode="WordWrap" />
+
+                            <HorizontalStackLayout Spacing="6">
+                                <Image WidthRequest="15" HeightRequest="15" VerticalOptions="Center">
+                                    <Image.Source>
+                                        <FontImageSource
+                                            FontFamily="MaterialOutlined"
+                                            Glyph="{x:Static m:MaterialRegular.Schedule}"
+                                            Color="#F8DCDC"
+                                            Size="15" />
+                                    </Image.Source>
+                                </Image>
+                                <Label
+                                    Text="{Binding Booking.TimeText}"
+                                    FontSize="13"
+                                    FontAttributes="Bold"
+                                    TextColor="#FBE3E1"
+                                    VerticalTextAlignment="Center" />
+                                <Label Text="•" FontSize="12" TextColor="#C88C88" VerticalTextAlignment="Center" />
+                                <Label
+                                    Text="{Binding Booking.ItemsSummaryText}"
+                                    FontSize="13"
+                                    TextColor="#FBE3E1"
+                                    VerticalTextAlignment="Center" />
+                            </HorizontalStackLayout>
+
+                            <Label
+                                Text="{Binding Booking.StatusNote}"
+                                FontSize="12"
+                                TextColor="#FBE3E1"
+                                LineHeight="1.35" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Services and add-ons -->
+                    <Border Style="{StaticResource CardStyle}">
+                        <VerticalStackLayout Spacing="8">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Text="Layanan" Style="{StaticResource SectionTitleStyle}" />
+                                <Label
+                                    Grid.Column="1"
+                                    Text="{Binding Booking.ServicesCountText}"
+                                    FontSize="11"
+                                    TextColor="#A79A96"
+                                    VerticalTextAlignment="Center" />
+                            </Grid>
+
+                            <VerticalStackLayout BindableLayout.ItemsSource="{Binding Booking.Services}" Spacing="0">
+                                <BindableLayout.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10" Padding="0,6">
+                                            <VerticalStackLayout Spacing="1">
+                                                <Label
+                                                    Text="{Binding Name}"
+                                                    FontSize="13"
+                                                    FontAttributes="Bold"
+                                                    TextColor="#1E1E1E" />
+                                                <Label
+                                                    Text="{Binding MetaText}"
+                                                    FontSize="10"
+                                                    TextColor="#A79A96" />
+                                            </VerticalStackLayout>
+                                            <Label
+                                                Grid.Column="1"
+                                                Text="{Binding FormattedPrice}"
+                                                FontSize="12"
+                                                TextColor="#757575"
+                                                VerticalTextAlignment="Center" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </BindableLayout.ItemTemplate>
+                            </VerticalStackLayout>
+
+                            <VerticalStackLayout IsVisible="{Binding Booking.HasAddOns}" Spacing="6">
+                                <BoxView HeightRequest="1" BackgroundColor="#F2E8E5" />
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label Text="Tambahan" FontSize="12" FontAttributes="Bold" TextColor="#8B2626" />
+                                    <Label
+                                        Grid.Column="1"
+                                        Text="{Binding Booking.AddOnsCountText}"
+                                        FontSize="10"
+                                        TextColor="#A79A96"
+                                        VerticalTextAlignment="Center" />
+                                </Grid>
+                                <VerticalStackLayout BindableLayout.ItemsSource="{Binding Booking.AddOns}" Spacing="0">
+                                    <BindableLayout.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10" Padding="0,4">
+                                                <Label
+                                                    Text="{Binding Name}"
+                                                    FontSize="12"
+                                                    TextColor="#757575" />
+                                                <Label
+                                                    Grid.Column="1"
+                                                    Text="{Binding FormattedPrice}"
+                                                    FontSize="12"
+                                                    TextColor="#757575" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </BindableLayout.ItemTemplate>
+                                </VerticalStackLayout>
+                            </VerticalStackLayout>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Hairstyle reference -->
+                    <Border IsVisible="{Binding Booking.HasHairstyle}" Style="{StaticResource CardStyle}">
+                        <VerticalStackLayout Spacing="10">
+                            <Label Text="Referensi Gaya" Style="{StaticResource SectionTitleStyle}" />
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                                <Border
+                                    WidthRequest="68"
+                                    HeightRequest="68"
+                                    StrokeThickness="0"
+                                    StrokeShape="RoundRectangle 12">
+                                    <Image
+                                        Source="{Binding Booking.HairstyleImage}"
+                                        Aspect="AspectFill"
+                                        WidthRequest="68"
+                                        HeightRequest="68" />
+                                </Border>
+                                <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                    <Label
+                                        Text="{Binding Booking.HairstyleName}"
+                                        FontSize="14"
+                                        FontAttributes="Bold"
+                                        TextColor="#8B2626" />
+                                    <Label
+                                        Text="Referensi sudah dikirim ke stylist."
+                                        FontSize="11"
+                                        TextColor="#757575" />
+                                </VerticalStackLayout>
+                            </Grid>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Notes -->
+                    <Border IsVisible="{Binding Booking.HasNotes}" Style="{StaticResource CardStyle}">
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="Catatan untuk Stylist" Style="{StaticResource SectionTitleStyle}" />
+                            <Label
+                                Text="{Binding Booking.Notes}"
+                                FontSize="12"
+                                TextColor="#757575"
+                                LineHeight="1.35"
+                                LineBreakMode="WordWrap" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Contact -->
+                    <Border Style="{StaticResource CardStyle}">
+                        <VerticalStackLayout Spacing="10">
+                            <Label Text="Kontak" Style="{StaticResource SectionTitleStyle}" />
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                                <Border
+                                    WidthRequest="44"
+                                    HeightRequest="44"
+                                    BackgroundColor="#FDECEC"
+                                    StrokeThickness="0"
+                                    StrokeShape="RoundRectangle 22">
+                                    <Image
+                                        WidthRequest="21"
+                                        HeightRequest="21"
+                                        HorizontalOptions="Center"
+                                        VerticalOptions="Center">
+                                        <Image.Source>
+                                            <FontImageSource
+                                                FontFamily="MaterialOutlined"
+                                                Glyph="{x:Static m:MaterialRegular.Person}"
+                                                Color="#D9534F"
+                                                Size="21" />
+                                        </Image.Source>
+                                    </Image>
+                                </Border>
+                                <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                    <Label
+                                        Text="{Binding Booking.CustomerName}"
+                                        FontSize="13"
+                                        FontAttributes="Bold"
+                                        TextColor="#1E1E1E" />
+                                    <Label
+                                        Text="{Binding Booking.CustomerPhone}"
+                                        FontSize="11"
+                                        TextColor="#757575" />
+                                </VerticalStackLayout>
+                            </Grid>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Price -->
+                    <Border Style="{StaticResource CardStyle}">
+                        <VerticalStackLayout Spacing="8">
+                            <Label Text="Rincian Harga" Style="{StaticResource SectionTitleStyle}" />
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Text="Biaya layanan" FontSize="12" TextColor="#757575" />
+                                <Label
+                                    Grid.Column="1"
+                                    Text="{Binding Booking.ServicesTotalText}"
+                                    FontSize="12"
+                                    TextColor="#757575" />
+                            </Grid>
+                            <Grid ColumnDefinitions="*,Auto" IsVisible="{Binding Booking.HasAddOns}">
+                                <Label Text="Item tambahan" FontSize="12" TextColor="#757575" />
+                                <Label
+                                    Grid.Column="1"
+                                    Text="{Binding Booking.AddOnsTotalText}"
+                                    FontSize="12"
+                                    TextColor="#757575" />
+                            </Grid>
+                            <BoxView HeightRequest="1" BackgroundColor="#F2E8E5" />
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Text="Total" FontSize="14" FontAttributes="Bold" TextColor="#8B2626" />
+                                <Label
+                                    Grid.Column="1"
+                                    Text="{Binding Booking.TotalText}"
+                                    FontSize="16"
+                                    FontAttributes="Bold"
+                                    TextColor="#D9534F" />
+                            </Grid>
+                            <Label
+                                Text="Pembayaran dilakukan di salon setelah layanan."
+                                FontSize="10"
+                                TextColor="#A79A96" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Existing feedback -->
+                    <Border IsVisible="{Binding Booking.HasFeedback}" Style="{StaticResource CardStyle}">
+                        <VerticalStackLayout Spacing="8">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Text="Ulasan Kamu" Style="{StaticResource SectionTitleStyle}" />
+                                <Label
+                                    Grid.Column="1"
+                                    Text="{Binding Booking.Feedback.CreatedText}"
+                                    FontSize="10"
+                                    TextColor="#A79A96"
+                                    VerticalTextAlignment="Center" />
+                            </Grid>
+                            <HorizontalStackLayout Spacing="8">
+                                <Label
+                                    Text="{Binding Booking.Feedback.StarsText}"
+                                    FontSize="18"
+                                    TextColor="#F59E0B"
+                                    VerticalTextAlignment="Center" />
+                                <Label
+                                    Text="{Binding Booking.Feedback.RatingText}"
+                                    FontSize="12"
+                                    FontAttributes="Bold"
+                                    TextColor="#8B2626"
+                                    VerticalTextAlignment="Center" />
+                            </HorizontalStackLayout>
+                            <Label
+                                Text="{Binding Booking.Feedback.TagsText}"
+                                FontSize="10"
+                                TextColor="#A79A96" />
+                            <Label
+                                Text="{Binding Booking.Feedback.CommentText}"
+                                FontSize="12"
+                                TextColor="#757575"
+                                LineHeight="1.35" />
+                            <Button
+                                Text="Ubah Ulasan"
+                                Command="{Binding WriteFeedbackCommand}"
+                                Style="{StaticResource SecondaryActionStyle}"
+                                HeightRequest="42"
+                                FontSize="12"
+                                Margin="0,2,0,0" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Lateness policy -->
+                    <Border IsVisible="{Binding Booking.IsActive}" Style="{StaticResource CardStyle}">
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="Kebijakan Keterlambatan" Style="{StaticResource SectionTitleStyle}" />
+                            <Label
+                                Text="• Terlambat 1–10 menit: booking tetap aktif, silakan tetap datang."
+                                FontSize="11"
+                                TextColor="#757575"
+                                LineHeight="1.35" />
+                            <Label
+                                Text="• Terlambat 10–15 menit: hubungi salon agar admin bisa mengatur ulang layanan."
+                                FontSize="11"
+                                TextColor="#757575"
+                                LineHeight="1.35" />
+                            <Label
+                                Text="• Jika waktu layanan tidak memungkinkan, admin menawarkan jadwal baru."
+                                FontSize="11"
+                                TextColor="#757575"
+                                LineHeight="1.35" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <Label
+                        Text="{Binding ErrorMessage}"
+                        IsVisible="{Binding HasError}"
+                        FontSize="11"
+                        TextColor="#B3261E"
+                        HorizontalTextAlignment="Center" />
+
+                    <Button
+                        Text="Beri Ulasan"
+                        Command="{Binding WriteFeedbackCommand}"
+                        IsVisible="{Binding Booking.CanLeaveFeedback}"
+                        Style="{StaticResource PrimaryActionStyle}" />
+
+                    <Button
+                        Text="Pesan Lagi"
+                        Command="{Binding BookAgainCommand}"
+                        Style="{StaticResource SecondaryActionStyle}" />
+
+                    <Button
+                        Text="Batalkan Booking"
+                        Command="{Binding CancelBookingCommand}"
+                        IsVisible="{Binding Booking.CanCancel}"
+                        Style="{StaticResource DangerActionStyle}" />
+
+                </VerticalStackLayout>
+
+                <VerticalStackLayout IsVisible="{Binding IsLoading}" Spacing="10" Padding="0,40,0,0">
+                    <ActivityIndicator
+                        IsRunning="{Binding IsLoading}"
+                        Color="#D9534F"
+                        HorizontalOptions="Center" />
+                    <Label
+                        Text="Memuat detail booking..."
+                        FontSize="12"
+                        TextColor="#757575"
+                        HorizontalTextAlignment="Center" />
+                </VerticalStackLayout>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+
+</uranium:UraniumContentPage>

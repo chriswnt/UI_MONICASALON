@@ -1,5 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using UAS_APP_MONICASALON.Services;
+using UAS_APP_MONICASALON.Views;
 
 namespace UAS_APP_MONICASALON.ViewModels;
 
@@ -55,8 +57,22 @@ public partial class RegisterViewModel : ObservableObject
             return;
         }
 
-        // Phase 1 is UI-only: after successful validation, return to the login screen.
-        await Shell.Current.GoToAsync("//LoginPage");
+        UserSession.Register(FullName, PhoneNumber, Email);
+
+        var shell = Shell.Current;
+
+        if (shell?.CurrentPage is Page page)
+        {
+            await page.DisplayAlertAsync(
+                "Akun berhasil dibuat",
+                $"Selamat datang, {UserSession.FirstName}! Akunmu sudah siap digunakan.",
+                "Mulai Booking");
+        }
+
+        if (shell is not null)
+        {
+            await shell.GoToAsync($"//HomeRoot/{nameof(HomeCustomerPage)}");
+        }
     }
 
     [RelayCommand]
@@ -68,6 +84,6 @@ public partial class RegisterViewModel : ObservableObject
     [RelayCommand]
     private async Task GoToLoginAsync()
     {
-        await Shell.Current.GoToAsync("//LoginPage");
+        await Shell.Current.GoToAsync("//LoginRoot/LoginPage");
     }
 }

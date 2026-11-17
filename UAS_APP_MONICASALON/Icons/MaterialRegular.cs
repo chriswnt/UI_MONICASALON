@@ -37,10 +37,28 @@ public static class MaterialRegular
     public const string Home = MaterialOutlined.Home;
     public const string Explore = MaterialOutlined.Explore;
     public const string Calendar_month = MaterialOutlined.Calendar_month;
+    public const string History = MaterialOutlined.History;
 
     // Outline variants are no longer separate glyph names in Material Symbols 3.x.
     public const string Chat_bubble_outline = MaterialOutlined.Chat_bubble;
     public const string Person_outline = MaterialOutlined.Person;
 
     public const string Close = MaterialOutlined.Close;
+    public const string Expand_more = MaterialOutlined.Expand_more;
+    public const string Check = MaterialOutlined.Check;
+    public const string Check_circle = MaterialOutlined.Check_circle;
+    public const string Schedule = MaterialOutlined.Schedule;
+    public const string Notes = MaterialOutlined.Notes;
+    public const string Info = MaterialOutlined.Info;
+    public const string Warning = MaterialOutlined.Warning;
+    public const string Chevron_right = MaterialOutlined.Chevron_right;
+    public const string Arrow_forward = MaterialOutlined.Arrow_forward;
+
+    // Booking, history, and feedback surfaces.
+    public const string Event = MaterialOutlined.Event;
+    public const string Payments = MaterialOutlined.Payments;
+    public const string Edit = MaterialOutlined.Edit;
+    public const string Cancel = MaterialOutlined.Cancel;
+    public const string Verified = MaterialOutlined.Verified;
+    public const string Task_alt = MaterialOutlined.Task_alt;
 }
