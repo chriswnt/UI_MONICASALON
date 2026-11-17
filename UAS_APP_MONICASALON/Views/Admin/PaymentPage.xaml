@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<uranium:UraniumContentPage
+    x:Class="UAS_APP_MONICASALON.Views.Admin.PaymentPage"
+    x:Name="PaymentRoot"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
+    xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
+    xmlns:admin="clr-namespace:UAS_APP_MONICASALON.Controls.Admin"
+    xmlns:icons="clr-namespace:UAS_APP_MONICASALON.Icons"
+    BackgroundColor="{StaticResource Background}"
+    NavigationPage.HasNavigationBar="False"
+    Shell.NavBarIsVisible="False">
+
+    <admin:AdminLayout
+        PageTitle="Pembayaran"
+        ActiveRoute="CashierPage">
+
+        <admin:AdminLayout.PageContent>
+            <Grid RowDefinitions="Auto,*,Auto" RowSpacing="12">
+
+                <!-- Step indicator -->
+                <Grid
+                    Padding="20,6,20,0"
+                    ColumnDefinitions="*,*,*,*"
+                    ColumnSpacing="6"
+                    SemanticProperties.Description="Langkah 3 dari 4: pembayaran">
+                    <VerticalStackLayout Spacing="3" AutomationProperties.IsInAccessibleTree="False">
+                        <BoxView Style="{StaticResource AdminStepTrackActive}" />
+                        <Label Text="Kasir" Style="{StaticResource AdminStepLabelActive}" />
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Column="1" Spacing="3" AutomationProperties.IsInAccessibleTree="False">
+                        <BoxView Style="{StaticResource AdminStepTrackActive}" />
+                        <Label Text="Review" Style="{StaticResource AdminStepLabelActive}" />
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Column="2" Spacing="3" AutomationProperties.IsInAccessibleTree="False">
+                        <BoxView Style="{StaticResource AdminStepTrackActive}" />
+                        <Label Text="Bayar" Style="{StaticResource AdminStepLabelActive}" />
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Column="3" Spacing="3" AutomationProperties.IsInAccessibleTree="False">
+                        <BoxView Style="{StaticResource AdminStepTrack}" />
+                        <Label Text="Selesai" Style="{StaticResource AdminStepLabel}" />
+                    </VerticalStackLayout>
+                </Grid>
+
+                <ScrollView Grid.Row="1">
+                    <VerticalStackLayout Padding="20,0,20,0" Spacing="12">
+
+                        <!-- Error state -->
+                        <Border
+                            Style="{StaticResource AdminErrorBanner}"
+                            IsVisible="{Binding HasError}"
+                            SemanticProperties.Description="{Binding ErrorMessage}">
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                                <Image
+                                    WidthRequest="16"
+                                    HeightRequest="16"
+                                    VerticalOptions="Start"
+                                    Style="{StaticResource AdminDecorativeIcon}">
+                                    <Image.Source>
+                                        <FontImageSource
+                                            FontFamily="MaterialOutlined"
+                                            Glyph="{x:Static icons:AdminIcons.Warning}"
+                                            Color="{StaticResource Error}"
+                                            Size="16" />
+                                    </Image.Source>
+                                </Image>
+                                <Label
+                                    Grid.Column="1"
+                                    Text="{Binding ErrorMessage}"
+                                    Style="{StaticResource AdminBannerText}"
+                                    AutomationProperties.IsInAccessibleTree="False" />
+                            </Grid>
+                        </Border>
+
+                        <!-- Amount due -->
+                        <Border Style="{StaticResource AdminSoftCard}">
+                            <VerticalStackLayout Spacing="4">
+                                <Label
+                                    Text="Total Tagihan"
+                                    Style="{StaticResource AdminCaption}"
+                                    TextColor="{StaticResource PrimaryDark}" />
+                                <Label
+                                    Text="{Binding TotalText}"
+                                    Style="{StaticResource AdminAmountLarge}"
+                                    FontSize="28"
+                                    TextColor="{StaticResource PrimaryDark}"
+                                    SemanticProperties.Description="{Binding TotalText}" />
+                                <Label
+                                    Text="{Binding PaidCaption}"
+                                    Style="{StaticResource AdminBannerText}"
+                                    TextColor="{StaticResource PrimaryDark}"
+                                    LineBreakMode="WordWrap" />
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <!-- Method -->
+                        <Border Style="{StaticResource AdminCard}">
+                            <VerticalStackLayout Spacing="12">
+                                <Label
+                                    Text="Metode Pembayaran"
+                                    Style="{StaticResource AdminSectionTitle}"
+                                    FontSize="14" />
+
+                                <Border Style="{StaticResource AdminInputShell}">
+                                    <uranium:Dropdown
+                                        ItemsSource="{Binding MethodOptions}"
+                                        SelectedItem="{Binding SelectedMethodLabel, Mode=TwoWay}"
+                                        Placeholder="Pilih metode pembayaran"
+                                        Style="{StaticResource AdminDropdown}"
+                                        SemanticProperties.Description="Metode pembayaran"
+                                        SemanticProperties.Hint="Buka daftar untuk memilih metode pembayaran" />
+                                </Border>
+
+                                <Border Style="{StaticResource AdminListRow}">
+                                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                                        <Border
+                                            WidthRequest="34"
+                                            HeightRequest="34"
+                                            BackgroundColor="{StaticResource Secondary}"
+                                            StrokeThickness="0"
+                                            StrokeShape="RoundRectangle 17"
+                                            VerticalOptions="Center"
+                                            AutomationProperties.IsInAccessibleTree="False">
+                                            <Image
+                                                WidthRequest="18"
+                                                HeightRequest="18"
+                                                HorizontalOptions="Center"
+                                                VerticalOptions="Center"
+                                                Style="{StaticResource AdminDecorativeIcon}">
+                                                <Image.Source>
+                                                    <FontImageSource
+                                                        FontFamily="MaterialOutlined"
+                                                        Glyph="{Binding MethodIconGlyph}"
+                                                        Color="{StaticResource Primary}"
+                                                        Size="18" />
+                                                </Image.Source>
+                                            </Image>
+                                        </Border>
+                                        <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                            <Label
+                                                Text="{Binding MethodLabel}"
+                                                Style="{StaticResource AdminCellTitle}"
+                                                FontSize="12.5" />
+                                            <Label
+                                                Text="{Binding MethodDescription}"
+                                                Style="{StaticResource AdminCellMeta}"
+                                                LineBreakMode="WordWrap"
+                                                MaxLines="3" />
+                                        </VerticalStackLayout>
+                                    </Grid>
+                                </Border>
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <!-- Cash received + change -->
+                        <Border Style="{StaticResource AdminCard}" IsVisible="{Binding IsCash}">
+                            <VerticalStackLayout Spacing="12">
+                                <Label
+                                    Text="Uang Diterima"
+                                    Style="{StaticResource AdminSectionTitle}"
+                                    FontSize="14" />
+
+                                <Border Style="{StaticResource AdminInputShell}">
+                                    <material:TextField
+                                        Title="Nominal diterima (Rp)"
+                                        Text="{Binding AmountPaidText}"
+                                        Keyboard="Numeric"
+                                        Style="{StaticResource AdminTextField}"
+                                        SemanticProperties.Description="Nominal uang yang diterima dari pelanggan"
+                                        SemanticProperties.Hint="Contoh: 150000" />
+                                </Border>
+
+                                <HorizontalStackLayout
+                                    Spacing="8"
+                                    BindableLayout.ItemsSource="{Binding QuickAmounts}"
+                                    SemanticProperties.Description="Pilihan nominal cepat">
+                                    <BindableLayout.ItemTemplate>
+                                        <DataTemplate>
+                                            <Button
+                                                Text="{Binding Label}"
+                                                Style="{StaticResource AdminSoftButton}"
+                                                Command="{Binding BindingContext.SelectQuickAmountCommand, Source={x:Reference PaymentRoot}}"
+                                                CommandParameter="{Binding .}"
+                                                SemanticProperties.Description="{Binding ScreenReaderText}" />
+                                        </DataTemplate>
+                                    </BindableLayout.ItemTemplate>
+                                </HorizontalStackLayout>
+
+                                <BoxView Style="{StaticResource AdminReceiptRule}" />
+
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label Text="Kembalian" Style="{StaticResource AdminSummaryLabel}" />
+                                    <Label
+                                        Grid.Column="1"
+                                        Text="{Binding ChangeText}"
+                                        Style="{StaticResource AdminAmountPrimary}"
+                                        SemanticProperties.Description="{Binding ChangeText}" />
+                                </Grid>
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <!-- Non-cash reference -->
+                        <Border Style="{StaticResource AdminCard}" IsVisible="{Binding IsNonCash}">
+                            <VerticalStackLayout Spacing="12">
+                                <Label
+                                    Text="Referensi Pembayaran"
+                                    Style="{StaticResource AdminSectionTitle}"
+                                    FontSize="14" />
+
+                                <Border Style="{StaticResource AdminInputShell}">
+                                    <material:TextField
+                                        Title="Nomor referensi"
+                                        Text="{Binding ReferenceCode}"
+                                        Style="{StaticResource AdminTextField}"
+                                        SemanticProperties.Description="{Binding ReferenceCodeLabel}"
+                                        SemanticProperties.Hint="Opsional, isi bila mesin EDC menampilkan nomor referensi" />
+                                </Border>
+
+                                <Label
+                                    Text="Catatan: verifikasi ke bank/e-wallet dilakukan manual oleh kasir. Aplikasi ini hanya mencatat referensinya."
+                                    Style="{StaticResource AdminCaption}"
+                                    LineBreakMode="WordWrap" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </VerticalStackLayout>
+                </ScrollView>
+
+                <!-- Actions / processing state -->
+                <VerticalStackLayout Grid.Row="2" Padding="20,0,20,20" Spacing="8">
+                    <Border
+                        Style="{StaticResource AdminBannerBorder}"
+                        IsVisible="{Binding IsProcessing}"
+                        SemanticProperties.Description="{Binding ProcessingText}">
+                        <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
+                            <ActivityIndicator
+                                IsRunning="{Binding IsProcessing}"
+                                Color="{StaticResource Primary}"
+                                WidthRequest="18"
+                                HeightRequest="18"
+                                VerticalOptions="Center"
+                                AutomationProperties.IsInAccessibleTree="False" />
+                            <Label
+                                Text="{Binding ProcessingText}"
+                                Style="{StaticResource AdminBannerText}"
+                                VerticalTextAlignment="Center"
+                                AutomationProperties.IsInAccessibleTree="False" />
+                        </HorizontalStackLayout>
+                    </Border>
+
+                    <Button
+                        Text="Bayar Sekarang"
+                        Style="{StaticResource AdminPrimaryButton}"
+                        Command="{Binding PayCommand}"
+                        IsEnabled="{Binding IsNotProcessing}"
+                        SemanticProperties.Description="Proses pembayaran"
+                        SemanticProperties.Hint="Ketuk dua kali untuk menyelesaikan pembayaran"
+                        HorizontalOptions="Fill" />
+
+                    <Button
+                        Text="Kembali ke Review"
+                        Style="{StaticResource AdminSecondaryButton}"
+                        Command="{Binding BackCommand}"
+                        SemanticProperties.Description="Kembali ke halaman review transaksi"
+                        HorizontalOptions="Fill" />
+                </VerticalStackLayout>
+            </Grid>
+        </admin:AdminLayout.PageContent>
+    </admin:AdminLayout>
+
+</uranium:UraniumContentPage>

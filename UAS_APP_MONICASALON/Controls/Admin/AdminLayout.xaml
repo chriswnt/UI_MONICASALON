@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+    x:Class="UAS_APP_MONICASALON.Controls.Admin.AdminLayout"
+    x:Name="LayoutRoot"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
+    xmlns:admin="clr-namespace:UAS_APP_MONICASALON.Controls.Admin"
+    xmlns:icons="clr-namespace:UAS_APP_MONICASALON.Icons"
+    BackgroundColor="{StaticResource Background}">
+
+    <Grid RowDefinitions="Auto,1,*,Auto" BackgroundColor="{StaticResource Background}">
+
+        <!-- Mobile admin header -->
+        <Grid RowDefinitions="Auto,Auto" Padding="20,12,20,10">
+
+            <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="10">
+                <Border
+                    WidthRequest="34"
+                    HeightRequest="34"
+                    BackgroundColor="{StaticResource Primary}"
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 10"
+                    AutomationProperties.IsInAccessibleTree="False">
+                    <Image
+                        WidthRequest="19"
+                        HeightRequest="19"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center">
+                        <Image.Source>
+                            <FontImageSource
+                                FontFamily="MaterialOutlined"
+                                Glyph="{x:Static icons:AdminIcons.Scissors}"
+                                Color="{StaticResource OnPrimary}"
+                                Size="19" />
+                        </Image.Source>
+                    </Image>
+                </Border>
+
+                <VerticalStackLayout Grid.Column="1" Spacing="0" VerticalOptions="Center">
+                    <Label
+                        Text="Monica Salon"
+                        FontFamily="OpenSansSemibold"
+                        FontSize="14"
+                        FontAttributes="Bold"
+                        TextColor="{StaticResource TextPrimary}" />
+                    <Label
+                        Text="ADMIN PANEL"
+                        FontFamily="OpenSansSemibold"
+                        FontSize="9"
+                        FontAttributes="Bold"
+                        CharacterSpacing="1"
+                        TextColor="{StaticResource TextSecondary}" />
+                </VerticalStackLayout>
+
+                <Border
+                    Grid.Column="2"
+                    WidthRequest="32"
+                    HeightRequest="32"
+                    BackgroundColor="{StaticResource Secondary}"
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 16"
+                    VerticalOptions="Center"
+                    AutomationProperties.IsInAccessibleTree="False">
+                    <Label
+                        Text="M"
+                        FontFamily="OpenSansSemibold"
+                        FontSize="11"
+                        FontAttributes="Bold"
+                        TextColor="{StaticResource Primary}"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center" />
+                </Border>
+
+                <uranium:ButtonView
+                    Grid.Column="3"
+                    Style="{StaticResource AdminIconButton}"
+                    WidthRequest="34"
+                    HeightRequest="34"
+                    StrokeShape="RoundRectangle 17"
+                    BackgroundColor="{StaticResource Surface}"
+                    VerticalOptions="Center"
+                    SemanticProperties.Description="Keluar dari Admin"
+                    TappedCommand="{Binding LogoutCommand, Source={x:Reference LayoutRoot}}">
+                    <Image
+                        WidthRequest="17"
+                        HeightRequest="17"
+                        InputTransparent="True"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center">
+                        <Image.Source>
+                            <FontImageSource
+                                FontFamily="MaterialOutlined"
+                                Glyph="{x:Static icons:AdminIcons.Logout}"
+                                Color="{StaticResource TextSecondary}"
+                                Size="17" />
+                        </Image.Source>
+                    </Image>
+                </uranium:ButtonView>
+            </Grid>
+
+            <VerticalStackLayout Grid.Row="1" Margin="0,12,0,0" Spacing="2">
+                <Label
+                    Text="{Binding PageTitle, Source={x:Reference LayoutRoot}}"
+                    Style="{StaticResource AdminPageTitle}" />
+
+                <HorizontalStackLayout
+                    Spacing="4"
+                    Margin="0,4,0,0"
+                    SemanticProperties.Description="{Binding TodayText, Source={x:Reference LayoutRoot}}">
+                    <Image
+                        WidthRequest="11"
+                        HeightRequest="11"
+                        VerticalOptions="Center"
+                        AutomationProperties.IsInAccessibleTree="False">
+                        <Image.Source>
+                            <FontImageSource
+                                FontFamily="MaterialOutlined"
+                                Glyph="{x:Static icons:AdminIcons.Calendar}"
+                                Color="{StaticResource TextSecondary}"
+                                Size="11" />
+                        </Image.Source>
+                    </Image>
+                    <Label
+                        Text="{Binding TodayText, Source={x:Reference LayoutRoot}}"
+                        FontSize="10"
+                        TextColor="{StaticResource TextSecondary}"
+                        VerticalTextAlignment="Center"
+                        AutomationProperties.IsInAccessibleTree="False" />
+                </HorizontalStackLayout>
+            </VerticalStackLayout>
+        </Grid>
+
+        <BoxView Grid.Row="1" BackgroundColor="{StaticResource Outline}" />
+
+        <!-- Page content -->
+        <ContentView
+            x:Name="PageContentHost"
+            Grid.Row="2" />
+
+        <!-- Mobile bottom navigation -->
+        <Grid
+            Grid.Row="3"
+            RowDefinitions="1,60"
+            BackgroundColor="{StaticResource Surface}">
+            <BoxView HeightRequest="1" BackgroundColor="{StaticResource Outline}" />
+
+            <Grid
+                x:Name="TabContainer"
+                Grid.Row="1"
+                ColumnDefinitions="*,*,*,*,*"
+                Padding="10,2">
+                <admin:AdminNavigationItem
+                    Title="Dashboard"
+                    IconGlyph="{x:Static icons:AdminIcons.Dashboard}"
+                    Route="AdminDashboardPage"
+                    Command="{Binding NavigateCommand, Source={x:Reference LayoutRoot}}" />
+
+                <admin:AdminNavigationItem
+                    Grid.Column="1"
+                    Title="Booking"
+                    IconGlyph="{x:Static icons:AdminIcons.Bookings}"
+                    Route="AdminBookingsPage"
+                    Command="{Binding NavigateCommand, Source={x:Reference LayoutRoot}}" />
+
+                <admin:AdminNavigationItem
+                    Grid.Column="2"
+                    Title="Kasir"
+                    IconGlyph="{x:Static icons:AdminIcons.Cashier}"
+                    Route="CashierPage"
+                    Command="{Binding NavigateCommand, Source={x:Reference LayoutRoot}}" />
+
+                <admin:AdminNavigationItem
+                    Grid.Column="3"
+                    Title="Reports"
+                    IconGlyph="{x:Static icons:AdminIcons.Reports}"
+                    Command="{Binding NavigateCommand, Source={x:Reference LayoutRoot}}" />
+
+                <admin:AdminNavigationItem
+                    Grid.Column="4"
+                    Title="Settings"
+                    IconGlyph="{x:Static icons:AdminIcons.Settings}"
+                    Command="{Binding NavigateCommand, Source={x:Reference LayoutRoot}}" />
+            </Grid>
+        </Grid>
+    </Grid>
+
+</ContentView>
