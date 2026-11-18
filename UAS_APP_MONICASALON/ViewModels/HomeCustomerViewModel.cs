@@ -39,6 +39,8 @@ public partial class HomeCustomerViewModel : ObservableObject
 
     public string GreetingText => $"Hai, {UserSession.FirstName}";
 
+    public string Initials => UserSession.Initials;
+
     public string SectionTitle => IsSearchActive ? "Hasil Pencarian" : "Layanan Favorit";
 
     public bool IsSearchActive => !string.IsNullOrWhiteSpace(SearchText);
@@ -189,9 +191,9 @@ public partial class HomeCustomerViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private async Task OpenNotificationsAsync()
+    private async Task OpenProfileAsync()
     {
-        await ShowInfoAsync("Notifikasi", "Belum ada notifikasi baru untukmu.");
+        await Shell.Current.GoToAsync(nameof(ProfilePage));
     }
 
     [RelayCommand]
@@ -206,13 +208,5 @@ public partial class HomeCustomerViewModel : ObservableObject
     {
         BookingSession.InitialSearch = SearchText.Trim();
         await Shell.Current.GoToAsync(nameof(CataloguePage));
-    }
-
-    private static async Task ShowInfoAsync(string title, string message)
-    {
-        if (Shell.Current?.CurrentPage is Page page)
-        {
-            await page.DisplayAlertAsync(title, message, "OK");
-        }
     }
 }

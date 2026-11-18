@@ -40,9 +40,9 @@ public partial class BookingHistoryViewModel : ObservableObject
             var active = _all.Count(booking => booking.IsActive);
             return active switch
             {
-                0 => "Belum ada slot aktif. Yuk buat booking baru.",
-                1 => "1 slot aktif menantimu.",
-                _ => $"{active} slot aktif menantimu."
+                0 => "Belum ada booking aktif",
+                1 => "1 booking aktif",
+                _ => $"{active} booking aktif"
             };
         }
     }

@@ -23,81 +23,41 @@
                 ItemsSource="{Binding Bookings}"
                 SelectionMode="None"
                 VerticalScrollBarVisibility="Never"
-                ItemSizingStrategy="MeasureAllItems">
+                ItemSizingStrategy="MeasureAllItems"
+                MaximumWidthRequest="720"
+                HorizontalOptions="Center">
 
                 <CollectionView.Header>
-                    <VerticalStackLayout Padding="20,16,20,12" Spacing="14">
+                    <VerticalStackLayout Padding="20,18,20,12" Spacing="14">
 
-                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
-                            <VerticalStackLayout Spacing="4" VerticalOptions="Center">
-                                <Label Text="RIWAYAT KUNJUNGAN" Style="{StaticResource PageKickerStyle}" />
-                                <Label Text="Booking Saya" Style="{StaticResource PageHeadingStyle}" />
-                                <Label
-                                    Text="Semua slot yang kamu pesan, dalam satu tempat."
-                                    FontSize="12"
-                                    TextColor="#757575" />
-                            </VerticalStackLayout>
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="RIWAYAT KUNJUNGAN" Style="{StaticResource PageKickerStyle}" />
+                            <Label Text="Booking Saya" Style="{StaticResource PageHeadingStyle}" />
+                            <Label
+                                Text="Lihat jadwal dan detail kunjunganmu di Monica Salon."
+                                FontSize="12"
+                                TextColor="#757575" />
+                        </VerticalStackLayout>
 
-                            <Border
-                                Grid.Column="1"
-                                WidthRequest="48"
-                                HeightRequest="48"
-                                BackgroundColor="#FDECEC"
-                                StrokeThickness="0"
-                                StrokeShape="RoundRectangle 24"
+                        <HorizontalStackLayout Spacing="6">
+                            <Image
+                                WidthRequest="14"
+                                HeightRequest="14"
                                 VerticalOptions="Center">
-                                <Image
-                                    WidthRequest="24"
-                                    HeightRequest="24"
-                                    HorizontalOptions="Center"
-                                    VerticalOptions="Center">
-                                    <Image.Source>
-                                        <FontImageSource
-                                            FontFamily="MaterialOutlined"
-                                            Glyph="{x:Static m:MaterialRegular.History}"
-                                            Color="#D9534F"
-                                            Size="24" />
-                                    </Image.Source>
-                                </Image>
-                            </Border>
-                        </Grid>
-
-                        <Border
-                            BackgroundColor="#8B2626"
-                            StrokeThickness="0"
-                            StrokeShape="RoundRectangle 18"
-                            Padding="16">
-                            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
-                                <VerticalStackLayout Spacing="4">
-                                    <Label
-                                        Text="SLOT AKTIF"
-                                        FontSize="10"
-                                        FontAttributes="Bold"
-                                        TextColor="#F3C7C4"
-                                        CharacterSpacing="1" />
-                                    <Label
-                                        Text="{Binding SummaryText}"
-                                        FontSize="15"
-                                        FontAttributes="Bold"
-                                        TextColor="#FFFFFF"
-                                        LineHeight="1.3" />
-                                </VerticalStackLayout>
-
-                                <Image
-                                    Grid.Column="1"
-                                    WidthRequest="38"
-                                    HeightRequest="38"
-                                    VerticalOptions="Center">
-                                    <Image.Source>
-                                        <FontImageSource
-                                            FontFamily="MaterialOutlined"
-                                            Glyph="{x:Static m:MaterialRegular.Calendar_month}"
-                                            Color="#F8DCDC"
-                                            Size="38" />
-                                    </Image.Source>
-                                </Image>
-                            </Grid>
-                        </Border>
+                                <Image.Source>
+                                    <FontImageSource
+                                        FontFamily="MaterialOutlined"
+                                        Glyph="{x:Static m:MaterialRegular.Calendar_month}"
+                                        Color="#D9534F"
+                                        Size="14" />
+                                </Image.Source>
+                            </Image>
+                            <Label
+                                Text="{Binding SummaryText}"
+                                FontSize="12"
+                                TextColor="#757575"
+                                VerticalTextAlignment="Center" />
+                        </HorizontalStackLayout>
 
                         <Border
                             IsVisible="{Binding HasError}"
@@ -141,9 +101,9 @@
                             </HorizontalStackLayout>
                         </ScrollView>
 
-                        <Grid ColumnDefinitions="*,Auto">
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
                             <Label
-                                Text="Booking terbaru"
+                                Text="Daftar Booking"
                                 FontSize="14"
                                 FontAttributes="Bold"
                                 TextColor="#8B2626" />
@@ -164,30 +124,90 @@
                             Style="{StaticResource CardStyle}"
                             Margin="20,0,20,12"
                             Padding="14">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer
+                                    Command="{Binding BindingContext.OpenBookingCommand, Source={x:Reference HistoryView}}"
+                                    CommandParameter="{Binding .}" />
+                            </Border.GestureRecognizers>
+
                             <VerticalStackLayout Spacing="10">
 
-                                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
-                                    <VerticalStackLayout Spacing="3" VerticalOptions="Center">
+                                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+
+                                    <!-- Date badge -->
+                                    <Border
+                                        WidthRequest="52"
+                                        HeightRequest="58"
+                                        BackgroundColor="#FDECEC"
+                                        StrokeThickness="0"
+                                        StrokeShape="RoundRectangle 12"
+                                        VerticalOptions="Start">
+                                        <VerticalStackLayout
+                                            Spacing="0"
+                                            HorizontalOptions="Center"
+                                            VerticalOptions="Center">
+                                            <Label
+                                                Text="{Binding DateDayText}"
+                                                FontSize="18"
+                                                FontAttributes="Bold"
+                                                TextColor="#8B2626"
+                                                HorizontalTextAlignment="Center" />
+                                            <Label
+                                                Text="{Binding DateMonthText}"
+                                                FontSize="10"
+                                                FontAttributes="Bold"
+                                                TextColor="#D9534F"
+                                                CharacterSpacing="0.8"
+                                                TextTransform="Uppercase"
+                                                HorizontalTextAlignment="Center" />
+                                        </VerticalStackLayout>
+                                    </Border>
+
+                                    <!-- Booking summary -->
+                                    <VerticalStackLayout Grid.Column="1" Spacing="3" VerticalOptions="Center">
+                                        <Label
+                                            Text="{Binding ServicesText}"
+                                            FontSize="14"
+                                            FontAttributes="Bold"
+                                            TextColor="#1E1E1E"
+                                            MaxLines="2"
+                                            LineBreakMode="TailTruncation" />
+
+                                        <HorizontalStackLayout Spacing="4">
+                                            <Image
+                                                WidthRequest="13"
+                                                HeightRequest="13"
+                                                VerticalOptions="Center">
+                                                <Image.Source>
+                                                    <FontImageSource
+                                                        FontFamily="MaterialOutlined"
+                                                        Glyph="{x:Static m:MaterialRegular.Schedule}"
+                                                        Color="#A79A96"
+                                                        Size="13" />
+                                                </Image.Source>
+                                            </Image>
+                                            <Label
+                                                Text="{Binding ScheduleText}"
+                                                FontSize="11"
+                                                TextColor="#757575"
+                                                VerticalTextAlignment="Center"
+                                                MaxLines="1"
+                                                LineBreakMode="TailTruncation" />
+                                        </HorizontalStackLayout>
+
                                         <Label
                                             Text="{Binding Code}"
                                             FontSize="10"
                                             TextColor="#A79A96"
-                                            CharacterSpacing="0.5" />
-                                        <Label
-                                            Text="{Binding DateLongText}"
-                                            FontSize="15"
-                                            FontAttributes="Bold"
-                                            TextColor="#8B2626"
-                                            MaxLines="1"
-                                            LineBreakMode="TailTruncation" />
+                                            CharacterSpacing="0.4" />
                                     </VerticalStackLayout>
 
                                     <Border
-                                        Grid.Column="1"
+                                        Grid.Column="2"
                                         BackgroundColor="{Binding StatusBackgroundColor}"
                                         StrokeThickness="0"
                                         StrokeShape="RoundRectangle 10"
-                                        Padding="9,4"
+                                        Padding="8,4"
                                         VerticalOptions="Start">
                                         <Label
                                             Text="{Binding StatusText}"
@@ -197,40 +217,18 @@
                                     </Border>
                                 </Grid>
 
-                                <Label
-                                    Text="{Binding ServicesText}"
-                                    FontSize="13"
-                                    TextColor="#757575"
-                                    MaxLines="2"
-                                    LineBreakMode="TailTruncation" />
+                                <BoxView HeightRequest="1" BackgroundColor="#F2E8E5" />
 
-                                <Grid ColumnDefinitions="Auto,Auto,*,Auto" ColumnSpacing="6">
-                                    <Image WidthRequest="14" HeightRequest="14" VerticalOptions="Center">
-                                        <Image.Source>
-                                            <FontImageSource
-                                                FontFamily="MaterialOutlined"
-                                                Glyph="{x:Static m:MaterialRegular.Schedule}"
-                                                Color="#A79A96"
-                                                Size="14" />
-                                        </Image.Source>
-                                    </Image>
+                                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
                                     <Label
-                                        Grid.Column="1"
-                                        Text="{Binding TimeText}"
-                                        FontSize="12"
-                                        TextColor="#757575"
-                                        VerticalTextAlignment="Center" />
-                                    <Label
-                                        Grid.Column="2"
                                         Text="{Binding ItemsSummaryText}"
                                         FontSize="11"
                                         TextColor="#A79A96"
-                                        HorizontalTextAlignment="End"
                                         VerticalTextAlignment="Center"
                                         MaxLines="1"
                                         LineBreakMode="TailTruncation" />
                                     <Label
-                                        Grid.Column="3"
+                                        Grid.Column="1"
                                         Text="{Binding TotalText}"
                                         FontSize="14"
                                         FontAttributes="Bold"
@@ -238,49 +236,26 @@
                                         VerticalTextAlignment="Center" />
                                 </Grid>
 
-                                <BoxView HeightRequest="1" BackgroundColor="#F2E8E5" />
-
-                                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
-                                    <uranium:ButtonView
-                                        HeightRequest="38"
-                                        BackgroundColor="#D9534F"
-                                        StrokeThickness="0"
-                                        StrokeShape="RoundRectangle 12"
-                                        Padding="12,0"
-                                        TappedCommand="{Binding BindingContext.OpenBookingCommand, Source={x:Reference HistoryView}}"
-                                        CommandParameter="{Binding .}"
-                                        SemanticProperties.Description="Lihat detail booking">
-                                        <Label
-                                            Text="Lihat Detail"
-                                            FontSize="12"
-                                            FontAttributes="Bold"
-                                            TextColor="#FFFFFF"
-                                            HorizontalTextAlignment="Center"
-                                            VerticalTextAlignment="Center"
-                                            InputTransparent="True" />
-                                    </uranium:ButtonView>
-
-                                    <uranium:ButtonView
+                                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="6">
+                                    <Label
+                                        Text="Lihat detail"
+                                        FontSize="12"
+                                        FontAttributes="Bold"
+                                        TextColor="#D9534F"
+                                        VerticalTextAlignment="Center" />
+                                    <Image
                                         Grid.Column="1"
-                                        HeightRequest="38"
-                                        BackgroundColor="#FFFFFF"
-                                        Stroke="#E8D7D2"
-                                        StrokeThickness="1"
-                                        StrokeShape="RoundRectangle 12"
-                                        Padding="12,0"
-                                        IsVisible="{Binding CanLeaveFeedback}"
-                                        TappedCommand="{Binding BindingContext.WriteFeedbackCommand, Source={x:Reference HistoryView}}"
-                                        CommandParameter="{Binding .}"
-                                        SemanticProperties.Description="Beri ulasan booking">
-                                        <Label
-                                            Text="Beri Ulasan"
-                                            FontSize="12"
-                                            FontAttributes="Bold"
-                                            TextColor="#8B2626"
-                                            HorizontalTextAlignment="Center"
-                                            VerticalTextAlignment="Center"
-                                            InputTransparent="True" />
-                                    </uranium:ButtonView>
+                                        WidthRequest="15"
+                                        HeightRequest="15"
+                                        VerticalOptions="Center">
+                                        <Image.Source>
+                                            <FontImageSource
+                                                FontFamily="MaterialOutlined"
+                                                Glyph="{x:Static m:MaterialRegular.Chevron_right}"
+                                                Color="#D9534F"
+                                                Size="15" />
+                                        </Image.Source>
+                                    </Image>
                                 </Grid>
 
                             </VerticalStackLayout>
@@ -330,7 +305,8 @@
                             Text="Buat Booking"
                             Command="{Binding BindingContext.BookNowCommand, Source={x:Reference HistoryView}}"
                             Style="{StaticResource PrimaryActionStyle}"
-                            WidthRequest="180"
+                            HorizontalOptions="Center"
+                            Padding="24,0"
                             Margin="0,4,0,0" />
                     </VerticalStackLayout>
                 </CollectionView.EmptyView>

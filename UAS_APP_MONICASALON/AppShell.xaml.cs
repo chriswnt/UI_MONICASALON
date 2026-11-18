@@ -12,6 +12,7 @@ namespace UAS_APP_MONICASALON
             Routing.RegisterRoute(nameof(RegisterPage), typeof(RegisterPage));
 
             // Customer flow
+            Routing.RegisterRoute(nameof(ProfilePage), typeof(ProfilePage));
             Routing.RegisterRoute(nameof(CataloguePage), typeof(CataloguePage));
             Routing.RegisterRoute(nameof(ServiceDetailPage), typeof(ServiceDetailPage));
             Routing.RegisterRoute(nameof(SchedulePage), typeof(SchedulePage));

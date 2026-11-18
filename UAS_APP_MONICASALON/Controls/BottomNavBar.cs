@@ -19,6 +19,11 @@ public class BottomNavBar : ContentView
         propertyChanged: OnActiveTabChanged);
 
     private readonly List<TabVisual> _tabs = new();
+    private readonly Grid _navHost = new()
+    {
+        HorizontalOptions = LayoutOptions.Center,
+        VerticalOptions = LayoutOptions.Fill
+    };
 
     public BottomNavBar()
     {
@@ -59,10 +64,23 @@ public class BottomNavBar : ContentView
         AddTab(tabGrid, 3, "Riwayat", "Riwayat", MaterialRegular.History);
         AddTab(tabGrid, 4, "Gaya", "Gaya", MaterialRegular.Auto_awesome);
 
-        root.Add(tabGrid, 0, 1);
+        _navHost.Add(tabGrid);
+        root.Add(_navHost, 0, 1);
         Content = root;
 
         UpdateState();
+    }
+
+    protected override void OnSizeAllocated(double width, double height)
+    {
+        base.OnSizeAllocated(width, height);
+
+        var contentWidth = Math.Min(720, Math.Max(0, width));
+
+        if (contentWidth > 0 && Math.Abs(_navHost.WidthRequest - contentWidth) > 0.5)
+        {
+            _navHost.WidthRequest = contentWidth;
+        }
     }
 
     public string ActiveTab

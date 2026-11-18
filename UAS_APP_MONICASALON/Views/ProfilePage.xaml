@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<uranium:UraniumContentPage
+    x:Class="UAS_APP_MONICASALON.Views.ProfilePage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
+    xmlns:m="clr-namespace:UAS_APP_MONICASALON.Icons"
+    BackgroundColor="#FAF7F5"
+    NavigationPage.HasNavigationBar="False"
+    Shell.NavBarIsVisible="False">
+
+    <Grid RowDefinitions="Auto,*">
+
+        <!-- Header -->
+        <Grid
+            Padding="20,16,20,10"
+            ColumnDefinitions="Auto,*"
+            ColumnSpacing="12">
+            <uranium:ButtonView
+                WidthRequest="40"
+                HeightRequest="40"
+                BackgroundColor="#FFFFFF"
+                Stroke="#EFE6E4"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 20"
+                Padding="0"
+                VerticalOptions="Center"
+                SemanticProperties.Description="Kembali"
+                TappedCommand="{Binding BackCommand}">
+                <Image
+                    WidthRequest="20"
+                    HeightRequest="20"
+                    InputTransparent="True"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center">
+                    <Image.Source>
+                        <FontImageSource
+                            FontFamily="MaterialOutlined"
+                            Glyph="{x:Static m:MaterialRegular.Arrow_back}"
+                            Color="#8B2626"
+                            Size="20" />
+                    </Image.Source>
+                </Image>
+            </uranium:ButtonView>
+
+            <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                <Label Text="AKUN" Style="{StaticResource PageKickerStyle}" />
+                <Label Text="Profil Saya" Style="{StaticResource PageHeadingStyle}" />
+            </VerticalStackLayout>
+        </Grid>
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout
+                x:Name="ProfileContent"
+                Padding="20,14,20,28"
+                Spacing="16"
+                HorizontalOptions="Center">
+
+                <!-- Avatar + identity -->
+                <VerticalStackLayout Spacing="10" HorizontalOptions="Center">
+                    <Border
+                        WidthRequest="88"
+                        HeightRequest="88"
+                        BackgroundColor="#FDECEC"
+                        Stroke="#F5D6D3"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 44"
+                        HorizontalOptions="Center">
+                        <Label
+                            Text="{Binding Initials}"
+                            FontSize="28"
+                            FontAttributes="Bold"
+                            TextColor="#8B2626"
+                            HorizontalTextAlignment="Center"
+                            VerticalTextAlignment="Center" />
+                    </Border>
+
+                    <VerticalStackLayout Spacing="3" HorizontalOptions="Center">
+                        <Label
+                            Text="{Binding FullName}"
+                            FontSize="20"
+                            FontAttributes="Bold"
+                            TextColor="#1E1E1E"
+                            HorizontalTextAlignment="Center" />
+                        <Label
+                            Text="{Binding Email}"
+                            FontSize="12"
+                            TextColor="#757575"
+                            HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+
+                <!-- Contact details -->
+                <Border Style="{StaticResource CardStyle}" Padding="16">
+                    <VerticalStackLayout Spacing="14">
+                        <Label
+                            Text="Informasi Akun"
+                            FontSize="14"
+                            FontAttributes="Bold"
+                            TextColor="#8B2626" />
+
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                            <Border
+                                WidthRequest="34"
+                                HeightRequest="34"
+                                BackgroundColor="#FDECEC"
+                                StrokeThickness="0"
+                                StrokeShape="RoundRectangle 17"
+                                VerticalOptions="Center">
+                                <Image
+                                    WidthRequest="17"
+                                    HeightRequest="17"
+                                    HorizontalOptions="Center"
+                                    VerticalOptions="Center">
+                                    <Image.Source>
+                                        <FontImageSource
+                                            FontFamily="MaterialOutlined"
+                                            Glyph="{x:Static m:MaterialRegular.Phone_iphone}"
+                                            Color="#D9534F"
+                                            Size="17" />
+                                    </Image.Source>
+                                </Image>
+                            </Border>
+                            <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                <Label Text="Nomor HP" FontSize="11" TextColor="#A79A96" />
+                                <Label Text="{Binding Phone}" FontSize="13" TextColor="#1E1E1E" />
+                            </VerticalStackLayout>
+                        </Grid>
+
+                        <BoxView HeightRequest="1" BackgroundColor="#F2E8E5" />
+
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                            <Border
+                                WidthRequest="34"
+                                HeightRequest="34"
+                                BackgroundColor="#FDECEC"
+                                StrokeThickness="0"
+                                StrokeShape="RoundRectangle 17"
+                                VerticalOptions="Center">
+                                <Image
+                                    WidthRequest="17"
+                                    HeightRequest="17"
+                                    HorizontalOptions="Center"
+                                    VerticalOptions="Center">
+                                    <Image.Source>
+                                        <FontImageSource
+                                            FontFamily="MaterialOutlined"
+                                            Glyph="{x:Static m:MaterialRegular.Mail}"
+                                            Color="#D9534F"
+                                            Size="17" />
+                                    </Image.Source>
+                                </Image>
+                            </Border>
+                            <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                <Label Text="Email" FontSize="11" TextColor="#A79A96" />
+                                <Label Text="{Binding Email}" FontSize="13" TextColor="#1E1E1E" />
+                            </VerticalStackLayout>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Button
+                    Text="Keluar dari Akun"
+                    Command="{Binding LogoutCommand}"
+                    BackgroundColor="#FFFFFF"
+                    BorderColor="#E8C6C2"
+                    BorderWidth="1"
+                    TextColor="#B3261E"
+                    CornerRadius="16"
+                    HeightRequest="50"
+                    FontAttributes="Bold"
+                    FontSize="14"
+                    SemanticProperties.Description="Keluar dari akun" />
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+
+</uranium:UraniumContentPage>

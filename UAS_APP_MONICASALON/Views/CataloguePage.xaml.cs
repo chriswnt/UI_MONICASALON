@@ -15,4 +15,16 @@ public partial class CataloguePage : UraniumContentPage
         InitializeComponent();
         BindingContext = viewModel;
     }
+
+    protected override void OnSizeAllocated(double width, double height)
+    {
+        base.OnSizeAllocated(width, height);
+
+        var contentWidth = Math.Min(720, Math.Max(0, width));
+
+        if (contentWidth > 0 && Math.Abs(CatalogueContent.WidthRequest - contentWidth) > 0.5)
+        {
+            CatalogueContent.WidthRequest = contentWidth;
+        }
+    }
 }

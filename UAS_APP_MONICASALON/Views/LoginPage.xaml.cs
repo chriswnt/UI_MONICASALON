@@ -33,18 +33,13 @@ public partial class LoginPage : UraniumContentPage
             return;
         }
 
-        if (Math.Abs(HeroContent.WidthRequest - contentWidth) > 0.5)
-        {
-            HeroContent.WidthRequest = contentWidth;
-        }
-
         if (Math.Abs(LoginContent.WidthRequest - contentWidth) > 0.5)
         {
             LoginContent.WidthRequest = contentWidth;
         }
 
-        // Keep the footer reachable on shorter windows without shrinking the
-        // hero so much that the greeting collides with the wave.
+        // Keep the plain hero as a decorative header while leaving enough room
+        // for the form on shorter windows.
         var heroHeight = Math.Clamp(height * 0.39, 286, 316);
 
         if (Math.Abs(HeroHost.HeightRequest - heroHeight) > 0.5)

@@ -16,9 +16,13 @@
 
         <!-- Scrollable dashboard -->
         <ScrollView Grid.Row="0">
-            <VerticalStackLayout Padding="20,16,20,20" Spacing="18">
+            <VerticalStackLayout
+                Padding="20,16,20,20"
+                Spacing="18"
+                MaximumWidthRequest="720"
+                HorizontalOptions="Center">
 
-                <!-- Greeting + location -->
+                <!-- Greeting + profile -->
                 <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
                     <VerticalStackLayout Spacing="3" VerticalOptions="Center">
                         <Label
@@ -26,28 +30,13 @@
                             FontSize="20"
                             FontAttributes="Bold"
                             TextColor="#8B2626" />
-                        <HorizontalStackLayout Spacing="5">
-                            <Image
-                                WidthRequest="14"
-                                HeightRequest="14"
-                                VerticalOptions="Center">
-                                <Image.Source>
-                                    <FontImageSource
-                                        FontFamily="MaterialOutlined"
-                                        Glyph="{x:Static m:MaterialRegular.Location_on}"
-                                        Color="#D9534F"
-                                        Size="14" />
-                                </Image.Source>
-                            </Image>
-                            <Label
-                                Text="Pasar Kemis, Tangerang"
-                                FontSize="12"
-                                TextColor="#757575"
-                                VerticalTextAlignment="Center" />
-                        </HorizontalStackLayout>
+                        <Label
+                            Text="Selamat datang kembali."
+                            FontSize="12"
+                            TextColor="#757575" />
                     </VerticalStackLayout>
 
-                    <uranium:ButtonView
+                    <Border
                         Grid.Column="1"
                         WidthRequest="44"
                         HeightRequest="44"
@@ -57,33 +46,28 @@
                         StrokeShape="RoundRectangle 22"
                         Padding="0"
                         VerticalOptions="Center"
-                        SemanticProperties.Description="Notifikasi"
-                        TappedCommand="{Binding OpenNotificationsCommand}">
-                        <Grid InputTransparent="True">
-                            <Image
-                                WidthRequest="22"
-                                HeightRequest="22"
-                                HorizontalOptions="Center"
-                                VerticalOptions="Center">
-                                <Image.Source>
-                                    <FontImageSource
-                                        FontFamily="MaterialOutlined"
-                                        Glyph="{x:Static m:MaterialRegular.Notifications}"
-                                        Color="#1E1E1E"
-                                        Size="22" />
-                                </Image.Source>
-                            </Image>
-                            <Border
-                                WidthRequest="8"
-                                HeightRequest="8"
-                                BackgroundColor="#D9534F"
-                                StrokeThickness="0"
-                                StrokeShape="RoundRectangle 4"
-                                HorizontalOptions="End"
-                                VerticalOptions="Start"
-                                Margin="0,9,9,0" />
-                        </Grid>
-                    </uranium:ButtonView>
+                        SemanticProperties.Description="Buka profil">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding OpenProfileCommand}" />
+                        </Border.GestureRecognizers>
+                        <Border
+                            WidthRequest="34"
+                            HeightRequest="34"
+                            BackgroundColor="#FDECEC"
+                            StrokeThickness="0"
+                            StrokeShape="RoundRectangle 17"
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center"
+                            InputTransparent="True">
+                            <Label
+                                Text="{Binding Initials}"
+                                FontSize="12"
+                                FontAttributes="Bold"
+                                TextColor="#8B2626"
+                                HorizontalTextAlignment="Center"
+                                VerticalTextAlignment="Center" />
+                        </Border>
+                    </Border>
                 </Grid>
 
                 <!-- Search + filter -->
@@ -429,30 +413,6 @@
                                                         </Image.Source>
                                                     </Image>
                                                 </Border>
-
-                                                <Border
-                                                    BackgroundColor="#FFFFFF"
-                                                    StrokeThickness="0"
-                                                    StrokeShape="RoundRectangle 10"
-                                                    Padding="7,3"
-                                                    HorizontalOptions="End"
-                                                    VerticalOptions="End"
-                                                    Margin="0,0,8,8">
-                                                    <HorizontalStackLayout Spacing="2">
-                                                        <Label
-                                                            Text="★"
-                                                            FontSize="11"
-                                                            FontAttributes="Bold"
-                                                            TextColor="#F59E0B"
-                                                            VerticalTextAlignment="Center" />
-                                                        <Label
-                                                            Text="{Binding RatingText}"
-                                                            FontSize="11"
-                                                            FontAttributes="Bold"
-                                                            TextColor="#1E1E1E"
-                                                            VerticalTextAlignment="Center" />
-                                                    </HorizontalStackLayout>
-                                                </Border>
                                             </Grid>
                                         </Border>
 
@@ -619,30 +579,6 @@
                 </Grid>
 
                 <HorizontalStackLayout Spacing="8">
-                    <Border
-                        BackgroundColor="#FAF7F5"
-                        StrokeThickness="0"
-                        StrokeShape="RoundRectangle 10"
-                        Padding="10,5">
-                        <HorizontalStackLayout Spacing="4">
-                            <Image WidthRequest="14" HeightRequest="14" VerticalOptions="Center">
-                                <Image.Source>
-                                    <FontImageSource
-                                        FontFamily="MaterialOutlined"
-                                        Glyph="{x:Static m:MaterialRegular.Star}"
-                                        Color="#F59E0B"
-                                        Size="14" />
-                                </Image.Source>
-                            </Image>
-                            <Label
-                                Text="{Binding SelectedService.RatingText}"
-                                FontSize="12"
-                                FontAttributes="Bold"
-                                TextColor="#1E1E1E"
-                                VerticalTextAlignment="Center" />
-                        </HorizontalStackLayout>
-                    </Border>
-
                     <Border
                         BackgroundColor="#FAF7F5"
                         StrokeThickness="0"

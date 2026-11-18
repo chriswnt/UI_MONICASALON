@@ -19,7 +19,9 @@
             ItemsSource="{Binding Hairstyles}"
             SelectionMode="None"
             VerticalScrollBarVisibility="Never"
-            ItemSizingStrategy="MeasureAllItems">
+            ItemSizingStrategy="MeasureAllItems"
+            MaximumWidthRequest="720"
+            HorizontalOptions="Center">
 
             <CollectionView.ItemsLayout>
                 <GridItemsLayout

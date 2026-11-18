@@ -101,6 +101,14 @@ public class BookingRecord
         ? "Belum pilih tanggal"
         : Date.ToString("ddd, d MMM", Indonesian);
 
+    public string DateDayText => Date == default
+        ? "--"
+        : Date.ToString("dd", Indonesian);
+
+    public string DateMonthText => Date == default
+        ? "---"
+        : Date.ToString("MMM", Indonesian);
+
     public string TimeText => string.IsNullOrWhiteSpace(Time) ? "Belum pilih jam" : Time;
 
     public string ScheduleText => $"{DateShortText} · {TimeText}";
