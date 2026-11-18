@@ -2,11 +2,7 @@
 
 Aplikasi **UI-only** untuk Monica Salon, dibangun dengan **.NET MAUI 10** dan **UraniumUI 3.0**. Proyek ini adalah tugas UAS mata kuliah Pemrograman Visual.
 
-<<<<<<< HEAD
-> **Scope Phase 1:** aplikasi **UI-only**. Belum ada backend, database, halaman admin, atau pembayaran nyata. Data salon, jadwal, booking, dan ulasan disediakan oleh **mock API layer** (`IBookingApi`, `IFeedbackApi`, `IScheduleApi`) yang disimpan di memori melalui `MockSalonDatabase`. Layer ini bisa diganti dengan HTTP API tanpa mengubah halaman atau ViewModel. Booking baru langsung berstatus **Terkonfirmasi** — tidak ada status "Menunggu Konfirmasi".
-=======
-> **Scope:** Phase 1 mencakup 3 halaman Customer UI. Phase 2 (Admin) menambahkan **Admin Dashboard** dan **Admin Booking** sebagai perluasan aplikasi. Tidak ada koneksi database/backend; semua data masih *mock data*.
->>>>>>> 4fb551ee537c1081a19e131aa6999af24d715ac3
+> **Scope:** Phase 1 mencakup **Customer UI** (login, register, home, katalog, booking, riwayat, ulasan, buku gaya). Phase 2 (Admin) menambahkan **Admin Dashboard**, **Admin Booking**, dan **Kasir** sebagai perluasan aplikasi. Aplikasi masih **UI-only**: belum ada backend, database, atau pembayaran nyata. Data salon, jadwal, booking, dan ulasan disediakan oleh **mock layer** yang disimpan di memori (`MockSalonDatabase`, `AdminBookingStore`, `CashierSession`). Booking customer langsung berstatus **Terkonfirmasi** — tidak ada status "Menunggu Konfirmasi".
 
 ---
 
@@ -14,9 +10,8 @@ Aplikasi **UI-only** untuk Monica Salon, dibangun dengan **.NET MAUI 10** dan **
 
 | Halaman | File | Isi |
 |---------|------|-----|
-| Login | `Views/LoginPage.xaml` | Hero coral dengan ilustrasi kontur, transisi gelombang ke panel putih, form email/password, "Ingat saya", lupa password, dan tautan daftar |
+| Login | `Views/LoginPage.xaml` | Hero coral dengan ilustrasi kontur, transisi gelombang ke panel putih, form email/password, "Ingat saya", lupa password, tautan daftar, dan tautan **Masuk sebagai Admin** |
 | Register | `Views/RegisterPage.xaml` | Form pendaftaran customer (nama, email, telepon, password, konfirmasi, checkbox S&K) |
-<<<<<<< HEAD
 | Home Customer | `Views/HomeCustomerPage.xaml` | Dashboard customer: sapaan, pencarian, banner promo, kategori, daftar layanan, bottom navigation, bottom sheet detail layanan |
 | Katalog Layanan | `Views/CataloguePage.xaml` | Daftar semua layanan dengan pencarian dan filter kategori |
 | Detail Layanan | `Views/ServiceDetailPage.xaml` | Foto, kategori, harga, durasi, deskripsi, dan tombol booking |
@@ -28,19 +23,11 @@ Aplikasi **UI-only** untuk Monica Salon, dibangun dengan **.NET MAUI 10** dan **
 | Ulasan | `Views/BookingFeedbackPage.xaml` | Rating bintang, tag ulasan, komentar, dan kirim ulasan |
 | Buku Gaya | `Views/HairstyleBookPage.xaml` | Katalog hairstyle dari admin dengan filter kategori |
 | Detail Hairstyle | `Views/HairstyleDetailPage.xaml` | Deskripsi gaya, rekomendasi layanan, dan tombol booking |
-
-Alur navigasi utama:
-
-`LoginPage` → (Login / Daftar) → `RegisterPage` / `HomeCustomerPage` → `CataloguePage` / `HairstyleBookPage` → `ServiceDetailPage` / `HairstyleDetailPage` → `SchedulePage` → `ConfirmBookingPage` → `BookingSuccessPage` → `BookingHistoryPage` → `BookingDetailsPage` → `BookingFeedbackPage`.
-
-Bottom navigation (`Controls/BottomNavBar.cs`) menghubungkan **Home**, **Layanan**, **Booking**, **Riwayat**, dan **Gaya**.
-=======
-| Home Customer | `Views/HomeCustomerPage.xaml` | Dashboard customer: header, search, banner promo, kategori layanan, daftar layanan, bottom navigation, bottom sheet detail layanan |
 | Admin Dashboard | `Views/Admin/AdminDashboardPage.xaml` | Ringkasan operasional: statistik, booking mingguan, pendapatan, booking terbaru |
 | Admin Booking | `Views/Admin/AdminBookingsPage.xaml` | Manajemen booking: pencarian, filter tanggal/status, kartu booking, bottom sheet detail & jadwal ulang |
 | Admin Booking Baru | `Views/Admin/AdminCreateBookingPage.xaml` | Form booking baru: pelanggan, layanan, stylist, tanggal/jam, catatan, cek ketersediaan slot |
 | Admin Detail Booking | `Views/Admin/AdminBookingDetailsPage.xaml` | Detail booking satu halaman penuh + aksi konfirmasi / tolak / selesai / batal / jadwal ulang / bayar di kasir |
-| Admin Jadwal Ulang | `Views/Admin/AdminReschedulePage.xaml` | Pindahkan jadwal: kalender, pilih jam, cek bentrok slot stylist |
+| Admin Jadwal Ulang | `Views/Admin/AdminReschedulePage.xaml` | Pindahkan jadwal: pemilihan tanggal, pilih jam, cek bentrok slot stylist |
 | Kasir | `Views/Admin/CashierPage.xaml` | Katalog layanan & produk, pencarian, filter kategori, keranjang (bottom sheet) |
 | Review Transaksi | `Views/Admin/TransactionReviewPage.xaml` | Data pelanggan & stylist, ubah jumlah item, kode promo, ringkasan total |
 | Pembayaran | `Views/Admin/PaymentPage.xaml` | Metode bayar (Tunai/EDC/QRIS/E-Wallet), nominal cepat, kembalian, status "memproses" |
@@ -48,11 +35,15 @@ Bottom navigation (`Controls/BottomNavBar.cs`) menghubungkan **Home**, **Layanan
 | Riwayat Transaksi | `Views/Admin/TransactionHistoryPage.xaml` | Statistik hari ini, filter cari/periode/metode, tombol kembali ke Kasir, daftar transaksi |
 | Detail Transaksi | `Views/Admin/TransactionDetailsPage.xaml` | Struk lengkap, cetak/bagikan (stub), pengembalian dana |
 
-Alur navigasi customer: `LoginPage` → (Login / Daftar) → `RegisterPage` / `HomeCustomerPage`.
+Alur navigasi customer:
 
-Alur navigasi Admin: `LoginPage` → tautan **Masuk sebagai Admin** → bottom navigation 5 tab:
-**Dashboard ↔ Booking ↔ Kasir ↔ Reports ↔ Settings** (Reports & Settings masih placeholder).
-Tab `Kasir` menggantikan tab placeholder `Customers` yang sebelumnya belum punya halaman.
+`LoginPage` → (Login / Daftar) → `RegisterPage` / `HomeCustomerPage` → `CataloguePage` / `HairstyleBookPage` → `ServiceDetailPage` / `HairstyleDetailPage` → `SchedulePage` → `ConfirmBookingPage` → `BookingSuccessPage` → `BookingHistoryPage` → `BookingDetailsPage` → `BookingFeedbackPage`.
+
+Bottom navigation (`Controls/BottomNavBar.cs`) menghubungkan **Home**, **Layanan**, **Booking**, **Riwayat**, dan **Gaya**.
+
+Alur navigasi Admin:
+
+`LoginPage` → **Masuk sebagai Admin** → bottom navigation **Dashboard ↔ Booking ↔ Kasir ↔ Reports ↔ Settings** (Reports & Settings masih placeholder).
 
 Alur modul Booking: `AdminBookingsPage` → tombol **+** → `AdminCreateBookingPage` (kembali ke daftar),
 atau kartu booking → bottom sheet detail → **Buka Halaman Detail** → `AdminBookingDetailsPage` →
@@ -61,7 +52,6 @@ atau kartu booking → bottom sheet detail → **Buka Halaman Detail** → `Admi
 Alur modul Kasir: `CashierPage` → keranjang / **Review** → `TransactionReviewPage` → `PaymentPage` →
 `TransactionSuccessPage` → **Lihat Struk** → `TransactionDetailsPage`, atau **Riwayat Transaksi** →
 `TransactionHistoryPage` → kartu transaksi → `TransactionDetailsPage`.
->>>>>>> 4fb551ee537c1081a19e131aa6999af24d715ac3
 
 ---
 
@@ -135,8 +125,15 @@ UAS_APP_MONICASALON/
 ├── prd_monica_salon_phase_1.md # Dokumen spesifikasi (PRD) Phase 1
 │
 ├── Controls/
-│   ├── BottomNavBar.cs         # Bottom navigation bersama (5 tab)
-│   └── ButtonView.cs           # Shim: <uranium:ButtonView> → UraniumUI Material
+│   ├── BottomNavBar.cs         # Bottom navigation customer (5 tab)
+│   ├── ButtonView.cs           # Shim: <uranium:ButtonView> → UraniumUI Material
+│   └── Admin/
+│       ├── AdminLayout.xaml    # Header + konten + bottom navigation admin
+│       ├── AdminNavigationItem.xaml
+│       ├── StatCard.xaml
+│       ├── SectionCard.xaml
+│       ├── StatusBadge.xaml
+│       └── PaymentBadge.xaml
 │
 ├── Models/                     # Model data (dummy / DTO)
 │   ├── BannerItem.cs
@@ -155,7 +152,17 @@ UAS_APP_MONICASALON/
 │   ├── FeedbackRecord.cs
 │   ├── FeedbackRequest.cs
 │   ├── FilterChip.cs
-│   └── RatingStarItem.cs
+│   ├── RatingStarItem.cs
+│   └── Admin/                  # Model & mock store modul admin/kasir
+│       ├── AdminBooking.cs
+│       ├── AdminBookingStore.cs
+│       ├── AdminMockData.cs
+│       ├── CashierSession.cs
+│       ├── CashierMockData.cs
+│       ├── CashierTransaction.cs
+│       ├── CashierPricing.cs
+│       ├── PaymentMethod.cs
+│       └── Rupiah.cs
 │
 ├── Services/                   # Mock API, session, katalog, formatter
 │   ├── AppServices.cs          # Service locator sederhana untuk halaman/VM
@@ -186,7 +193,19 @@ UAS_APP_MONICASALON/
 │   ├── BookingDetailsViewModel.cs
 │   ├── BookingFeedbackViewModel.cs
 │   ├── HairstyleBookViewModel.cs
-│   └── HairstyleDetailViewModel.cs
+│   ├── HairstyleDetailViewModel.cs
+│   └── Admin/                  # ViewModel modul admin/kasir
+│       ├── AdminDashboardViewModel.cs
+│       ├── AdminBookingsViewModel.cs
+│       ├── AdminCreateBookingViewModel.cs
+│       ├── AdminBookingDetailsViewModel.cs
+│       ├── AdminRescheduleViewModel.cs
+│       ├── CashierViewModel.cs
+│       ├── TransactionReviewViewModel.cs
+│       ├── PaymentViewModel.cs
+│       ├── TransactionSuccessViewModel.cs
+│       ├── TransactionHistoryViewModel.cs
+│       └── TransactionDetailsViewModel.cs
 │
 ├── Views/
 │   ├── LoginPage.xaml(.cs)
@@ -201,15 +220,33 @@ UAS_APP_MONICASALON/
 │   ├── BookingDetailsPage.xaml(.cs)
 │   ├── BookingFeedbackPage.xaml(.cs)
 │   ├── HairstyleBookPage.xaml(.cs)
-│   └── HairstyleDetailPage.xaml(.cs)
+│   ├── HairstyleDetailPage.xaml(.cs)
+│   └── Admin/                  # Halaman admin, booking, dan kasir
+│       ├── AdminDashboardPage.xaml(.cs)
+│       ├── AdminBookingsPage.xaml(.cs)
+│       ├── AdminCreateBookingPage.xaml(.cs)
+│       ├── AdminBookingDetailsPage.xaml(.cs)
+│       ├── AdminReschedulePage.xaml(.cs)
+│       ├── CashierPage.xaml(.cs)
+│       ├── TransactionReviewPage.xaml(.cs)
+│       ├── PaymentPage.xaml(.cs)
+│       ├── TransactionSuccessPage.xaml(.cs)
+│       ├── TransactionHistoryPage.xaml(.cs)
+│       └── TransactionDetailsPage.xaml(.cs)
 │
 ├── Icons/
-│   └── MaterialRegular.cs      # Kumpulan nama ikon Material Symbols
+│   ├── MaterialRegular.cs      # Kumpulan nama ikon Material Symbols
+│   └── AdminIcons.cs           # Ikon khusus layar admin
 │
 ├── Platforms/                  # Konfigurasi per-platform (Android/iOS/Windows/Mac)
 └── Resources/                  # Font, gambar, icon, splash, style warna
+    ├── Styles/
+    │   ├── Colors.xaml         # Token warna customer + admin
+    │   ├── Styles.xaml         # Style dasar MAUI/customer
+    │   └── AdminStyles.xaml    # Style layar admin
     └── Images/
         ├── login_hero.svg      # Ilustrasi kontur coral untuk hero login
+        ├── banner_aplikasi.png # Banner login alternatif
         ├── style_*.png         # Ilustrasi hairstyle
         └── service_*.jpg       # Foto layanan
 ```
@@ -270,18 +307,18 @@ public class ButtonView : UraniumUI.Material.Controls.ButtonView { }
 
 Shim ini didaftarkan lewat `AssemblyInfo.cs` (`XmlnsDefinition`) dan handler-nya didaftarkan di `MauiProgram.cs`. Karena mewarisi (`inherit`) kontrol Uranium asli, seluruh perilaku dan tampilan tetap milik UraniumUI.
 
-<<<<<<< HEAD
 ### Catatan: `Platforms/Windows/SafeStatefulButtonHandler.cs`
 
 UraniumUI 3.0 mendaftarkan `StatefulButtonHandler` untuk setiap `Button` polos. Saat halaman di-pop dari navigation stack, handler tersebut mereset visual state setelah MAUI menghapus platform view, sehingga muncul error `PlatformView cannot be null here` dan aplikasi tertutup. Di Windows, handler diganti dengan `SafeStatefulButtonHandler` yang mempertahankan efek hover/pressed tetapi melewati reset state saat proses disconnect.
-=======
+
 ### Admin UI (Phase 2)
 
-- Layout **mobile-first**: header admin, konten bertumpuk, dan bottom navigation Dashboard / Booking.
-- Komponen bersama di `Controls/Admin/`: `AdminLayout`, `AdminNavigationItem`, `StatCard`, `SectionCard`, `StatusBadge`.
+- Layout **mobile-first**: header admin, konten bertumpuk, dan bottom navigation Dashboard / Booking / Kasir / Reports / Settings.
+- Komponen bersama di `Controls/Admin/`: `AdminLayout`, `AdminNavigationItem`, `StatCard`, `SectionCard`, `StatusBadge`, `PaymentBadge`.
 - Style bersama di `Resources/Styles/AdminStyles.xaml`; warna tetap memakai token dari `Colors.xaml`.
-- Data mock di `Models/Admin/AdminMockData.cs`; ViewModel di `ViewModels/Admin/`.
-- Alur login/register customer tidak diubah; hanya ditambahkan tautan admin di footer login.
+- Data mock di `Models/Admin/`; ViewModel di `ViewModels/Admin/`.
+- Alur login/register customer tidak diubah; hanya ditambahkan tautan **Masuk sebagai Admin** di bagian bawah halaman login.
+- Font admin memakai `OpenSansRegular` / `OpenSansSemibold`, sedangkan halaman customer memakai `PlusJakartaSans*`; keduanya didaftarkan di `MauiProgram.cs`.
 
 ### Modul Kasir & Booking (Phase 3)
 
@@ -313,7 +350,7 @@ UraniumUI 3.0 mendaftarkan `StatefulButtonHandler` untuk setiap `Button` polos. 
 
 **Aksesibilitas:**
 
-- `SemanticProperties.Description` + `SemanticProperties.Hint` pada semua kontrol interaktif
+- `SemanticProperties.Description` + `SemanticProperties.Hint` pada kontrol interaktif
   (tombol, tombol ikon `ButtonView`, chip kategori, kartu katalog, dropdown, field teks).
 - `SemanticProperties.HeadingLevel` (Level 1 untuk judul halaman, Level 2 untuk judul kartu/seksi) di
   `AdminStyles.xaml`, jadi urutan heading konsisten di seluruh layar admin.
@@ -332,7 +369,6 @@ aplikasi mati mendadak di Windows. Karena itu semua halaman yang bisa di-back me
 (atau dropdown periode), dan tidak ada lagi `CalendarView` di proyek ini. Tombol aksi yang penting
 (tombol kembali, tombol **+** Booking Baru, shortcut Riwayat) juga memakai `Button` asli, bukan
 `ButtonView`/gesture, supaya bisa diaktifkan pembaca layar.
->>>>>>> 4fb551ee537c1081a19e131aa6999af24d715ac3
 
 ### Palet Warna
 

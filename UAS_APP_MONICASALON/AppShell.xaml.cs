@@ -10,7 +10,8 @@ namespace UAS_APP_MONICASALON
             InitializeComponent();
 
             Routing.RegisterRoute(nameof(RegisterPage), typeof(RegisterPage));
-<<<<<<< HEAD
+
+            // Customer flow
             Routing.RegisterRoute(nameof(CataloguePage), typeof(CataloguePage));
             Routing.RegisterRoute(nameof(ServiceDetailPage), typeof(ServiceDetailPage));
             Routing.RegisterRoute(nameof(SchedulePage), typeof(SchedulePage));
@@ -21,8 +22,8 @@ namespace UAS_APP_MONICASALON
             Routing.RegisterRoute(nameof(BookingFeedbackPage), typeof(BookingFeedbackPage));
             Routing.RegisterRoute(nameof(HairstyleBookPage), typeof(HairstyleBookPage));
             Routing.RegisterRoute(nameof(HairstyleDetailPage), typeof(HairstyleDetailPage));
-=======
-            Routing.RegisterRoute(nameof(HomeCustomerPage), typeof(HomeCustomerPage));
+
+            // Admin flow
             Routing.RegisterRoute(nameof(AdminDashboardPage), typeof(AdminDashboardPage));
             Routing.RegisterRoute(nameof(AdminBookingsPage), typeof(AdminBookingsPage));
 
@@ -34,11 +35,10 @@ namespace UAS_APP_MONICASALON
             Routing.RegisterRoute(nameof(TransactionHistoryPage), typeof(TransactionHistoryPage));
             Routing.RegisterRoute(nameof(TransactionDetailsPage), typeof(TransactionDetailsPage));
 
-            // Booking module
+            // Admin booking module
             Routing.RegisterRoute(nameof(AdminCreateBookingPage), typeof(AdminCreateBookingPage));
             Routing.RegisterRoute(nameof(AdminBookingDetailsPage), typeof(AdminBookingDetailsPage));
             Routing.RegisterRoute(nameof(AdminReschedulePage), typeof(AdminReschedulePage));
->>>>>>> 4fb551ee537c1081a19e131aa6999af24d715ac3
         }
     }
 }

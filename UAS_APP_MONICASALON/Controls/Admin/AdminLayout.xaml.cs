@@ -107,6 +107,6 @@ public partial class AdminLayout : ContentView
 
     private async void OnLogout()
     {
-        await Shell.Current.GoToAsync("//LoginPage");
+        await Shell.Current.GoToAsync("//LoginRoot/LoginPage");
     }
 }

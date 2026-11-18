@@ -42,6 +42,11 @@ namespace UAS_APP_MONICASALON
                     fonts.AddFont("PlusJakartaSans-Medium.ttf", "PlusJakartaSansMedium");
                     fonts.AddFont("PlusJakartaSans-SemiBold.ttf", "PlusJakartaSansSemiBold");
                     fonts.AddFont("PlusJakartaSans-Bold.ttf", "PlusJakartaSansBold");
+
+                    // Admin screens (Phase 2) use the template's Open Sans faces.
+                    fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
+                    fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+
                     fonts.AddMaterialSymbolsFonts();
                 });
 
