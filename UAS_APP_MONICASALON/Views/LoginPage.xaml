@@ -142,7 +142,7 @@
                     <VerticalStackLayout Spacing="0">
 
                         <material:TextField
-                            Title="Email atau No. HP"
+                            Title="Email atau Username"
                             Text="{Binding Identifier}"
                             AccentColor="#D9534F"
                             BorderColor="#F0DFDB"
@@ -271,7 +271,7 @@
                 </HorizontalStackLayout>
 
                 <Label
-                    Text="Mode demo: email dan password apa pun bisa digunakan."
+                    Text="Customer baru? Daftar dulu."
                     FontSize="10"
                     TextColor="#A79A96"
                     HorizontalTextAlignment="Center"

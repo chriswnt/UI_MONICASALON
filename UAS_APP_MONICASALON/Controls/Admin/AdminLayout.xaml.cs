@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Windows.Input;
+using UAS_APP_MONICASALON.Services;
 
 namespace UAS_APP_MONICASALON.Controls.Admin;
 
@@ -107,6 +108,16 @@ public partial class AdminLayout : ContentView
 
     private async void OnLogout()
     {
+        try
+        {
+            await AppServices.AuthApi.LogoutAsync();
+        }
+        catch (Exception)
+        {
+            // Local session is still cleared below.
+        }
+
+        UserSession.SignOut();
         await Shell.Current.GoToAsync("//LoginRoot/LoginPage");
     }
 }

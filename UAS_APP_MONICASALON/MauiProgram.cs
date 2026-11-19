@@ -1,6 +1,8 @@
 ﻿using System.Globalization;
 using Microsoft.Extensions.Logging;
 using UAS_APP_MONICASALON.Controls;
+using UAS_APP_MONICASALON.Services;
+using UAS_APP_MONICASALON.Services.Api;
 using UraniumUI;
 using UraniumUI.Icons.MaterialSymbols;
 using UraniumUI.Material.Handlers;
@@ -50,11 +52,33 @@ namespace UAS_APP_MONICASALON
                     fonts.AddMaterialSymbolsFonts();
                 });
 
+            builder.Services.AddSingleton(new HttpClient
+            {
+                Timeout = TimeSpan.FromSeconds(ApiConfig.TimeoutSeconds)
+            });
+
+            builder.Services.AddSingleton<TokenStore>();
+            builder.Services.AddSingleton<ApiClient>();
+            builder.Services.AddSingleton<IAuthApi, HttpAuthApi>();
+            builder.Services.AddSingleton<ICatalogApi, HttpCatalogApi>();
+            builder.Services.AddSingleton<CatalogCache>();
+            builder.Services.AddSingleton<IBookingApi, HttpBookingApi>();
+            builder.Services.AddSingleton<IScheduleApi, HttpScheduleApi>();
+            // The backend has no feedback endpoints yet, so feedback stays local.
+            builder.Services.AddSingleton<IFeedbackApi, MockFeedbackApi>();
+            builder.Services.AddSingleton<IAdminBookingApi, HttpAdminBookingApi>();
+            builder.Services.AddSingleton<ITransactionApi, HttpTransactionApi>();
+            builder.Services.AddSingleton<IInventoryApi, HttpInventoryApi>();
+            builder.Services.AddSingleton<IFinanceApi, HttpFinanceApi>();
+
 #if DEBUG
             builder.Logging.AddDebug();
 #endif
 
-            return builder.Build();
+            var app = builder.Build();
+            AppServices.Configure(app.Services);
+
+            return app;
         }
     }
 }

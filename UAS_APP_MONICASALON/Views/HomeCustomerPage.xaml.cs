@@ -15,4 +15,14 @@ public partial class HomeCustomerPage : UraniumContentPage
         InitializeComponent();
         BindingContext = viewModel;
     }
+
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+
+        if (BindingContext is HomeCustomerViewModel viewModel)
+        {
+            await viewModel.LoadAsync();
+        }
+    }
 }

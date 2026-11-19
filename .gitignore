@@ -24,3 +24,7 @@ packages/
 # OS
 .DS_Store
 Thumbs.db
+
+# Local environment (API base URL, secrets)
+.env
+.env.local

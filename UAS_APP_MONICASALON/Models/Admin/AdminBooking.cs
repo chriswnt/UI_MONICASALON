@@ -7,6 +7,8 @@ public partial class AdminBooking : ObservableObject
 {
     private static readonly CultureInfo IndonesianCulture = CultureInfo.GetCultureInfo("id-ID");
 
+    public long ApiId { get; init; }
+
     public string Id { get; init; } = string.Empty;
 
     public string CustomerName { get; init; } = string.Empty;

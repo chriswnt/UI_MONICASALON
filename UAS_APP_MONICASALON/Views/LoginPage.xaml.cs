@@ -1,3 +1,4 @@
+using UAS_APP_MONICASALON.Services;
 using UAS_APP_MONICASALON.ViewModels;
 using UAS_APP_MONICASALON.Views.Admin;
 using UraniumUI.Pages;
@@ -55,6 +56,15 @@ public partial class LoginPage : UraniumContentPage
 
     private async void OnAdminAccessClicked(object? sender, EventArgs e)
     {
-        await Shell.Current.GoToAsync(nameof(AdminDashboardPage));
+        if (UserSession.IsStaffOrOwner)
+        {
+            await Shell.Current.GoToAsync(nameof(AdminDashboardPage));
+            return;
+        }
+
+        await DisplayAlertAsync(
+            "Akses Admin",
+            "Masuk dengan akun Staff atau Owner terlebih dahulu melalui form login.",
+            "OK");
     }
 }

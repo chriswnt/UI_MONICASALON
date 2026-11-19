@@ -16,12 +16,13 @@ public partial class HairstyleBookPage : UraniumContentPage
         BindingContext = viewModel;
     }
 
-    protected override void OnAppearing()
+    protected override async void OnAppearing()
     {
         base.OnAppearing();
 
         if (BindingContext is HairstyleBookViewModel viewModel)
         {
+            await viewModel.LoadAsync();
             viewModel.RefreshMode();
         }
     }

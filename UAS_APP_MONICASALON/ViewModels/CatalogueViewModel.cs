@@ -10,11 +10,12 @@ namespace UAS_APP_MONICASALON.ViewModels;
 public partial class CatalogueViewModel : ObservableObject
 {
     private readonly List<ServiceItem> _allServices = new();
+    private bool _catalogLoaded;
 
     public ObservableCollection<ServiceItem> FilteredServices { get; } = new();
 
-    public IReadOnlyList<string> CategoryOptions { get; } =
-        new[] { "Semua", "Haircut", "Treatment", "Styling", "Coloring", "Facial" };
+    public List<string> CategoryOptions { get; } =
+        new() { "Semua", "Haircut", "Treatment", "Styling", "Coloring", "Facial" };
 
     [ObservableProperty]
     public partial string SearchText { get; set; } = string.Empty;
@@ -37,6 +38,34 @@ public partial class CatalogueViewModel : ObservableObject
         BookingSession.InitialSearch = string.Empty;
 
         ApplyFilter();
+    }
+
+    public async Task LoadAsync()
+    {
+        if (_catalogLoaded)
+        {
+            return;
+        }
+
+        try
+        {
+            var services = await AppServices.CatalogCache.GetServicesAsync();
+
+            if (services.Count == 0)
+            {
+                return;
+            }
+
+            _allServices.Clear();
+            _allServices.AddRange(services);
+            RebuildCategoryOptions();
+            ApplyFilter();
+            _catalogLoaded = true;
+        }
+        catch (Exception)
+        {
+            // Keep the local fallback catalogue when the API is unreachable.
+        }
     }
 
     partial void OnSearchTextChanged(string value) => ApplyFilter();
@@ -64,6 +93,28 @@ public partial class CatalogueViewModel : ObservableObject
 
         IsEmpty = FilteredServices.Count == 0;
         OnPropertyChanged(nameof(ResultCountText));
+    }
+
+    private void RebuildCategoryOptions()
+    {
+        var selected = SelectedCategory;
+
+        CategoryOptions.Clear();
+        CategoryOptions.Add("Semua");
+
+        foreach (var category in _allServices
+                     .Select(service => service.Category)
+                     .Where(category => !string.IsNullOrWhiteSpace(category))
+                     .Distinct(StringComparer.OrdinalIgnoreCase)
+                     .OrderBy(category => category))
+        {
+            CategoryOptions.Add(category);
+        }
+
+        if (!CategoryOptions.Contains(selected, StringComparer.OrdinalIgnoreCase))
+        {
+            SelectedCategory = "Semua";
+        }
     }
 
     [RelayCommand]

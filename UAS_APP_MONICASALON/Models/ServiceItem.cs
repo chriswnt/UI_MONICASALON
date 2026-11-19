@@ -4,6 +4,10 @@ namespace UAS_APP_MONICASALON.Models;
 
 public class ServiceItem
 {
+    public long ApiId { get; set; }
+
+    public bool IsActive { get; set; } = true;
+
     public string Name { get; set; } = string.Empty;
 
     public decimal Price { get; set; }

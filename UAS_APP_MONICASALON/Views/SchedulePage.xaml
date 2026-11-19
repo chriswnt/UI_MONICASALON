@@ -522,7 +522,8 @@
                 </Border>
 
                 <!-- ============ ADD-ONS ============ -->
-                <Border Style="{StaticResource CardStyle}">
+                <!-- Hidden until the backend exposes an add-on/booking-item endpoint. -->
+                <Border Style="{StaticResource CardStyle}" IsVisible="False">
                     <VerticalStackLayout Spacing="10">
                         <VerticalStackLayout Spacing="2">
                             <HorizontalStackLayout Spacing="6">
@@ -621,7 +622,7 @@
                     <VerticalStackLayout Spacing="6">
                         <Label Text="Sebelum Konfirmasi" Style="{StaticResource SectionTitleStyle}" />
                         <Label
-                            Text="• Slot yang kamu pilih langsung dikunci, tanpa menunggu konfirmasi."
+                            Text="• Booking akan dikonfirmasi oleh salon sebelum slot kamu dikunci."
                             FontSize="11"
                             TextColor="#757575"
                             LineHeight="1.35" />

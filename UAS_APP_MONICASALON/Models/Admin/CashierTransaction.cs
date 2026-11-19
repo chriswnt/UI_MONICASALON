@@ -11,6 +11,8 @@ public partial class CashierTransaction : ObservableObject
 {
     private static readonly CultureInfo IndonesianCulture = CultureInfo.GetCultureInfo("id-ID");
 
+    public long ApiId { get; init; }
+
     public string Id { get; init; } = string.Empty;
 
     public DateTime CreatedAt { get; init; }

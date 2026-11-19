@@ -10,6 +10,7 @@ namespace UAS_APP_MONICASALON.ViewModels;
 public partial class ScheduleViewModel : ObservableObject
 {
     private bool _datesLoaded;
+    private bool _catalogLoaded;
     private int _slotRequestVersion;
 
     public ObservableCollection<ServiceSelectionItem> Services { get; } = new();
@@ -134,6 +135,8 @@ public partial class ScheduleViewModel : ObservableObject
     {
         BookingSession.IsPickingHairstyle = false;
 
+        await LoadCatalogAsync();
+
         if (_datesLoaded)
         {
             RefreshHairstyleSelection();
@@ -142,6 +145,54 @@ public partial class ScheduleViewModel : ObservableObject
         }
 
         await LoadDatesAsync();
+    }
+
+    private async Task LoadCatalogAsync()
+    {
+        if (_catalogLoaded)
+        {
+            return;
+        }
+
+        try
+        {
+            var services = await AppServices.CatalogCache.GetServicesAsync();
+            var styles = await AppServices.CatalogCache.GetHairstylesAsync();
+
+            if (services.Count > 0)
+            {
+                var preselectedNames = BookingSession.DraftServices
+                    .Select(service => service.Name)
+                    .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+                Services.Clear();
+
+                foreach (var service in services)
+                {
+                    var item = new ServiceSelectionItem(service, preselectedNames.Contains(service.Name));
+                    item.SelectionChanged += (_, _) => UpdateSummary();
+                    Services.Add(item);
+                }
+            }
+
+            if (styles.Count > 0)
+            {
+                Hairstyles.Clear();
+
+                foreach (var style in styles)
+                {
+                    Hairstyles.Add(style);
+                }
+            }
+
+            RefreshHairstyleSelection();
+            UpdateSummary();
+            _catalogLoaded = true;
+        }
+        catch (Exception)
+        {
+            // Keep the local fallback catalogue when the API is unreachable.
+        }
     }
 
     private async Task LoadDatesAsync()

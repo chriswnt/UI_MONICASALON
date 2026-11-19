@@ -8,6 +8,8 @@ public static class UserSession
 {
     public const string DemoCustomerId = "cust-bella";
 
+    public static long UserId { get; private set; }
+
     public static string CustomerId { get; private set; } = DemoCustomerId;
 
     public static string FullName { get; private set; } = "Bella Anisa";
@@ -16,7 +18,13 @@ public static class UserSession
 
     public static string Email { get; private set; } = "bella@email.com";
 
+    public static string Role { get; private set; } = "Customer";
+
     public static bool IsLoggedIn { get; private set; }
+
+    public static bool IsStaffOrOwner =>
+        string.Equals(Role, "Staff", StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(Role, "Owner", StringComparison.OrdinalIgnoreCase);
 
     public static string FirstName
     {
@@ -39,6 +47,17 @@ public static class UserSession
             var initials = string.Concat(parts);
             return string.IsNullOrWhiteSpace(initials) ? "MS" : initials;
         }
+    }
+
+    public static void ApplyUser(long userId, string fullName, string email, string? phone, string role)
+    {
+        UserId = userId;
+        CustomerId = userId > 0 ? userId.ToString() : DemoCustomerId;
+        FullName = string.IsNullOrWhiteSpace(fullName) ? "Pelanggan Monica" : fullName.Trim();
+        Email = string.IsNullOrWhiteSpace(email) ? Email : email.Trim();
+        Phone = string.IsNullOrWhiteSpace(phone) ? string.Empty : phone.Trim();
+        Role = string.IsNullOrWhiteSpace(role) ? "Customer" : role.Trim();
+        IsLoggedIn = true;
     }
 
     public static void SignIn(string identifier)
@@ -66,9 +85,11 @@ public static class UserSession
     public static void SignOut()
     {
         IsLoggedIn = false;
-        CustomerId = DemoCustomerId;
-        FullName = "Bella Anisa";
-        Phone = "+62 812-3456-7890";
-        Email = "bella@email.com";
+        UserId = 0;
+        CustomerId = string.Empty;
+        FullName = string.Empty;
+        Phone = string.Empty;
+        Email = string.Empty;
+        Role = "Customer";
     }
 }

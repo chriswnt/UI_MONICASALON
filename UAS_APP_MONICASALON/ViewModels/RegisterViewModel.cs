@@ -29,11 +29,22 @@ public partial class RegisterViewModel : ObservableObject
     [NotifyPropertyChangedFor(nameof(HasError))]
     public partial string ErrorMessage { get; set; } = string.Empty;
 
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsNotBusy))]
+    public partial bool IsBusy { get; set; }
+
     public bool HasError => !string.IsNullOrWhiteSpace(ErrorMessage);
+
+    public bool IsNotBusy => !IsBusy;
 
     [RelayCommand]
     private async Task RegisterAsync()
     {
+        if (IsBusy)
+        {
+            return;
+        }
+
         ErrorMessage = string.Empty;
 
         if (string.IsNullOrWhiteSpace(FullName) ||
@@ -51,27 +62,57 @@ public partial class RegisterViewModel : ObservableObject
             return;
         }
 
+        if (Password.Length < 6)
+        {
+            ErrorMessage = "Password minimal 6 karakter.";
+            return;
+        }
+
         if (!IsTermsAccepted)
         {
             ErrorMessage = "Anda harus menyetujui syarat & ketentuan.";
             return;
         }
 
-        UserSession.Register(FullName, PhoneNumber, Email);
+        IsBusy = true;
 
-        var shell = Shell.Current;
-
-        if (shell?.CurrentPage is Page page)
+        try
         {
-            await page.DisplayAlertAsync(
-                "Akun berhasil dibuat",
-                $"Selamat datang, {UserSession.FirstName}! Akunmu sudah siap digunakan.",
-                "Mulai Booking");
+            var auth = await AppServices.AuthApi.RegisterAsync(
+                FullName.Trim(),
+                Email.Trim(),
+                PhoneNumber.Trim(),
+                Password);
+
+            UserSession.ApplyUser(
+                auth.User.Id,
+                auth.User.Name,
+                auth.User.Email,
+                PhoneNumber,
+                auth.User.Role);
+
+            var shell = Shell.Current;
+
+            if (shell?.CurrentPage is Page page)
+            {
+                await page.DisplayAlertAsync(
+                    "Akun berhasil dibuat",
+                    $"Selamat datang, {UserSession.FirstName}! Akunmu sudah siap digunakan.",
+                    "Mulai Booking");
+            }
+
+            if (shell is not null)
+            {
+                await shell.GoToAsync($"//HomeRoot/{nameof(HomeCustomerPage)}");
+            }
         }
-
-        if (shell is not null)
+        catch (Exception ex)
         {
-            await shell.GoToAsync($"//HomeRoot/{nameof(HomeCustomerPage)}");
+            ErrorMessage = ex.Message;
+        }
+        finally
+        {
+            IsBusy = false;
         }
     }
 

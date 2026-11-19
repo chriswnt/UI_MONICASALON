@@ -11,6 +11,8 @@ namespace UAS_APP_MONICASALON.ViewModels;
 public partial class HomeCustomerViewModel : ObservableObject
 {
     private readonly List<ServiceItem> _favoriteServices = new();
+    private readonly List<ServiceItem> _allServices = new();
+    private bool _catalogLoaded;
 
     public ObservableCollection<BannerItem> Banners { get; } = new();
 
@@ -49,6 +51,77 @@ public partial class HomeCustomerViewModel : ObservableObject
         ApplySearch();
     }
 
+    public async Task LoadAsync()
+    {
+        if (_catalogLoaded)
+        {
+            return;
+        }
+
+        try
+        {
+            var services = await AppServices.CatalogCache.GetServicesAsync();
+            var styles = await AppServices.CatalogCache.GetHairstylesAsync();
+
+            if (services.Count > 0)
+            {
+                _allServices.Clear();
+                _allServices.AddRange(services);
+
+                _favoriteServices.Clear();
+
+                foreach (var serviceName in new[]
+                         {
+                             "Potong Rambut",
+                             "Smoothing",
+                             "Pewarnaan Rambut",
+                             "Creambath",
+                             "Rebonding",
+                             "Facial"
+                         })
+                {
+                    var service = services.FirstOrDefault(item =>
+                        string.Equals(item.Name, serviceName, StringComparison.OrdinalIgnoreCase));
+
+                    if (service is not null && !_favoriteServices.Contains(service))
+                    {
+                        _favoriteServices.Add(service);
+                    }
+                }
+
+                if (_favoriteServices.Count == 0)
+                {
+                    _favoriteServices.AddRange(services.Take(6));
+                }
+            }
+
+            if (styles.Count > 0)
+            {
+                StyleHighlights.Clear();
+
+                foreach (var style in styles.Where(item => item.IsTrending).Take(4))
+                {
+                    StyleHighlights.Add(style);
+                }
+
+                if (StyleHighlights.Count == 0)
+                {
+                    foreach (var style in styles.Take(4))
+                    {
+                        StyleHighlights.Add(style);
+                    }
+                }
+            }
+
+            ApplySearch();
+            _catalogLoaded = true;
+        }
+        catch (Exception)
+        {
+            // Keep the local fallback catalogue when the API is unreachable.
+        }
+    }
+
     private void LoadMockData()
     {
         Banners.Add(new BannerItem
@@ -62,7 +135,7 @@ public partial class HomeCustomerViewModel : ObservableObject
         Banners.Add(new BannerItem
         {
             Title = "Kini Bisa Booking 24 Jam!",
-            Subtitle = "Pilih slot yang tersedia dan langsung terkonfirmasi tanpa antre.",
+            Subtitle = "Pilih slot yang tersedia, lalu tunggu konfirmasi dari salon tanpa perlu antre.",
             Badge = "# Buka 24/7",
             ImageSource = "banner_booking24jam.png"
         });
@@ -72,6 +145,8 @@ public partial class HomeCustomerViewModel : ObservableObject
         Categories.Add(new CategoryItem { Name = "Smoothing", IconGlyph = MaterialRegular.Auto_awesome });
         Categories.Add(new CategoryItem { Name = "Pewarnaan", IconGlyph = MaterialRegular.Palette });
         Categories.Add(new CategoryItem { Name = "Facial", IconGlyph = MaterialRegular.Face_retouching_natural });
+
+        _allServices.AddRange(ServiceCatalog.All);
 
         foreach (var serviceName in new[]
                  {
@@ -108,7 +183,7 @@ public partial class HomeCustomerViewModel : ObservableObject
 
         var results = query.Length == 0
             ? _favoriteServices
-            : ServiceCatalog.All.Where(service =>
+            : _allServices.Where(service =>
                 service.Name.Contains(query, StringComparison.OrdinalIgnoreCase) ||
                 service.Category.Contains(query, StringComparison.OrdinalIgnoreCase) ||
                 service.Description.Contains(query, StringComparison.OrdinalIgnoreCase));

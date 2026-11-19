@@ -10,6 +10,8 @@ namespace UAS_APP_MONICASALON.Models;
 /// </summary>
 public partial class HairstyleItem : ObservableObject
 {
+    public long ApiId { get; set; }
+
     public string Id { get; set; } = string.Empty;
 
     public string Name { get; set; } = string.Empty;

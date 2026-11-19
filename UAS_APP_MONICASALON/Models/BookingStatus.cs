@@ -6,6 +6,7 @@ namespace UAS_APP_MONICASALON.Models;
 /// </summary>
 public enum BookingStatus
 {
+    Pending,
     Confirmed,
     Completed,
     Cancelled
@@ -15,9 +16,10 @@ public static class BookingStatusExtensions
 {
     public static string ToDisplayText(this BookingStatus status) => status switch
     {
+        BookingStatus.Pending => "Menunggu Konfirmasi",
         BookingStatus.Confirmed => "Terkonfirmasi",
         BookingStatus.Completed => "Selesai",
         BookingStatus.Cancelled => "Dibatalkan",
-        _ => "Terkonfirmasi"
+        _ => "Menunggu Konfirmasi"
     };
 }

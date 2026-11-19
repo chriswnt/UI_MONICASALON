@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Maui.Storage;
 using UAS_APP_MONICASALON.Services;
 using UAS_APP_MONICASALON.Views;
+using UAS_APP_MONICASALON.Views.Admin;
 
 namespace UAS_APP_MONICASALON.ViewModels;
 
@@ -33,31 +34,66 @@ public partial class LoginViewModel : ObservableObject
     [NotifyPropertyChangedFor(nameof(HasError))]
     public partial string ErrorMessage { get; set; } = string.Empty;
 
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsNotBusy))]
+    public partial bool IsBusy { get; set; }
+
     public bool HasError => !string.IsNullOrWhiteSpace(ErrorMessage);
+
+    public bool IsNotBusy => !IsBusy;
 
     [RelayCommand]
     private async Task LoginAsync()
     {
+        if (IsBusy)
+        {
+            return;
+        }
+
         ErrorMessage = string.Empty;
 
         if (string.IsNullOrWhiteSpace(Identifier) || string.IsNullOrWhiteSpace(Password))
         {
-            ErrorMessage = "Email/No. HP dan password wajib diisi.";
+            ErrorMessage = "Email/username dan password wajib diisi.";
             return;
         }
 
-        // Phase 1 is UI-only: any non-empty credential opens the customer home.
-        if (RememberMe)
-        {
-            Preferences.Default.Set(RememberedIdentifierKey, Identifier.Trim());
-        }
-        else
-        {
-            Preferences.Default.Remove(RememberedIdentifierKey);
-        }
+        IsBusy = true;
 
-        UserSession.SignIn(Identifier);
-        await Shell.Current.GoToAsync($"//HomeRoot/{nameof(HomeCustomerPage)}");
+        try
+        {
+            var auth = await AppServices.AuthApi.LoginAsync(Identifier.Trim(), Password);
+
+            UserSession.ApplyUser(
+                auth.User.Id,
+                auth.User.Name,
+                auth.User.Email,
+                null,
+                auth.User.Role);
+
+            if (RememberMe)
+            {
+                Preferences.Default.Set(RememberedIdentifierKey, Identifier.Trim());
+            }
+            else
+            {
+                Preferences.Default.Remove(RememberedIdentifierKey);
+            }
+
+            var target = UserSession.IsStaffOrOwner
+                ? nameof(AdminDashboardPage)
+                : $"//HomeRoot/{nameof(HomeCustomerPage)}";
+
+            await Shell.Current.GoToAsync(target);
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = ex.Message;
+        }
+        finally
+        {
+            IsBusy = false;
+        }
     }
 
     [RelayCommand]

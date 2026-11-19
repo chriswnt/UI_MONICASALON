@@ -13,6 +13,8 @@ public class BookingRecord
 {
     private static readonly CultureInfo Indonesian = CultureInfo.GetCultureInfo("id-ID");
 
+    public long ApiId { get; init; }
+
     public string Id { get; init; } = Guid.NewGuid().ToString("N");
 
     public string Code { get; init; } = string.Empty;
@@ -49,13 +51,13 @@ public class BookingRecord
 
     public decimal Total => ServicesTotal + AddOnsTotal;
 
-    public bool IsActive => Status == BookingStatus.Confirmed;
+    public bool IsActive => Status is BookingStatus.Pending or BookingStatus.Confirmed;
 
     public bool IsCompleted => Status == BookingStatus.Completed;
 
     public bool IsCancelled => Status == BookingStatus.Cancelled;
 
-    public bool CanCancel => IsActive;
+    public bool CanCancel => Status == BookingStatus.Pending;
 
     public bool CanLeaveFeedback => IsCompleted && Feedback is null;
 
@@ -128,6 +130,7 @@ public class BookingRecord
 
     public string StatusNote => Status switch
     {
+        BookingStatus.Pending => "Booking menunggu konfirmasi salon. Slot kamu belum dikunci sampai admin menyetujui.",
         BookingStatus.Confirmed => "Slot kamu sudah dikunci. Datang 10 menit sebelum jadwal ya.",
         BookingStatus.Completed => "Terima kasih sudah datang. Bagikan pengalamanmu lewat ulasan.",
         BookingStatus.Cancelled => "Booking ini telah dibatalkan. Kamu bisa membuat booking baru kapan saja.",
@@ -136,6 +139,7 @@ public class BookingRecord
 
     public Color StatusBackgroundColor => Status switch
     {
+        BookingStatus.Pending => Color.FromArgb("#FFF4E5"),
         BookingStatus.Confirmed => Color.FromArgb("#E8F5E9"),
         BookingStatus.Completed => Color.FromArgb("#FDECEC"),
         BookingStatus.Cancelled => Color.FromArgb("#F9DEDC"),
@@ -144,6 +148,7 @@ public class BookingRecord
 
     public Color StatusTextColor => Status switch
     {
+        BookingStatus.Pending => Color.FromArgb("#B26A00"),
         BookingStatus.Confirmed => Color.FromArgb("#2E7D32"),
         BookingStatus.Completed => Color.FromArgb("#8B2626"),
         BookingStatus.Cancelled => Color.FromArgb("#B3261E"),

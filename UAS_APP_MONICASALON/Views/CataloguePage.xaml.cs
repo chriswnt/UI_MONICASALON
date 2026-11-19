@@ -15,4 +15,14 @@ public partial class CataloguePage : UraniumContentPage
         InitializeComponent();
         BindingContext = viewModel;
     }
+
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+
+        if (BindingContext is CatalogueViewModel viewModel)
+        {
+            await viewModel.LoadAsync();
+        }
+    }
 }

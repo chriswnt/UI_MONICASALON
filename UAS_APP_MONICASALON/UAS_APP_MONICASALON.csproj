@@ -66,6 +66,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<!-- API client configuration. The local .env wins; fresh clones fall back to .env.example. -->
+		<EmbeddedResource Include="..\.env" LogicalName="UAS_APP_MONICASALON.appconfig" Condition="Exists('..\.env')" />
+		<EmbeddedResource Include="..\.env.example" LogicalName="UAS_APP_MONICASALON.appconfig" Condition="!Exists('..\.env')" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
 		<PackageReference Include="InputKit.Maui" Version="4.6.0" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.71" />

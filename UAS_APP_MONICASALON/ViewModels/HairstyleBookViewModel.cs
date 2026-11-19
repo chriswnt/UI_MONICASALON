@@ -11,6 +11,7 @@ public partial class HairstyleBookViewModel : ObservableObject
 {
     private readonly List<HairstyleItem> _all = new();
     private string _selectedCategory = "Semua";
+    private bool _catalogLoaded;
 
     public ObservableCollection<HairstyleItem> Hairstyles { get; } = new();
 
@@ -43,22 +44,36 @@ public partial class HairstyleBookViewModel : ObservableObject
     public HairstyleBookViewModel()
     {
         _all.AddRange(HairstyleCatalog.All);
+        BuildCategories();
+        ApplyFilter();
+    }
 
-        Categories.Add(new FilterChip("Semua", "Semua", _all.Count));
-
-        foreach (var category in HairstyleCatalog.Categories.Where(category => category != "Semua"))
+    public async Task LoadAsync()
+    {
+        if (_catalogLoaded)
         {
-            Categories.Add(new FilterChip(
-                category,
-                category,
-                _all.Count(style => string.Equals(
-                    style.Category,
-                    category,
-                    StringComparison.OrdinalIgnoreCase))));
+            return;
         }
 
-        Categories[0].IsSelected = true;
-        ApplyFilter();
+        try
+        {
+            var styles = await AppServices.CatalogCache.GetHairstylesAsync();
+
+            if (styles.Count == 0)
+            {
+                return;
+            }
+
+            _all.Clear();
+            _all.AddRange(styles);
+            BuildCategories();
+            ApplyFilter();
+            _catalogLoaded = true;
+        }
+        catch (Exception)
+        {
+            // Keep the local fallback catalogue when the API is unreachable.
+        }
     }
 
     public void RefreshMode()
@@ -99,6 +114,40 @@ public partial class HairstyleBookViewModel : ObservableObject
 
         IsEmpty = Hairstyles.Count == 0;
         OnPropertyChanged(nameof(ResultCountText));
+    }
+
+    private void BuildCategories()
+    {
+        var selected = _selectedCategory;
+
+        Categories.Clear();
+        Categories.Add(new FilterChip("Semua", "Semua", _all.Count));
+
+        foreach (var category in _all
+                     .Select(style => style.Category)
+                     .Where(category => !string.IsNullOrWhiteSpace(category))
+                     .Distinct(StringComparer.OrdinalIgnoreCase)
+                     .OrderBy(category => category))
+        {
+            Categories.Add(new FilterChip(
+                category,
+                category,
+                _all.Count(style => string.Equals(
+                    style.Category,
+                    category,
+                    StringComparison.OrdinalIgnoreCase))));
+        }
+
+        var selectedChip = Categories.FirstOrDefault(chip =>
+                               string.Equals(chip.Key, selected, StringComparison.OrdinalIgnoreCase))
+                           ?? Categories[0];
+
+        foreach (var chip in Categories)
+        {
+            chip.IsSelected = ReferenceEquals(chip, selectedChip);
+        }
+
+        _selectedCategory = selectedChip.Key;
     }
 
     [RelayCommand]

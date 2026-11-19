@@ -5,6 +5,10 @@ namespace UAS_APP_MONICASALON.Models.Admin;
 /// </summary>
 public class CashierService
 {
+    public long ApiId { get; init; }
+
+    public long? InventoryItemId { get; init; }
+
     public string Name { get; init; } = string.Empty;
 
     public string Category { get; init; } = string.Empty;

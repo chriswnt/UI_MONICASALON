@@ -1,8 +1,10 @@
-# Monica Salon — Aplikasi Mobile UI (Phase 1)
+# Monica Salon — Aplikasi Mobile
 
-Aplikasi **UI-only** untuk Monica Salon, dibangun dengan **.NET MAUI 10** dan **UraniumUI 3.0**. Proyek ini adalah tugas UAS mata kuliah Pemrograman Visual.
+Aplikasi Monica Salon dengan **.NET MAUI 10** dan **UraniumUI 3.0**. Proyek ini adalah tugas UAS mata kuliah Pemrograman Visual.
 
-> **Scope:** Phase 1 mencakup **Customer UI** (login, register, home, katalog, booking, riwayat, ulasan, buku gaya). Phase 2 (Admin) menambahkan **Admin Dashboard**, **Admin Booking**, dan **Kasir** sebagai perluasan aplikasi. Aplikasi masih **UI-only**: belum ada backend, database, atau pembayaran nyata. Data salon, jadwal, booking, dan ulasan disediakan oleh **mock layer** yang disimpan di memori (`MockSalonDatabase`, `AdminBookingStore`, `CashierSession`). Booking customer langsung berstatus **Terkonfirmasi** — tidak ada status "Menunggu Konfirmasi".
+> **Scope:** Phase 1 mencakup **Customer UI** (login, register, home, katalog, booking, riwayat, ulasan, buku gaya). Phase 2 (Admin) menambahkan **Admin Dashboard**, **Admin Booking**, dan **Kasir** sebagai perluasan aplikasi.
+>
+> **Status integrasi API (2026-11-19):** auth, katalog, jadwal, dan booking customer sudah memakai backend production `https://monica-salon-be.onrender.com` lewat `Services/Api/`. **Admin Dashboard, Admin Booking, Kasir, dan feedback masih memakai mock layer** (`AdminBookingStore`, `CashierSession`, `MockFeedbackApi`). Booking customer baru berstatus **Menunggu Konfirmasi (`Pending`)** sampai admin mengonfirmasi. Detail integrasi ada di [`docs/features/api-integration/`](docs/features/api-integration/) dan keterbatasan di [`docs/known-issues.md`](docs/known-issues.md).
 
 ---
 
@@ -15,11 +17,11 @@ Aplikasi **UI-only** untuk Monica Salon, dibangun dengan **.NET MAUI 10** dan **
 | Home Customer | `Views/HomeCustomerPage.xaml` | Dashboard customer: sapaan, pencarian, banner promo, kategori, daftar layanan, bottom navigation, bottom sheet detail layanan |
 | Katalog Layanan | `Views/CataloguePage.xaml` | Daftar semua layanan dengan pencarian dan filter kategori |
 | Detail Layanan | `Views/ServiceDetailPage.xaml` | Foto, kategori, harga, durasi, deskripsi, dan tombol booking |
-| Jadwal | `Views/SchedulePage.xaml` | Pilih layanan tambahan, tanggal, slot waktu bergaya bioskop, hairstyle, add-on, dan ringkasan total |
-| Konfirmasi Booking | `Views/ConfirmBookingPage.xaml` | Ringkasan layanan/jadwal, hairstyle, add-on, kontak, catatan, dan rincian harga |
-| Booking Berhasil | `Views/BookingSuccessPage.xaml` | Kode booking, status **Terkonfirmasi**, jadwal, layanan, add-on, dan total |
+| Jadwal | `Views/SchedulePage.xaml` | Pilih layanan tambahan, tanggal, slot waktu bergaya bioskop, hairstyle, dan ringkasan total |
+| Konfirmasi Booking | `Views/ConfirmBookingPage.xaml` | Ringkasan layanan/jadwal, hairstyle, kontak, catatan, dan rincian harga |
+| Booking Berhasil | `Views/BookingSuccessPage.xaml` | Kode booking, status awal **Menunggu Konfirmasi**, jadwal, layanan, dan total |
 | Riwayat Booking | `Views/BookingHistoryPage.xaml` | Daftar booking dengan filter status (Semua/Aktif/Selesai/Dibatalkan) dan shortcut beri ulasan |
-| Detail Booking | `Views/BookingDetailsPage.xaml` | Status, jadwal, layanan, add-on, catatan, total, dan tombol beri ulasan |
+| Detail Booking | `Views/BookingDetailsPage.xaml` | Status, jadwal, layanan, catatan, total, dan tombol beri ulasan |
 | Ulasan | `Views/BookingFeedbackPage.xaml` | Rating bintang, tag ulasan, komentar, dan kirim ulasan |
 | Buku Gaya | `Views/HairstyleBookPage.xaml` | Katalog hairstyle dari admin dengan filter kategori |
 | Detail Hairstyle | `Views/HairstyleDetailPage.xaml` | Deskripsi gaya, rekomendasi layanan, dan tombol booking |
@@ -34,6 +36,8 @@ Aplikasi **UI-only** untuk Monica Salon, dibangun dengan **.NET MAUI 10** dan **
 | Pembayaran Berhasil | `Views/Admin/TransactionSuccessPage.xaml` | Status sukses + ringkasan struk + aksi lanjutan |
 | Riwayat Transaksi | `Views/Admin/TransactionHistoryPage.xaml` | Statistik hari ini, filter cari/periode/metode, tombol kembali ke Kasir, daftar transaksi |
 | Detail Transaksi | `Views/Admin/TransactionDetailsPage.xaml` | Struk lengkap, cetak/bagikan (stub), pengembalian dana |
+
+> **Status data (2026-11-19):** halaman auth, katalog, buku gaya, jadwal, dan booking customer memakai API production. Halaman **Admin Dashboard**, **Admin Booking**, **Kasir**, dan **Riwayat/Detail Transaksi** masih memakai data mock.
 
 Alur navigasi customer:
 
@@ -109,11 +113,72 @@ dotnet build -t:Run -f net10.0-android
 
 > ⚠️ Proyek iOS/MacCatalyst **tidak bisa** di-build di Windows tanpa Mac — ini normal, abaikan saja target tersebut.
 
-> 💡 Login bersifat demo: email dan password apa pun yang tidak kosong akan membuka Home. "Ingat saya" menyimpan identifier melalui `Preferences` agar terisi otomatis pada pembukaan berikutnya.
+> 💡 Login memakai API production. Gunakan akun seed `owner / Admin123!` atau `staff / Staff123!` untuk admin, atau daftar akun customer baru lewat halaman **Register**. "Ingat saya" hanya menyimpan identifier lewat `Preferences`; password tidak pernah disimpan.
+
+---
+
+## 🌐 Integrasi API
+
+Aplikasi terhubung ke backend Monica Salon melalui `Services/Api/`. Sumber kebenaran kontrak ada di project `D:\monicasalon\monica-salon-api`.
+
+### Konfigurasi `.env`
+
+- Template ada di [`.env.example`](.env.example); salin menjadi `.env` untuk development lokal.
+- `API_BASE_URL` dipakai Windows/iOS/Mac, `API_BASE_URL_ANDROID` dipakai Android.
+- Keduanya di-embed ke assembly saat build (`EmbeddedResource` di `UAS_APP_MONICASALON.csproj`), sehingga tidak perlu file runtime di perangkat.
+- Environment variable dengan nama yang sama menimpa nilai `.env`.
+- Production saat ini: `https://monica-salon-be.onrender.com`; timeout 60 detik karena Render free tier bisa cold start.
+
+```dotenv
+API_BASE_URL=https://monica-salon-be.onrender.com
+API_BASE_URL_ANDROID=https://monica-salon-be.onrender.com
+API_PREFIX=/api/v1
+API_TIMEOUT_SECONDS=60
+API_ENVIRONMENT=Production
+```
+
+### Yang sudah memakai API
+
+| Area | Endpoint utama | Status |
+|---|---|---|
+| Login/register/logout | `POST /auth/login`, `/auth/register`, `/auth/logout` | Tersambung |
+| Katalog layanan & gaya | `GET /services`, `GET /hairstyles` | Tersambung (cache sesi + fallback lokal) |
+| Jadwal & slot | `GET /bookings/availability?date=` | Tersambung |
+| Booking customer | `POST /bookings`, `GET /bookings/mine`, `GET /bookings/{id}`, `POST /bookings/{id}/cancel` | Tersambung |
+| Admin booking, kasir, inventory, finance | `HttpAdminBookingApi`, `HttpTransactionApi`, `HttpInventoryApi`, `HttpFinanceApi` | Service HTTP tersedia; UI masih mock |
+| Feedback & add-on | — | Belum ada endpoint backend |
+
+### Akun demo backend
+
+| Role | Login | Password |
+|---|---|---|
+| Owner | `owner` | `Admin123!` |
+| Staff | `staff` | `Staff123!` |
+
+Customer harus **register** terlebih dahulu. Ganti password seed sebelum demo publik.
+
+### Menjalankan di Android via USB
+
+```bash
+adb devices
+dotnet build -t:Run -f net10.0-android
+```
+
+Kalau instalasi diblokir HP (`INSTALL_FAILED_USER_RESTRICTED`) atau ingin install manual:
+
+```bash
+dotnet publish -f net10.0-android -c Release
+adb install -r "UAS_APP_MONICASALON/bin/Release/net10.0-android/publish/com.companyname.uas_app_monicasalon-Signed.apk"
+adb shell monkey -p com.companyname.uas_app_monicasalon -c android.intent.category.LAUNCHER 1
+```
+
+> Jangan install APK Debug hasil `dotnet build` secara manual: APK itu memakai **Fast Deployment** dan akan crash `No assemblies found ... Fast Deployment`. Lihat [KI-017](docs/known-issues.md).
 
 ---
 
 ## 🧱 Struktur Proyek
+
+Di root repository juga tersedia `.env.example` (template konfigurasi API) dan folder `docs/` (dokumentasi fitur + known issues).
 
 ```
 UAS_APP_MONICASALON/
@@ -164,8 +229,9 @@ UAS_APP_MONICASALON/
 │       ├── PaymentMethod.cs
 │       └── Rupiah.cs
 │
-├── Services/                   # Mock API, session, katalog, formatter
-│   ├── AppServices.cs          # Service locator sederhana untuk halaman/VM
+├── Services/                   # API client, session, katalog, formatter
+│   ├── Api/                    # ApiConfig, ApiClient, TokenStore, DTO, Http*Api
+│   ├── AppServices.cs          # Service locator (DI) untuk halaman/VM
 │   ├── IBookingApi.cs
 │   ├── IFeedbackApi.cs
 │   ├── IScheduleApi.cs
@@ -259,15 +325,15 @@ UAS_APP_MONICASALON/
 
 - Hero coral memakai ilustrasi kontur `login_hero.svg` dan transisi gelombang putih (`Path`) ke panel form.
 - Form dibatasi maksimal **440 px** dan tetap terpusat pada layar lebar; pada layar sempit konten dapat di-scroll.
-- Validasi login dilakukan di `LoginViewModel` dan ditampilkan sebagai banner error di atas tombol **Masuk** (bukan ikon validasi di dalam field).
+- Login/register memanggil `IAuthApi`; error API (401/409/koneksi) ditampilkan sebagai banner di atas tombol **Masuk**. `UserSession.Role` menentukan Home atau Admin Dashboard.
 - "Ingat saya" menyimpan identifier lewat `Preferences`; password tidak pernah disimpan.
 - Warna mengikuti token coral/blush yang sudah ada (`#D9534F`, `#8B2626`, `#FDECEC`, `#FAF7F5`).
 
 ### Booking
 
-- Slot waktu mengikuti pola **cinema booking**: admin/API menyediakan slot tersedia, slot terisi tidak bisa dipilih, dan tidak ada status "Menunggu Konfirmasi".
-- Halaman jadwal menggabungkan pemilihan tanggal, slot, hairstyle, add-on (mis. shampoo), dan total yang diperbarui langsung.
-- Setelah submit, booking disimpan lewat `IBookingApi` dengan status **Terkonfirmasi**.
+- Slot waktu mengikuti pola **cinema booking**: admin/API menyediakan slot tersedia, slot terisi tidak bisa dipilih. Booking customer baru berstatus **Menunggu Konfirmasi (`Pending`)** sampai admin mengonfirmasi.
+- Halaman jadwal menggabungkan pemilihan tanggal, slot, hairstyle, dan total yang diperbarui langsung. Section add-on disembunyikan sampai backend punya endpoint add-on.
+- Setelah submit, booking dikirim ke `POST /bookings` lewat `HttpBookingApi`; status awal `Pending`.
 
 ### Chip & filter
 
@@ -411,6 +477,17 @@ dotnet restore
 | `UraniumUI.Icons.MaterialSymbols` | 3.0.0 | Ikon Material Symbols |
 | `InputKit.Maui` | 4.6.0 | FormView & validasi form |
 | `CommunityToolkit.Mvvm` | 8.4.2 | MVVM: `ObservableObject`, `RelayCommand` |
+
+> Integrasi API tidak menambah package NuGet; memakai `HttpClient`, `System.Text.Json`, `SecureStorage`, dan `Preferences` bawaan MAUI/.NET.
+
+---
+
+## 📚 Dokumentasi
+
+- [docs/README.md](docs/README.md) — index fitur dan backlog dokumentasi
+- [docs/features/api-integration/technical-design.md](docs/features/api-integration/technical-design.md) — desain teknis integrasi API
+- [docs/features/api-integration/qa-test.md](docs/features/api-integration/qa-test.md) — test matrix dan hasil QA
+- [docs/known-issues.md](docs/known-issues.md) — daftar fitur yang belum sempurna
 
 ---
 
