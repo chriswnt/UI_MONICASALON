@@ -9,6 +9,12 @@ public partial class AdminBooking : ObservableObject
 
     public string Id { get; init; } = string.Empty;
 
+    /// <summary>
+    /// Links this admin row to the customer booking created from the customer
+    /// app. Null for bookings made directly by the admin.
+    /// </summary>
+    public string? CustomerBookingId { get; init; }
+
     public string CustomerName { get; init; } = string.Empty;
 
     public string CustomerPhone { get; init; } = string.Empty;

@@ -37,7 +37,7 @@ public partial class BookingHistoryViewModel : ObservableObject
     {
         get
         {
-            var active = _all.Count(booking => booking.IsActive);
+            var active = _all.Count(booking => booking.Status == BookingStatus.Confirmed);
             return active switch
             {
                 0 => "Belum ada booking aktif",
@@ -54,6 +54,7 @@ public partial class BookingHistoryViewModel : ObservableObject
     public BookingHistoryViewModel()
     {
         Filters.Add(new FilterChip("Semua", "Semua"));
+        Filters.Add(new FilterChip("Menunggu", "Menunggu"));
         Filters.Add(new FilterChip("Aktif", "Aktif"));
         Filters.Add(new FilterChip("Selesai", "Selesai"));
         Filters.Add(new FilterChip("Dibatalkan", "Dibatalkan"));
@@ -95,7 +96,8 @@ public partial class BookingHistoryViewModel : ObservableObject
     private void UpdateFilterCounts()
     {
         SetFilterCount("Semua", _all.Count);
-        SetFilterCount("Aktif", _all.Count(booking => booking.IsActive));
+        SetFilterCount("Menunggu", _all.Count(booking => booking.IsPending));
+        SetFilterCount("Aktif", _all.Count(booking => booking.Status == BookingStatus.Confirmed));
         SetFilterCount("Selesai", _all.Count(booking => booking.IsCompleted));
         SetFilterCount("Dibatalkan", _all.Count(booking => booking.IsCancelled));
     }
@@ -114,7 +116,8 @@ public partial class BookingHistoryViewModel : ObservableObject
     {
         var query = _selectedFilterKey switch
         {
-            "Aktif" => _all.Where(booking => booking.IsActive),
+            "Menunggu" => _all.Where(booking => booking.IsPending),
+            "Aktif" => _all.Where(booking => booking.Status == BookingStatus.Confirmed),
             "Selesai" => _all.Where(booking => booking.IsCompleted),
             "Dibatalkan" => _all.Where(booking => booking.IsCancelled),
             _ => _all.AsEnumerable()

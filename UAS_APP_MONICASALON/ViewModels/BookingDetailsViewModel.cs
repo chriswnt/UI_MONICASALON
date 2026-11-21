@@ -105,10 +105,14 @@ public partial class BookingDetailsViewModel : ObservableObject
         }
 
         var page = Shell.Current?.CurrentPage;
+        var message = Booking.IsPending
+            ? $"Permintaan booking {Booking.ScheduleText} akan dibatalkan dan dihapus dari antrean admin."
+            : $"Slot {Booking.ScheduleText} akan dilepas dan bisa dipesan pelanggan lain.";
+
         var confirmed = page is not null &&
                         await page.DisplayAlertAsync(
                             "Batalkan booking?",
-                            $"Slot {Booking.ScheduleText} akan dilepas dan bisa dipesan pelanggan lain.",
+                            message,
                             "Ya, batalkan",
                             "Kembali");
 
@@ -138,7 +142,7 @@ public partial class BookingDetailsViewModel : ObservableObject
             {
                 await page.DisplayAlertAsync(
                     "Booking dibatalkan",
-                    "Slot sudah dilepas. Kamu bisa membuat booking baru kapan saja.",
+                    "Booking sudah dibatalkan. Kamu bisa membuat booking baru kapan saja.",
                     "Mengerti");
             }
         }

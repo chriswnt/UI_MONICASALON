@@ -82,7 +82,7 @@ public partial class AdminBookingDetailsViewModel : ObservableObject, IQueryAttr
 
         await ShowInfoAsync(
             "Booking Dikonfirmasi",
-            $"Jadwal {booking.CustomerName} pada {booking.ScheduleText} telah dikonfirmasi dan slot waktunya dikunci.");
+            $"Jadwal {booking.CustomerName} pada {booking.ScheduleText} telah dikonfirmasi dan slot waktunya dikunci. Status booking pelanggan ikut diperbarui.");
     }
 
     [RelayCommand]
@@ -104,7 +104,7 @@ public partial class AdminBookingDetailsViewModel : ObservableObject, IQueryAttr
         AfterStatusChange($"Booking {booking.Id} ditolak.");
         RaiseActionVisibility();
 
-        await ShowInfoAsync("Booking Ditolak", $"Booking {booking.CustomerName} ditolak.");
+        await ShowInfoAsync("Booking Ditolak", $"Booking {booking.CustomerName} ditolak. Status booking pelanggan ikut diperbarui.");
     }
 
     [RelayCommand]
@@ -148,7 +148,7 @@ public partial class AdminBookingDetailsViewModel : ObservableObject, IQueryAttr
         AfterStatusChange($"Booking {booking.Id} dibatalkan.");
         RaiseActionVisibility();
 
-        await ShowInfoAsync("Booking Dibatalkan", $"Booking {booking.CustomerName} dibatalkan.");
+        await ShowInfoAsync("Booking Dibatalkan", $"Booking {booking.CustomerName} dibatalkan. Status booking pelanggan ikut diperbarui.");
     }
 
     [RelayCommand]

@@ -31,7 +31,7 @@ public class MockBookingApi : IBookingApi
 
         if (request.Date == default || string.IsNullOrWhiteSpace(request.Time))
         {
-            throw new InvalidOperationException("Tanggal dan slot waktu wajib dipilih.");
+            throw new InvalidOperationException("Tanggal dan jam kunjungan wajib dipilih.");
         }
 
         await Task.Delay(520, cancellationToken);
@@ -63,11 +63,15 @@ public class MockBookingApi : IBookingApi
             Date = request.Date.Date,
             Time = request.Time,
             Notes = request.Notes.Trim(),
-            Status = BookingStatus.Confirmed,
+            Status = BookingStatus.Pending,
             CreatedAt = DateTime.Now
         };
 
         MockSalonDatabase.AddBooking(booking);
+
+        // Same in-memory session is shared with the admin module, so the
+        // request shows up in the admin queue as "Menunggu" for approval.
+        Models.Admin.AdminBookingStore.AddFromCustomer(booking);
         return booking;
     }
 
@@ -89,6 +93,7 @@ public class MockBookingApi : IBookingApi
             throw new InvalidOperationException("Booking ini tidak dapat dibatalkan.");
         }
 
+        Models.Admin.AdminBookingStore.CancelByCustomerBookingId(booking.Id);
         return booking;
     }
 }

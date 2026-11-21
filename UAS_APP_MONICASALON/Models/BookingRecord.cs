@@ -5,9 +5,9 @@ using UAS_APP_MONICASALON.Services;
 namespace UAS_APP_MONICASALON.Models;
 
 /// <summary>
-/// A confirmed booking as returned by the booking API. A booking is confirmed
-/// immediately when the customer picks an available slot, so there is no
-/// "waiting for confirmation" state in the customer flow.
+/// A booking as returned by the booking API. New requests start as
+/// <see cref="BookingStatus.Pending"/> and are confirmed or rejected by the
+/// admin from the admin booking screen.
 /// </summary>
 public class BookingRecord
 {
@@ -29,15 +29,15 @@ public class BookingRecord
 
     public HairstyleItem? Hairstyle { get; init; }
 
-    public DateTime Date { get; init; }
+    public DateTime Date { get; set; }
 
-    public string Time { get; init; } = string.Empty;
+    public string Time { get; set; } = string.Empty;
 
     public string StyleReference { get; init; } = "Tanpa referensi gaya";
 
     public string Notes { get; init; } = string.Empty;
 
-    public BookingStatus Status { get; set; } = BookingStatus.Confirmed;
+    public BookingStatus Status { get; set; } = BookingStatus.Pending;
 
     public FeedbackRecord? Feedback { get; set; }
 
@@ -49,11 +49,15 @@ public class BookingRecord
 
     public decimal Total => ServicesTotal + AddOnsTotal;
 
-    public bool IsActive => Status == BookingStatus.Confirmed;
+    public bool IsPending => Status == BookingStatus.Pending;
+
+    public bool IsActive => Status is BookingStatus.Pending or BookingStatus.Confirmed;
 
     public bool IsCompleted => Status == BookingStatus.Completed;
 
-    public bool IsCancelled => Status == BookingStatus.Cancelled;
+    public bool IsRejected => Status == BookingStatus.Rejected;
+
+    public bool IsCancelled => Status is BookingStatus.Cancelled or BookingStatus.Rejected or BookingStatus.NoShow;
 
     public bool CanCancel => IsActive;
 
@@ -136,25 +140,34 @@ public class BookingRecord
 
     public string StatusNote => Status switch
     {
-        BookingStatus.Confirmed => "Slot kamu sudah dikunci. Datang 10 menit sebelum jadwal ya.",
+        BookingStatus.Pending => "Permintaan booking sudah dikirim. Admin sedang mengecek ketersediaan jadwal dan akan mengonfirmasi secepatnya.",
+        BookingStatus.Confirmed => "Slot kamu sudah dikunci admin. Datang 10 menit sebelum jadwal ya.",
         BookingStatus.Completed => "Terima kasih sudah datang. Bagikan pengalamanmu lewat ulasan.",
+        BookingStatus.Rejected => "Admin belum bisa menyetujui jadwal ini. Silakan pilih waktu lain dan kirim booking baru.",
         BookingStatus.Cancelled => "Booking ini telah dibatalkan. Kamu bisa membuat booking baru kapan saja.",
+        BookingStatus.NoShow => "Kamu tidak hadir pada jadwal ini. Silakan buat booking baru jika ingin datang.",
         _ => string.Empty
     };
 
     public Color StatusBackgroundColor => Status switch
     {
+        BookingStatus.Pending => Color.FromArgb("#FEF3C7"),
         BookingStatus.Confirmed => Color.FromArgb("#E8F5E9"),
         BookingStatus.Completed => Color.FromArgb("#FDECEC"),
+        BookingStatus.Rejected => Color.FromArgb("#F9DEDC"),
         BookingStatus.Cancelled => Color.FromArgb("#F9DEDC"),
+        BookingStatus.NoShow => Color.FromArgb("#EFE6E4"),
         _ => Color.FromArgb("#F5EDEA")
     };
 
     public Color StatusTextColor => Status switch
     {
+        BookingStatus.Pending => Color.FromArgb("#8A5A00"),
         BookingStatus.Confirmed => Color.FromArgb("#2E7D32"),
         BookingStatus.Completed => Color.FromArgb("#8B2626"),
+        BookingStatus.Rejected => Color.FromArgb("#B3261E"),
         BookingStatus.Cancelled => Color.FromArgb("#B3261E"),
+        BookingStatus.NoShow => Color.FromArgb("#757575"),
         _ => Color.FromArgb("#757575")
     };
 }

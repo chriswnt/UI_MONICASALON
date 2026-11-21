@@ -36,8 +36,8 @@ public partial class ConfirmBookingViewModel : ObservableObject
     public bool IsNotSubmitting => !IsSubmitting;
 
     public string SubmitButtonText => IsSubmitting
-        ? "Memproses booking..."
-        : "Konfirmasi & Amankan Slot";
+        ? "Mengirim permintaan..."
+        : "Kirim Permintaan Booking";
 
     public string CustomerName => UserSession.FullName;
 
@@ -136,7 +136,7 @@ public partial class ConfirmBookingViewModel : ObservableObject
 
         if (string.IsNullOrWhiteSpace(BookingSession.DraftTime))
         {
-            ErrorMessage = "Slot waktu belum dipilih.";
+            ErrorMessage = "Jam kunjungan belum dipilih.";
             return;
         }
 

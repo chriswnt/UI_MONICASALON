@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Maui.Storage;
 using UAS_APP_MONICASALON.Services;
 using UAS_APP_MONICASALON.Views;
+using UAS_APP_MONICASALON.Views.Admin;
 
 namespace UAS_APP_MONICASALON.ViewModels;
 
@@ -56,9 +57,21 @@ public partial class LoginViewModel : ObservableObject
             Preferences.Default.Remove(RememberedIdentifierKey);
         }
 
-        UserSession.SignIn(Identifier);
+        var isAdmin = IsAdminIdentifier(Identifier);
+        UserSession.SignIn(Identifier, isAdmin);
+
+        if (isAdmin)
+        {
+            await Shell.Current.GoToAsync(nameof(AdminDashboardPage));
+            return;
+        }
+
         await Shell.Current.GoToAsync($"//HomeRoot/{nameof(HomeCustomerPage)}");
     }
+
+    private static bool IsAdminIdentifier(string identifier) =>
+        !string.IsNullOrWhiteSpace(identifier) &&
+        identifier.Contains("admin", StringComparison.OrdinalIgnoreCase);
 
     [RelayCommand]
     private async Task GoToRegisterAsync()

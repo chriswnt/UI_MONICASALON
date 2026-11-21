@@ -1,3 +1,6 @@
+using System.Globalization;
+using UAS_APP_MONICASALON.Services;
+
 namespace UAS_APP_MONICASALON.Models.Admin;
 
 /// <summary>
@@ -33,7 +36,111 @@ public static class AdminBookingStore
             : All.FirstOrDefault(booking =>
                 string.Equals(booking.Id, id.Trim(), StringComparison.OrdinalIgnoreCase));
 
+    public static AdminBooking? FindByCustomerBookingId(string? customerBookingId) =>
+        string.IsNullOrWhiteSpace(customerBookingId)
+            ? null
+            : All.FirstOrDefault(booking => string.Equals(
+                booking.CustomerBookingId,
+                customerBookingId.Trim(),
+                StringComparison.OrdinalIgnoreCase));
+
     public static string NextId() => $"BK-{++_sequence}";
+
+    /// <summary>
+    /// Mirrors a customer booking into the admin queue as a pending request.
+    /// The customer app and the admin module use separate mock stores, so this
+    /// is the hand-off between them.
+    /// </summary>
+    public static AdminBooking AddFromCustomer(BookingRecord booking)
+    {
+        var existing = FindByCustomerBookingId(booking.Id);
+
+        if (existing is not null)
+        {
+            return existing;
+        }
+
+        var duration = booking.Services
+            .Select(service => CashierMockData.FindService(service.Name)?.DurationMinutes ?? 45)
+            .Sum();
+
+        if (duration <= 0)
+        {
+            duration = 45;
+        }
+
+        var adminBooking = new AdminBooking
+        {
+            Id = NextId(),
+            CustomerBookingId = booking.Id,
+            CustomerName = booking.CustomerName,
+            CustomerPhone = booking.CustomerPhone,
+            ServiceName = booking.Services.Count == 0
+                ? "Layanan Salon"
+                : string.Join(", ", booking.Services.Select(service => service.Name)),
+            StaffName = ResolveStaff(booking),
+            AppointmentAt = booking.Date.Date + ParseTime(booking.Time),
+            DurationMinutes = duration,
+            Price = booking.Total,
+            Status = BookingStatus.Pending,
+            PaymentStatus = PaymentStatus.Unpaid,
+            IsSlotLocked = false,
+            Notes = booking.Notes
+        };
+
+        All.Insert(0, adminBooking);
+        return adminBooking;
+    }
+
+    /// <summary>
+    /// Called when the customer cancels their own request, so the admin queue
+    /// does not keep a stale pending row.
+    /// </summary>
+    public static void CancelByCustomerBookingId(string customerBookingId)
+    {
+        var booking = FindByCustomerBookingId(customerBookingId);
+
+        if (booking is null)
+        {
+            return;
+        }
+
+        booking.Status = BookingStatus.Cancelled;
+        booking.IsSlotLocked = false;
+    }
+
+    private static string ResolveStaff(BookingRecord booking)
+    {
+        var service = booking.Services.FirstOrDefault()?.Name ?? string.Empty;
+
+        if (service.Contains("Smoothing", StringComparison.OrdinalIgnoreCase) ||
+            service.Contains("Rebonding", StringComparison.OrdinalIgnoreCase) ||
+            service.Contains("Pewarnaan", StringComparison.OrdinalIgnoreCase))
+        {
+            return "Rina";
+        }
+
+        if (service.Contains("Creambath", StringComparison.OrdinalIgnoreCase))
+        {
+            return "Sari";
+        }
+
+        if (service.Contains("Facial", StringComparison.OrdinalIgnoreCase))
+        {
+            return "Nadia";
+        }
+
+        return "Dewi";
+    }
+
+    private static TimeSpan ParseTime(string time) =>
+        TimeSpan.TryParseExact(
+            time,
+            new[] { @"hh\:mm", @"h\:mm", @"hh\:mm\:ss" },
+            CultureInfo.InvariantCulture,
+            out var parsed)
+            ? parsed
+            : TimeSpan.FromHours(10);
 
     public static AdminBooking Add(
         string customerName,
@@ -94,29 +201,63 @@ public static class AdminBookingStore
     {
         booking.Status = BookingStatus.Confirmed;
         booking.IsSlotLocked = true;
+        SyncCustomer(booking);
     }
 
     public static void Reject(AdminBooking booking)
     {
         booking.Status = BookingStatus.Rejected;
         booking.IsSlotLocked = false;
+        SyncCustomer(booking);
     }
 
     public static void Complete(AdminBooking booking)
     {
         booking.Status = BookingStatus.Completed;
         booking.IsSlotLocked = false;
+        SyncCustomer(booking);
     }
 
     public static void Cancel(AdminBooking booking)
     {
         booking.Status = BookingStatus.Cancelled;
         booking.IsSlotLocked = false;
+        SyncCustomer(booking);
     }
 
     public static void Reschedule(AdminBooking booking, DateTime appointment)
     {
         booking.AppointmentAt = appointment;
         booking.IsSlotLocked = true;
+        SyncCustomer(booking);
+    }
+
+    /// <summary>
+    /// Pushes the admin status back to the customer booking so the customer's
+    /// detail/history pages reflect the approval result.
+    /// </summary>
+    private static void SyncCustomer(AdminBooking booking)
+    {
+        if (string.IsNullOrWhiteSpace(booking.CustomerBookingId))
+        {
+            return;
+        }
+
+        var customerStatus = booking.Status switch
+        {
+            BookingStatus.Pending => Models.BookingStatus.Pending,
+            BookingStatus.Confirmed => Models.BookingStatus.Confirmed,
+            BookingStatus.Completed => Models.BookingStatus.Completed,
+            BookingStatus.Rejected => Models.BookingStatus.Rejected,
+            BookingStatus.Cancelled => Models.BookingStatus.Cancelled,
+            BookingStatus.NoShow => Models.BookingStatus.NoShow,
+            _ => Models.BookingStatus.Pending
+        };
+
+        MockSalonDatabase.UpdateFromAdmin(
+            booking.CustomerBookingId,
+            customerStatus,
+            booking.AppointmentAt,
+            booking.AppointmentAt.ToString("HH:mm", CultureInfo.InvariantCulture));
     }
 }

@@ -218,13 +218,12 @@ public partial class AdminBookingsViewModel : ObservableObject
             return;
         }
 
-        booking.Status = BookingStatus.Confirmed;
-        booking.IsSlotLocked = true;
+        AdminBookingStore.Confirm(booking);
         ApplyFilters();
 
         await ShowInfoAsync(
             "Booking Dikonfirmasi",
-            $"Jadwal {booking.CustomerName} pada {booking.ScheduleText} telah dikonfirmasi dan slot waktunya dikunci.\n\nPelanggan akan menerima notifikasi.");
+            $"Jadwal {booking.CustomerName} pada {booking.ScheduleText} telah dikonfirmasi dan slot waktunya dikunci.\n\nStatus booking pelanggan ikut diperbarui.");
     }
 
     [RelayCommand]
@@ -242,13 +241,12 @@ public partial class AdminBookingsViewModel : ObservableObject
             return;
         }
 
-        booking.Status = BookingStatus.Rejected;
-        booking.IsSlotLocked = false;
+        AdminBookingStore.Reject(booking);
         ApplyFilters();
 
         await ShowInfoAsync(
             "Booking Ditolak",
-            $"Booking {booking.CustomerName} ditolak. Pelanggan akan menerima notifikasi.");
+            $"Booking {booking.CustomerName} ditolak. Status booking pelanggan ikut diperbarui.");
     }
 
     [RelayCommand]
@@ -266,8 +264,7 @@ public partial class AdminBookingsViewModel : ObservableObject
             return;
         }
 
-        booking.Status = BookingStatus.Completed;
-        booking.IsSlotLocked = false;
+        AdminBookingStore.Complete(booking);
         ApplyFilters();
 
         await ShowInfoAsync(
@@ -290,13 +287,12 @@ public partial class AdminBookingsViewModel : ObservableObject
             return;
         }
 
-        booking.Status = BookingStatus.Cancelled;
-        booking.IsSlotLocked = false;
+        AdminBookingStore.Cancel(booking);
         ApplyFilters();
 
         await ShowInfoAsync(
             "Booking Dibatalkan",
-            $"Booking {booking.CustomerName} dibatalkan. Pelanggan akan menerima notifikasi.");
+            $"Booking {booking.CustomerName} dibatalkan. Status booking pelanggan ikut diperbarui.");
     }
 
     [RelayCommand]
@@ -356,8 +352,7 @@ public partial class AdminBookingsViewModel : ObservableObject
             return;
         }
 
-        booking.AppointmentAt = newAppointment;
-        booking.IsSlotLocked = true;
+        AdminBookingStore.Reschedule(booking, newAppointment);
 
         OnPropertyChanged(nameof(MinimumDate));
         OnPropertyChanged(nameof(MaximumDate));

@@ -2,7 +2,7 @@
 
 Aplikasi **UI-only** untuk Monica Salon, dibangun dengan **.NET MAUI 10** dan **UraniumUI 3.0**. Proyek ini adalah tugas UAS mata kuliah Pemrograman Visual.
 
-> **Scope:** Phase 1 mencakup **Customer UI** (login, register, home, katalog, booking, riwayat, ulasan, buku gaya). Phase 2 (Admin) menambahkan **Admin Dashboard**, **Admin Booking**, dan **Kasir** sebagai perluasan aplikasi. Aplikasi masih **UI-only**: belum ada backend, database, atau pembayaran nyata. Data salon, jadwal, booking, dan ulasan disediakan oleh **mock layer** yang disimpan di memori (`MockSalonDatabase`, `AdminBookingStore`, `CashierSession`). Booking customer langsung berstatus **Terkonfirmasi** — tidak ada status "Menunggu Konfirmasi".
+> **Scope:** Phase 1 mencakup **Customer UI** (login, register, home, katalog, booking, riwayat, ulasan, buku gaya). Phase 2 (Admin) menambahkan **Admin Dashboard**, **Admin Booking**, dan **Kasir** sebagai perluasan aplikasi. Aplikasi masih **UI-only**: belum ada backend, database, atau pembayaran nyata. Data salon, jadwal, booking, dan ulasan disediakan oleh **mock layer** yang disimpan di memori (`MockSalonDatabase`, `AdminBookingStore`, `CashierSession`). Booking customer dibuat dengan status **Menunggu Konfirmasi** dan baru menjadi **Terkonfirmasi** setelah disetujui admin.
 
 ---
 
@@ -10,15 +10,15 @@ Aplikasi **UI-only** untuk Monica Salon, dibangun dengan **.NET MAUI 10** dan **
 
 | Halaman | File | Isi |
 |---------|------|-----|
-| Login | `Views/LoginPage.xaml` | Hero coral dengan ilustrasi kontur, transisi gelombang ke panel putih, form email/password, "Ingat saya", lupa password, tautan daftar, dan tautan **Masuk sebagai Admin** |
+| Login | `Views/LoginPage.xaml` | Hero coral dengan ilustrasi kontur, transisi gelombang ke panel putih, form email/password, "Ingat saya", lupa password, dan tautan daftar. Identifier yang mengandung **`admin`** otomatis membuka panel admin tanpa tombol terpisah |
 | Register | `Views/RegisterPage.xaml` | Form pendaftaran customer (nama, email, telepon, password, konfirmasi, checkbox S&K) |
 | Home Customer | `Views/HomeCustomerPage.xaml` | Dashboard customer: sapaan, pencarian, banner promo, kategori, daftar layanan, bottom navigation, bottom sheet detail layanan |
 | Katalog Layanan | `Views/CataloguePage.xaml` | Daftar semua layanan dengan pencarian dan filter kategori |
 | Detail Layanan | `Views/ServiceDetailPage.xaml` | Foto, kategori, harga, durasi, deskripsi, dan tombol booking |
-| Jadwal | `Views/SchedulePage.xaml` | Pilih layanan tambahan, tanggal, slot waktu bergaya bioskop, hairstyle, add-on, dan ringkasan total |
-| Konfirmasi Booking | `Views/ConfirmBookingPage.xaml` | Ringkasan layanan/jadwal, hairstyle, add-on, kontak, catatan, dan rincian harga |
-| Booking Berhasil | `Views/BookingSuccessPage.xaml` | Kode booking, status **Terkonfirmasi**, jadwal, layanan, add-on, dan total |
-| Riwayat Booking | `Views/BookingHistoryPage.xaml` | Daftar booking dengan filter status (Semua/Aktif/Selesai/Dibatalkan) dan shortcut beri ulasan |
+| Jadwal | `Views/SchedulePage.xaml` | Pilih layanan tambahan, tanggal & jam lewat dialog Material, hairstyle, add-on, dan ringkasan total |
+| Konfirmasi Booking | `Views/ConfirmBookingPage.xaml` | Ringkasan layanan/jadwal, hairstyle, add-on, kontak, catatan, rincian harga, dan pengiriman permintaan ke admin |
+| Booking Berhasil | `Views/BookingSuccessPage.xaml` | Kode booking, status **Menunggu Konfirmasi**, jadwal, layanan, add-on, dan total |
+| Riwayat Booking | `Views/BookingHistoryPage.xaml` | Daftar booking dengan filter status (Semua/Menunggu/Aktif/Selesai/Dibatalkan) dan shortcut beri ulasan |
 | Detail Booking | `Views/BookingDetailsPage.xaml` | Status, jadwal, layanan, add-on, catatan, total, dan tombol beri ulasan |
 | Ulasan | `Views/BookingFeedbackPage.xaml` | Rating bintang, tag ulasan, komentar, dan kirim ulasan |
 | Buku Gaya | `Views/HairstyleBookPage.xaml` | Katalog hairstyle dari admin dengan filter kategori |
@@ -43,7 +43,7 @@ Bottom navigation (`Controls/BottomNavBar.cs`) menghubungkan **Home**, **Layanan
 
 Alur navigasi Admin:
 
-`LoginPage` → **Masuk sebagai Admin** → bottom navigation **Dashboard ↔ Booking ↔ Kasir ↔ Reports ↔ Settings** (Reports & Settings masih placeholder).
+`LoginPage` → login memakai identifier yang mengandung **`admin`** (mis. `admin@monicasalon.com`) → bottom navigation **Dashboard ↔ Booking ↔ Kasir ↔ Reports ↔ Settings** (Reports & Settings masih placeholder).
 
 Alur modul Booking: `AdminBookingsPage` → tombol **+** → `AdminCreateBookingPage` (kembali ke daftar),
 atau kartu booking → bottom sheet detail → **Buka Halaman Detail** → `AdminBookingDetailsPage` →
@@ -127,6 +127,7 @@ UAS_APP_MONICASALON/
 ├── Controls/
 │   ├── BottomNavBar.cs         # Bottom navigation customer (5 tab)
 │   ├── ButtonView.cs           # Shim: <uranium:ButtonView> → UraniumUI Material
+│   ├── ClockDialView.cs        # Dial jam Material custom (hour/minute, AM/PM)
 │   └── Admin/
 │       ├── AdminLayout.xaml    # Header + konten + bottom navigation admin
 │       ├── AdminNavigationItem.xaml
@@ -265,9 +266,10 @@ UAS_APP_MONICASALON/
 
 ### Booking
 
-- Slot waktu mengikuti pola **cinema booking**: admin/API menyediakan slot tersedia, slot terisi tidak bisa dipilih, dan tidak ada status "Menunggu Konfirmasi".
-- Halaman jadwal menggabungkan pemilihan tanggal, slot, hairstyle, add-on (mis. shampoo), dan total yang diperbarui langsung.
-- Setelah submit, booking disimpan lewat `IBookingApi` dengan status **Terkonfirmasi**.
+- Customer memilih tanggal lewat dialog kalender native `DatePicker` dan jam lewat **dialog jam Material custom** (`Controls/ClockDialView.cs`). Dialog jam menampilkan pilihan angka 1–12 atau 00–59, tombol AM/PM, dan dapat diklik langsung pada dial; tidak memakai `TimePicker` scroll.
+- Halaman jadwal menggabungkan pemilihan tanggal & jam, hairstyle, add-on (mis. shampoo), dan total yang diperbarui langsung.
+- Setelah submit, booking disimpan lewat `IBookingApi` dengan status **Menunggu Konfirmasi** dan masuk ke antrean admin (`AdminBookingStore.AddFromCustomer`).
+- Slot baru dikunci saat admin menyetujui booking (`AdminBookingStore.Confirm` → `MockSalonDatabase.UpdateFromAdmin`); penolakan, pembatalan, dan jadwal ulang ikut disinkronkan ke status customer.
 
 ### Chip & filter
 
@@ -317,7 +319,7 @@ UraniumUI 3.0 mendaftarkan `StatefulButtonHandler` untuk setiap `Button` polos. 
 - Komponen bersama di `Controls/Admin/`: `AdminLayout`, `AdminNavigationItem`, `StatCard`, `SectionCard`, `StatusBadge`, `PaymentBadge`.
 - Style bersama di `Resources/Styles/AdminStyles.xaml`; warna tetap memakai token dari `Colors.xaml`.
 - Data mock di `Models/Admin/`; ViewModel di `ViewModels/Admin/`.
-- Alur login/register customer tidak diubah; hanya ditambahkan tautan **Masuk sebagai Admin** di bagian bawah halaman login.
+- Admin memakai form login yang sama dengan customer. `LoginViewModel` memeriksa identifier: jika mengandung **`admin`**, sesi diarahkan ke `AdminDashboardPage`; jika tidak, ke `HomeCustomerPage`. Tidak ada tombol atau halaman login admin terpisah.
 - Font admin memakai `OpenSansRegular` / `OpenSansSemibold`, sedangkan halaman customer memakai `PlusJakartaSans*`; keduanya didaftarkan di `MauiProgram.cs`.
 
 ### Modul Kasir & Booking (Phase 3)

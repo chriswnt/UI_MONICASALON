@@ -64,7 +64,7 @@ public partial class HomeCustomerViewModel : ObservableObject
         Banners.Add(new BannerItem
         {
             Title = "Kini Bisa Booking 24 Jam!",
-            Subtitle = "Pilih slot yang tersedia dan langsung terkonfirmasi tanpa antre.",
+            Subtitle = "Pilih tanggal dan jam favoritmu, lalu tunggu persetujuan admin.",
             Badge = "# Buka 24/7",
             ImageSource = "banner_booking24jam.png"
         });

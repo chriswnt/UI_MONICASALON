@@ -1,6 +1,8 @@
 using System.Collections.ObjectModel;
+using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using UAS_APP_MONICASALON.Controls;
 using UAS_APP_MONICASALON.Models;
 using UAS_APP_MONICASALON.Services;
 using UAS_APP_MONICASALON.Views;
@@ -9,51 +11,90 @@ namespace UAS_APP_MONICASALON.ViewModels;
 
 public partial class ScheduleViewModel : ObservableObject
 {
-    private bool _datesLoaded;
-    private int _slotRequestVersion;
+    private static readonly CultureInfo Indonesian = CultureInfo.GetCultureInfo("id-ID");
+    private static readonly TimeSpan OpeningTime = TimeSpan.FromHours(9);
+    private static readonly TimeSpan ClosingTime = TimeSpan.FromHours(19);
+
+    private bool _initialized;
 
     public ObservableCollection<ServiceSelectionItem> Services { get; } = new();
 
     public ObservableCollection<AddOnSelectionItem> AddOns { get; } = new();
-
-    public ObservableCollection<DateOption> Dates { get; } = new();
-
-    public ObservableCollection<BookingTimeSlot> TimeSlots { get; } = new();
 
     public ObservableCollection<HairstyleItem> Hairstyles { get; } = new();
 
     [ObservableProperty]
     public partial bool IsServiceEditorVisible { get; set; }
 
+    /// <summary>Date shown by the date picker. Bound to the Material date dialog.</summary>
     [ObservableProperty]
-    public partial bool IsLoadingDates { get; set; }
+    [NotifyPropertyChangedFor(nameof(ScheduleSummaryText))]
+    public partial DateTime SelectedDateValue { get; set; } = DateTime.Today.AddDays(1);
+
+    /// <summary>Time chosen from the Material clock dialog.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ScheduleSummaryText))]
+    [NotifyPropertyChangedFor(nameof(SelectedTimeText))]
+    public partial TimeSpan SelectedTimeValue { get; set; } = TimeSpan.FromHours(10);
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(ShowSlotEmpty))]
-    [NotifyPropertyChangedFor(nameof(SlotEmptyText))]
-    public partial bool IsLoadingSlots { get; set; }
+    [NotifyPropertyChangedFor(nameof(IsHourDial))]
+    [NotifyPropertyChangedFor(nameof(IsMinuteDial))]
+    public partial ClockDialMode ClockMode { get; set; } = ClockDialMode.Hour;
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(ShowSlotEmpty))]
-    [NotifyPropertyChangedFor(nameof(SlotEmptyText))]
-    public partial bool HasAvailableSlots { get; set; }
+    [NotifyPropertyChangedFor(nameof(ClockHour12))]
+    [NotifyPropertyChangedFor(nameof(PickerHourText))]
+    [NotifyPropertyChangedFor(nameof(IsAmSelected))]
+    [NotifyPropertyChangedFor(nameof(IsPmSelected))]
+    public partial int PickerHour24 { get; set; } = 10;
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(HasSlotError))]
-    [NotifyPropertyChangedFor(nameof(ShowSlotEmpty))]
-    public partial string SlotErrorMessage { get; set; } = string.Empty;
+    [NotifyPropertyChangedFor(nameof(ClockMinute))]
+    [NotifyPropertyChangedFor(nameof(PickerMinuteText))]
+    public partial int PickerMinute { get; set; }
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(SelectedDateText))]
-    [NotifyPropertyChangedFor(nameof(ShowSlotEmpty))]
-    [NotifyPropertyChangedFor(nameof(SlotEmptyText))]
-    public partial DateOption? SelectedDate { get; set; }
+    public partial bool IsTimePickerOpen { get; set; }
 
-    [ObservableProperty]
-    public partial string SelectedTimeText { get; set; } = "Belum pilih jam";
+    public bool IsHourDial => ClockMode == ClockDialMode.Hour;
 
-    [ObservableProperty]
-    public partial bool HasSelectedTime { get; set; }
+    public bool IsMinuteDial => ClockMode == ClockDialMode.Minute;
+
+    public bool IsAmSelected => PickerHour24 < 12;
+
+    public bool IsPmSelected => PickerHour24 >= 12;
+
+    public int ClockHour12
+    {
+        get => PickerHour24 % 12 == 0 ? 12 : PickerHour24 % 12;
+        set
+        {
+            var normalized = value == 12 ? 0 : Math.Clamp(value, 1, 11);
+            var isPm = PickerHour24 >= 12;
+            PickerHour24 = normalized + (isPm ? 12 : 0);
+        }
+    }
+
+    public int ClockMinute
+    {
+        get => PickerMinute;
+        set => PickerMinute = Math.Clamp(value, 0, 59);
+    }
+
+    public string SelectedTimeText => SelectedTimeValue.ToString(@"hh\:mm");
+
+    public string PickerHourText => ClockHour12.ToString("00");
+
+    public string PickerMinuteText => PickerMinute.ToString("00");
+
+    public DateTime MinimumDate => DateTime.Today;
+
+    public DateTime MaximumDate => DateTime.Today.AddMonths(2);
+
+    public string ScheduleSummaryText =>
+        $"{SelectedDateValue.ToString("dddd, d MMMM yyyy", Indonesian)} · " +
+        $"{SelectedDateValue.Date.Add(SelectedTimeValue):HH:mm}";
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(SelectedHairstyleImage))]
@@ -81,19 +122,6 @@ public partial class ScheduleViewModel : ObservableObject
     public partial string ErrorMessage { get; set; } = string.Empty;
 
     public bool HasError => !string.IsNullOrWhiteSpace(ErrorMessage);
-
-    public bool HasSlotError => !string.IsNullOrWhiteSpace(SlotErrorMessage);
-
-    public string SelectedDateText => SelectedDate?.FullText ?? "Pilih tanggal kunjungan";
-
-    public bool ShowSlotEmpty => !IsLoadingSlots &&
-                                 !HasSlotError &&
-                                 SelectedDate is not null &&
-                                 !HasAvailableSlots;
-
-    public string SlotEmptyText => SelectedDate is null
-        ? "Pilih tanggal untuk melihat slot."
-        : "Semua slot di tanggal ini sudah penuh. Coba tanggal lain ya.";
 
     public ScheduleViewModel()
     {
@@ -127,141 +155,63 @@ public partial class ScheduleViewModel : ObservableObject
 
         IsServiceEditorVisible = !hasDraftServices;
         RefreshHairstyleSelection();
+        ApplyDraftSchedule();
         UpdateSummary();
     }
 
-    public async Task InitializeAsync()
+    public Task InitializeAsync()
     {
         BookingSession.IsPickingHairstyle = false;
 
-        if (_datesLoaded)
+        if (!_initialized)
         {
-            RefreshHairstyleSelection();
-            UpdateSummary();
-            return;
+            ApplyDraftSchedule();
+            _initialized = true;
         }
 
-        await LoadDatesAsync();
+        RefreshHairstyleSelection();
+        UpdateSummary();
+        return Task.CompletedTask;
     }
 
-    private async Task LoadDatesAsync()
+    partial void OnSelectedDateValueChanged(DateTime value)
     {
-        if (IsLoadingDates)
-        {
-            return;
-        }
-
-        IsLoadingDates = true;
-        ErrorMessage = string.Empty;
-        SlotErrorMessage = string.Empty;
-
-        try
-        {
-            var days = await AppServices.ScheduleApi.GetAvailabilityAsync(DateTime.Today, 14);
-
-            Dates.Clear();
-
-            foreach (var day in days)
-            {
-                Dates.Add(new DateOption(day.Date, day.AvailableCount));
-            }
-
-            var desiredDate = BookingSession.DraftDate?.Date;
-
-            var selected = Dates.FirstOrDefault(option =>
-                               desiredDate.HasValue &&
-                               option.Date == desiredDate.Value &&
-                               option.IsOpen)
-                           ?? Dates.FirstOrDefault(option => option.IsOpen);
-
-            if (selected is null)
-            {
-                SelectedDate = null;
-                ErrorMessage = "Belum ada tanggal yang bisa dipesan. Silakan hubungi salon.";
-                return;
-            }
-
-            SetSelectedDate(selected);
-            await LoadSlotsAsync(selected.Date, BookingSession.DraftTime);
-            _datesLoaded = true;
-        }
-        catch (Exception ex)
-        {
-            ErrorMessage = $"Jadwal belum bisa dimuat. {ex.Message}";
-        }
-        finally
-        {
-            IsLoadingDates = false;
-        }
+        OnPropertyChanged(nameof(MinimumDate));
+        OnPropertyChanged(nameof(MaximumDate));
+        SyncSchedule();
     }
 
-    private void SetSelectedDate(DateOption date)
+    partial void OnSelectedTimeValueChanged(TimeSpan value) => SyncSchedule();
+
+    private void ApplyDraftSchedule()
     {
-        foreach (var option in Dates)
+        var desiredDate = BookingSession.DraftDate?.Date;
+
+        SelectedDateValue = desiredDate.HasValue && desiredDate.Value >= DateTime.Today
+            ? desiredDate.Value
+            : DateTime.Today.AddDays(1);
+
+        if (!string.IsNullOrWhiteSpace(BookingSession.DraftTime) &&
+            TimeSpan.TryParseExact(
+                BookingSession.DraftTime,
+                new[] { @"hh\:mm", @"h\:mm", @"hh\:mm\:ss" },
+                CultureInfo.InvariantCulture,
+                out var draftTime))
         {
-            option.IsSelected = ReferenceEquals(option, date);
+            SelectedTimeValue = draftTime;
         }
 
-        SelectedDate = date;
-        BookingSession.DraftDate = date.Date;
+        SyncSchedule();
     }
 
-    private async Task LoadSlotsAsync(DateTime date, string? preferredTime = null)
+    private void SyncSchedule()
     {
-        var requestVersion = ++_slotRequestVersion;
+        BookingSession.DraftDate = SelectedDateValue.Date;
+        BookingSession.DraftTime = SelectedDateValue.Date.Add(SelectedTimeValue).ToString("HH:mm");
 
-        IsLoadingSlots = true;
-        HasAvailableSlots = false;
-        HasSelectedTime = false;
-        SelectedTimeText = "Belum pilih jam";
-        SlotErrorMessage = string.Empty;
-        TimeSlots.Clear();
-
-        try
+        if (!string.IsNullOrWhiteSpace(ErrorMessage))
         {
-            var slots = await AppServices.ScheduleApi.GetSlotsAsync(date);
-
-            if (requestVersion != _slotRequestVersion)
-            {
-                return;
-            }
-
-            foreach (var slot in slots)
-            {
-                slot.IsSelected = slot.IsAvailable &&
-                                  !string.IsNullOrWhiteSpace(preferredTime) &&
-                                  string.Equals(slot.Label, preferredTime, StringComparison.Ordinal);
-                TimeSlots.Add(slot);
-            }
-
-            HasAvailableSlots = TimeSlots.Any(slot => slot.IsAvailable);
-
-            var selectedSlot = TimeSlots.FirstOrDefault(slot => slot.IsSelected);
-
-            if (selectedSlot is not null)
-            {
-                HasSelectedTime = true;
-                SelectedTimeText = selectedSlot.Label;
-                BookingSession.DraftTime = selectedSlot.Label;
-            }
-            else
-            {
-                BookingSession.DraftTime = null;
-            }
-        }
-        catch (Exception ex)
-        {
-            if (requestVersion == _slotRequestVersion)
-            {
-                SlotErrorMessage = $"Slot waktu belum bisa dimuat. {ex.Message}";
-            }
-        }
-        finally
-        {
-            if (requestVersion == _slotRequestVersion)
-            {
-                IsLoadingSlots = false;
-            }
+            ErrorMessage = string.Empty;
         }
     }
 
@@ -336,56 +286,6 @@ public partial class ScheduleViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private async Task SelectDateAsync(DateOption? date)
-    {
-        if (date is null || !date.IsOpen)
-        {
-            return;
-        }
-
-        if (SelectedDate?.Date == date.Date)
-        {
-            return;
-        }
-
-        SetSelectedDate(date);
-        BookingSession.DraftTime = null;
-
-        ErrorMessage = string.Empty;
-        await LoadSlotsAsync(date.Date);
-    }
-
-    [RelayCommand]
-    private void SelectSlot(BookingTimeSlot? slot)
-    {
-        if (slot is null || !slot.IsAvailable)
-        {
-            return;
-        }
-
-        foreach (var item in TimeSlots)
-        {
-            item.IsSelected = ReferenceEquals(item, slot);
-        }
-
-        HasSelectedTime = true;
-        SelectedTimeText = slot.Label;
-        BookingSession.DraftTime = slot.Label;
-        ErrorMessage = string.Empty;
-    }
-
-    [RelayCommand]
-    private async Task RetrySlotsAsync()
-    {
-        if (SelectedDate is null)
-        {
-            return;
-        }
-
-        await LoadSlotsAsync(SelectedDate.Date, BookingSession.DraftTime);
-    }
-
-    [RelayCommand]
     private void SelectHairstyle(HairstyleItem? style)
     {
         if (style is null)
@@ -431,15 +331,17 @@ public partial class ScheduleViewModel : ObservableObject
             return;
         }
 
-        if (SelectedDate is null)
+        var appointment = SelectedDateValue.Date.Add(SelectedTimeValue);
+
+        if (appointment <= DateTime.Now)
         {
-            ErrorMessage = "Pilih tanggal kunjungan terlebih dahulu.";
+            ErrorMessage = "Pilih tanggal dan jam setelah waktu sekarang.";
             return;
         }
 
-        if (!HasSelectedTime || string.IsNullOrWhiteSpace(BookingSession.DraftTime))
+        if (SelectedTimeValue < OpeningTime || SelectedTimeValue > ClosingTime)
         {
-            ErrorMessage = "Pilih slot waktu terlebih dahulu. Slot akan langsung dikunci.";
+            ErrorMessage = "Salon menerima booking antara pukul 09.00 dan 19.00.";
             return;
         }
 
@@ -449,10 +351,50 @@ public partial class ScheduleViewModel : ObservableObject
             .Select(item => item.AddOn)
             .ToList();
         BookingSession.DraftHairstyle = SelectedHairstyle;
-        BookingSession.DraftDate = SelectedDate.Date;
+        BookingSession.DraftDate = SelectedDateValue.Date;
+        BookingSession.DraftTime = appointment.ToString("HH:mm");
         BookingSession.PreviewService = selectedServices[0];
 
         await Shell.Current.GoToAsync(nameof(ConfirmBookingPage));
+    }
+
+    [RelayCommand]
+    private void OpenTimePicker()
+    {
+        PickerHour24 = SelectedTimeValue.Hours;
+        PickerMinute = SelectedTimeValue.Minutes;
+        ClockMode = ClockDialMode.Hour;
+        IsTimePickerOpen = true;
+    }
+
+    [RelayCommand]
+    private void CloseTimePicker() => IsTimePickerOpen = false;
+
+    [RelayCommand]
+    private void ConfirmTimePicker()
+    {
+        SelectedTimeValue = new TimeSpan(PickerHour24, PickerMinute, 0);
+        IsTimePickerOpen = false;
+    }
+
+    [RelayCommand]
+    private void SelectHourDial() => ClockMode = ClockDialMode.Hour;
+
+    [RelayCommand]
+    private void SelectMinuteDial() => ClockMode = ClockDialMode.Minute;
+
+    [RelayCommand]
+    private void SelectAm()
+    {
+        var hour12 = PickerHour24 % 12;
+        PickerHour24 = hour12;
+    }
+
+    [RelayCommand]
+    private void SelectPm()
+    {
+        var hour12 = PickerHour24 % 12;
+        PickerHour24 = hour12 + 12;
     }
 
     [RelayCommand]

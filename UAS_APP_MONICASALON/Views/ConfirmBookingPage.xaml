@@ -45,7 +45,7 @@
                     <Label Text="LANGKAH 2 DARI 3" Style="{StaticResource PageKickerStyle}" />
                     <Label Text="Konfirmasi Booking" Style="{StaticResource PageHeadingStyle}" />
                     <Label
-                        Text="Periksa kembali layanan, jadwal, dan referensi gaya sebelum slot diamankan."
+                        Text="Periksa kembali layanan, jadwal, dan referensi gaya sebelum permintaan dikirim ke admin."
                         FontSize="12"
                         TextColor="#757575"
                         LineHeight="1.35" />
@@ -70,7 +70,7 @@
                             <VerticalStackLayout Spacing="2" VerticalOptions="Center">
                                 <Label Text="Jadwal Kunjungan" Style="{StaticResource SectionTitleStyle}" />
                                 <Label
-                                    Text="Slot sudah tersedia dan akan langsung dikunci saat kamu konfirmasi."
+                                    Text="Permintaan akan dikirim ke admin dan menunggu persetujuan."
                                     Style="{StaticResource SectionCaptionStyle}" />
                             </VerticalStackLayout>
 
@@ -408,6 +408,23 @@
                 <!-- ============ POLICY ============ -->
                 <Border BackgroundColor="#FFFFFF" Stroke="#EFE6E4" StrokeThickness="1" StrokeShape="RoundRectangle 16" Padding="16">
                     <VerticalStackLayout Spacing="6">
+                        <Label Text="Persetujuan Admin" Style="{StaticResource SectionTitleStyle}" />
+                        <Label
+                            Text="• Booking tidak langsung mengunci slot. Admin mengecek ketersediaan terlebih dahulu."
+                            FontSize="11"
+                            TextColor="#757575"
+                            LineHeight="1.35" />
+                        <Label
+                            Text="• Status berubah menjadi Terkonfirmasi setelah admin menyetujui jadwalmu."
+                            FontSize="11"
+                            TextColor="#757575"
+                            LineHeight="1.35" />
+                        <Label
+                            Text="• Jika jadwal tidak tersedia, admin dapat menolak dan kamu bisa memilih waktu lain."
+                            FontSize="11"
+                            TextColor="#757575"
+                            LineHeight="1.35" />
+                        <BoxView HeightRequest="1" BackgroundColor="#F2E8E5" Margin="0,2" />
                         <Label Text="Kebijakan Keterlambatan" Style="{StaticResource SectionTitleStyle}" />
                         <Label
                             Text="• Terlambat 1–10 menit: booking tetap aktif, silakan tetap datang."

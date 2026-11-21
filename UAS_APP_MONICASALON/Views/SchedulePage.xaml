@@ -5,6 +5,7 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
+    xmlns:controls="clr-namespace:UAS_APP_MONICASALON.Controls"
     xmlns:m="clr-namespace:UAS_APP_MONICASALON.Icons"
     BackgroundColor="#FAF7F5"
     NavigationPage.HasNavigationBar="False"
@@ -45,7 +46,7 @@
                     <Label Text="LANGKAH 1 DARI 3" Style="{StaticResource PageKickerStyle}" />
                     <Label Text="Pilih Jadwal &amp; Gaya" Style="{StaticResource PageHeadingStyle}" />
                     <Label
-                        Text="Pilih layanan, tanggal, dan jam yang tersedia. Slot langsung dikunci untukmu."
+                        Text="Pilih layanan, tanggal, dan jam. Permintaan booking akan dikirim ke admin untuk disetujui."
                         FontSize="12"
                         TextColor="#757575"
                         LineHeight="1.35" />
@@ -187,213 +188,166 @@
                     </VerticalStackLayout>
                 </Border>
 
-                <!-- ============ DATE STRIP ============ -->
+                <!-- ============ SCHEDULE PICKERS ============ -->
                 <Border Style="{StaticResource CardStyle}">
-                    <VerticalStackLayout Spacing="10">
-                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
-                            <VerticalStackLayout Spacing="2" VerticalOptions="Center">
-                                <Label Text="2. Pilih Tanggal" Style="{StaticResource SectionTitleStyle}" />
-                                <Label
-                                    Text="{Binding SelectedDateText}"
-                                    Style="{StaticResource SectionCaptionStyle}"
-                                    FontAttributes="Bold"
-                                    TextColor="#8B2626" />
-                            </VerticalStackLayout>
+                    <VerticalStackLayout Spacing="12">
+                        <VerticalStackLayout Spacing="2">
+                            <Label Text="2. Pilih Tanggal &amp; Jam" Style="{StaticResource SectionTitleStyle}" />
+                            <Label
+                                Text="Ketuk kolom di bawah untuk membuka pemilih tanggal dan jam Material."
+                                Style="{StaticResource SectionCaptionStyle}" />
+                        </VerticalStackLayout>
 
-                            <ActivityIndicator
-                                Grid.Column="1"
-                                IsVisible="{Binding IsLoadingDates}"
-                                IsRunning="{Binding IsLoadingDates}"
-                                Color="#D9534F"
-                                WidthRequest="20"
-                                HeightRequest="20"
-                                VerticalOptions="Center" />
-                        </Grid>
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                            <!-- Date field -> native Material calendar dialog -->
+                            <Border
+                                BackgroundColor="#FAF7F5"
+                                Stroke="#F2E8E5"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 12"
+                                Padding="10,8">
+                                <VerticalStackLayout Spacing="2">
+                                    <HorizontalStackLayout Spacing="5">
+                                        <Image WidthRequest="14" HeightRequest="14" VerticalOptions="Center">
+                                            <Image.Source>
+                                                <FontImageSource
+                                                    FontFamily="MaterialOutlined"
+                                                    Glyph="{x:Static m:MaterialRegular.Calendar_month}"
+                                                    Color="#D9534F"
+                                                    Size="14" />
+                                            </Image.Source>
+                                        </Image>
+                                        <Label
+                                            Text="Tanggal"
+                                            FontSize="10"
+                                            TextColor="#A79A96"
+                                            VerticalTextAlignment="Center" />
+                                    </HorizontalStackLayout>
+                                    <DatePicker
+                                        Date="{Binding SelectedDateValue, Mode=TwoWay}"
+                                        MinimumDate="{Binding MinimumDate}"
+                                        MaximumDate="{Binding MaximumDate}"
+                                        Format="d MMM yyyy"
+                                        FontFamily="PlusJakartaSansSemiBold"
+                                        FontSize="13"
+                                        TextColor="#8B2626"
+                                        BackgroundColor="Transparent"
+                                        HeightRequest="34"
+                                        HorizontalOptions="Fill"
+                                        SemanticProperties.Description="Tanggal kunjungan"
+                                        SemanticProperties.Hint="Ketuk untuk membuka pemilih tanggal" />
+                                </VerticalStackLayout>
+                            </Border>
 
-                        <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never">
-                            <HorizontalStackLayout Spacing="8" BindableLayout.ItemsSource="{Binding Dates}">
-                                <BindableLayout.ItemTemplate>
-                                    <DataTemplate>
-                                        <Border
-                                            WidthRequest="62"
-                                            HeightRequest="86"
-                                            Padding="4"
-                                            BackgroundColor="{Binding BackgroundColor}"
-                                            Stroke="{Binding BorderColor}"
-                                            StrokeThickness="1"
-                                            StrokeShape="RoundRectangle 14"
-                                            Opacity="{Binding Opacity}">
-                                            <Border.GestureRecognizers>
-                                                <TapGestureRecognizer
-                                                    Command="{Binding BindingContext.SelectDateCommand, Source={x:Reference ScheduleView}}"
-                                                    CommandParameter="{Binding .}" />
-                                            </Border.GestureRecognizers>
-
-                                            <VerticalStackLayout
-                                                Spacing="1"
-                                                VerticalOptions="Center"
-                                                HorizontalOptions="Center">
-                                                <Label
-                                                    Text="{Binding DayShort}"
-                                                    FontSize="10"
-                                                    TextColor="{Binding SubTextColor}"
-                                                    HorizontalTextAlignment="Center" />
-                                                <Label
-                                                    Text="{Binding DayNumber}"
-                                                    FontSize="19"
-                                                    FontAttributes="Bold"
-                                                    TextColor="{Binding TextColor}"
-                                                    HorizontalTextAlignment="Center" />
-                                                <Label
-                                                    Text="{Binding MonthShort}"
-                                                    FontSize="9"
-                                                    TextColor="{Binding SubTextColor}"
-                                                    HorizontalTextAlignment="Center" />
-                                                <Label
-                                                    Text="{Binding SlotText}"
-                                                    FontSize="8"
-                                                    FontAttributes="Bold"
-                                                    TextColor="{Binding SubTextColor}"
-                                                    HorizontalTextAlignment="Center"
-                                                    Margin="0,2,0,0" />
-                                            </VerticalStackLayout>
-                                        </Border>
-                                    </DataTemplate>
-                                </BindableLayout.ItemTemplate>
-                            </HorizontalStackLayout>
-                        </ScrollView>
-                    </VerticalStackLayout>
-                </Border>
-
-                <!-- ============ TIME SLOTS ============ -->
-                <Border Style="{StaticResource CardStyle}">
-                    <VerticalStackLayout Spacing="10">
-                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
-                            <VerticalStackLayout Spacing="2" VerticalOptions="Center">
-                                <Label Text="3. Pilih Jam" Style="{StaticResource SectionTitleStyle}" />
-                                <Label
-                                    Text="Slot tersedia dari jadwal admin salon."
-                                    Style="{StaticResource SectionCaptionStyle}" />
-                            </VerticalStackLayout>
-
+                            <!-- Time field -> custom Material clock dialog -->
                             <Border
                                 Grid.Column="1"
-                                BackgroundColor="#FDECEC"
-                                StrokeThickness="0"
-                                StrokeShape="RoundRectangle 10"
-                                Padding="9,4"
-                                VerticalOptions="Center">
-                                <Label
-                                    Text="{Binding SelectedTimeText}"
-                                    FontSize="10"
-                                    FontAttributes="Bold"
-                                    TextColor="#D9534F" />
+                                BackgroundColor="#FAF7F5"
+                                Stroke="#F2E8E5"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 12"
+                                Padding="10,8"
+                                SemanticProperties.Description="Jam kunjungan"
+                                SemanticProperties.Hint="Ketuk untuk membuka pemilih jam">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding OpenTimePickerCommand}" />
+                                </Border.GestureRecognizers>
+                                <VerticalStackLayout Spacing="2">
+                                    <HorizontalStackLayout Spacing="5">
+                                        <Image WidthRequest="14" HeightRequest="14" VerticalOptions="Center">
+                                            <Image.Source>
+                                                <FontImageSource
+                                                    FontFamily="MaterialOutlined"
+                                                    Glyph="{x:Static m:MaterialRegular.Schedule}"
+                                                    Color="#D9534F"
+                                                    Size="14" />
+                                            </Image.Source>
+                                        </Image>
+                                        <Label
+                                            Text="Jam"
+                                            FontSize="10"
+                                            TextColor="#A79A96"
+                                            VerticalTextAlignment="Center" />
+                                    </HorizontalStackLayout>
+                                    <Grid ColumnDefinitions="*,Auto" HeightRequest="34">
+                                        <Label
+                                            Text="{Binding SelectedTimeText}"
+                                            FontFamily="PlusJakartaSansSemiBold"
+                                            FontSize="13"
+                                            TextColor="#8B2626"
+                                            VerticalTextAlignment="Center" />
+                                        <Image
+                                            Grid.Column="1"
+                                            WidthRequest="16"
+                                            HeightRequest="16"
+                                            VerticalOptions="Center">
+                                            <Image.Source>
+                                                <FontImageSource
+                                                    FontFamily="MaterialOutlined"
+                                                    Glyph="{x:Static m:MaterialRegular.Expand_more}"
+                                                    Color="#B08A84"
+                                                    Size="16" />
+                                            </Image.Source>
+                                        </Image>
+                                    </Grid>
+                                </VerticalStackLayout>
                             </Border>
                         </Grid>
 
-                        <ActivityIndicator
-                            IsVisible="{Binding IsLoadingSlots}"
-                            IsRunning="{Binding IsLoadingSlots}"
-                            Color="#D9534F"
-                            WidthRequest="24"
-                            HeightRequest="24"
-                            HorizontalOptions="Center"
-                            Margin="0,6" />
-
-                        <FlexLayout
-                            Wrap="Wrap"
-                            Direction="Row"
-                            AlignItems="Start"
-                            JustifyContent="Start"
-                            BindableLayout.ItemsSource="{Binding TimeSlots}">
-                            <BindableLayout.ItemTemplate>
-                                <DataTemplate>
-                                    <Border
-                                        FlexLayout.Basis="30%"
-                                        HeightRequest="58"
-                                        Margin="0,0,8,8"
-                                        Padding="4"
-                                        BackgroundColor="{Binding BackgroundColor}"
-                                        Stroke="{Binding BorderColor}"
-                                        StrokeThickness="1"
-                                        StrokeShape="RoundRectangle 12"
-                                        Opacity="{Binding Opacity}"
-                                        IsVisible="{Binding IsAvailable}">
-                                        <Border.GestureRecognizers>
-                                            <TapGestureRecognizer
-                                                Command="{Binding BindingContext.SelectSlotCommand, Source={x:Reference ScheduleView}}"
-                                                CommandParameter="{Binding .}" />
-                                        </Border.GestureRecognizers>
-                                        <VerticalStackLayout
-                                            Spacing="1"
-                                            VerticalOptions="Center"
-                                            HorizontalOptions="Center">
-                                            <Label
-                                                Text="{Binding Label}"
-                                                FontSize="13"
-                                                FontAttributes="Bold"
-                                                TextColor="{Binding TextColor}"
-                                                HorizontalTextAlignment="Center" />
-                                            <Label
-                                                Text="{Binding StatusText}"
-                                                FontSize="8"
-                                                TextColor="{Binding SubTextColor}"
-                                                HorizontalTextAlignment="Center" />
-                                        </VerticalStackLayout>
-                                    </Border>
-                                </DataTemplate>
-                            </BindableLayout.ItemTemplate>
-                        </FlexLayout>
+                        <Border
+                            BackgroundColor="#FFFFFF"
+                            Stroke="#EFE6E4"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 10"
+                            Padding="10,8">
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                                <Image WidthRequest="15" HeightRequest="15" VerticalOptions="Center">
+                                    <Image.Source>
+                                        <FontImageSource
+                                            FontFamily="MaterialOutlined"
+                                            Glyph="{x:Static m:MaterialRegular.Event}"
+                                            Color="#D9534F"
+                                            Size="15" />
+                                    </Image.Source>
+                                </Image>
+                                <Label
+                                    Grid.Column="1"
+                                    Text="{Binding ScheduleSummaryText}"
+                                    FontSize="12"
+                                    FontAttributes="Bold"
+                                    TextColor="#8B2626"
+                                    VerticalTextAlignment="Center"
+                                    LineBreakMode="WordWrap" />
+                            </Grid>
+                        </Border>
 
                         <Border
-                            IsVisible="{Binding HasSlotError}"
-                            BackgroundColor="#F9DEDC"
+                            BackgroundColor="#FEF3C7"
                             StrokeThickness="0"
                             StrokeShape="RoundRectangle 10"
                             Padding="10,8">
-                            <VerticalStackLayout Spacing="6">
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                                <Image WidthRequest="15" HeightRequest="15" VerticalOptions="Start" Margin="0,1,0,0">
+                                    <Image.Source>
+                                        <FontImageSource
+                                            FontFamily="MaterialOutlined"
+                                            Glyph="{x:Static m:MaterialRegular.Info}"
+                                            Color="#8A5A00"
+                                            Size="15" />
+                                    </Image.Source>
+                                </Image>
                                 <Label
-                                    Text="{Binding SlotErrorMessage}"
+                                    Grid.Column="1"
+                                    Text="Setelah dikirim, admin mengecek ketersediaan jadwal. Status booking tetap Menunggu Konfirmasi sampai disetujui."
                                     FontSize="10"
-                                    TextColor="#B3261E"
+                                    TextColor="#8A5A00"
+                                    LineHeight="1.35"
                                     LineBreakMode="WordWrap" />
-                                <Button
-                                    Text="Coba Lagi"
-                                    Command="{Binding RetrySlotsCommand}"
-                                    BackgroundColor="#D9534F"
-                                    TextColor="#FFFFFF"
-                                    CornerRadius="10"
-                                    HeightRequest="32"
-                                    FontSize="10"
-                                    FontAttributes="Bold"
-                                    HorizontalOptions="Start"
-                                    Padding="12,0" />
-                            </VerticalStackLayout>
+                            </Grid>
                         </Border>
 
-                        <VerticalStackLayout
-                            IsVisible="{Binding ShowSlotEmpty}"
-                            Spacing="8"
-                            Padding="0,4">
-                            <Label
-                                Text="{Binding SlotEmptyText}"
-                                FontSize="11"
-                                TextColor="#A79A96"
-                                HorizontalTextAlignment="Center"
-                                LineHeight="1.35" />
-                            <Button
-                                Text="Muat Ulang Slot"
-                                Command="{Binding RetrySlotsCommand}"
-                                Style="{StaticResource SecondaryActionStyle}"
-                                HeightRequest="38"
-                                CornerRadius="12"
-                                FontSize="11"
-                                HorizontalOptions="Center"
-                                Padding="16,0" />
-                        </VerticalStackLayout>
-
                         <Label
-                            Text="Semua slot terisi ditampilkan dengan warna lebih pudar."
+                            Text="Jam operasional salon: 09.00–19.00. Pilih waktu di dalam rentang tersebut."
                             FontSize="10"
                             TextColor="#A79A96" />
                     </VerticalStackLayout>
@@ -405,7 +359,7 @@
                         <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
                             <VerticalStackLayout Spacing="2" VerticalOptions="Center">
                                 <HorizontalStackLayout Spacing="6">
-                                    <Label Text="4. Referensi Gaya" Style="{StaticResource SectionTitleStyle}" />
+                                    <Label Text="3. Referensi Gaya" Style="{StaticResource SectionTitleStyle}" />
                                     <Label
                                         Text="Opsional"
                                         FontSize="9"
@@ -526,7 +480,7 @@
                     <VerticalStackLayout Spacing="10">
                         <VerticalStackLayout Spacing="2">
                             <HorizontalStackLayout Spacing="6">
-                                <Label Text="5. Tambahan" Style="{StaticResource SectionTitleStyle}" />
+                                <Label Text="4. Tambahan" Style="{StaticResource SectionTitleStyle}" />
                                 <Label
                                     Text="Opsional"
                                     FontSize="9"
@@ -621,7 +575,7 @@
                     <VerticalStackLayout Spacing="6">
                         <Label Text="Sebelum Konfirmasi" Style="{StaticResource SectionTitleStyle}" />
                         <Label
-                            Text="• Slot yang kamu pilih langsung dikunci, tanpa menunggu konfirmasi."
+                            Text="• Booking berstatus Menunggu Konfirmasi sampai admin menyetujui jadwalmu."
                             FontSize="11"
                             TextColor="#757575"
                             LineHeight="1.35" />
@@ -680,6 +634,213 @@
                     Command="{Binding ContinueCommand}"
                     Style="{StaticResource PrimaryActionStyle}" />
             </VerticalStackLayout>
+        </Grid>
+
+        <!-- ============ MATERIAL CLOCK TIME PICKER ============ -->
+        <Grid
+            Grid.RowSpan="2"
+            IsVisible="{Binding IsTimePickerOpen}"
+            BackgroundColor="#99000000"
+            Padding="20"
+            ZIndex="20">
+
+            <Border
+                BackgroundColor="#FFFFFF"
+                StrokeThickness="0"
+                StrokeShape="RoundRectangle 28"
+                Padding="20,16,20,12"
+                HorizontalOptions="Center"
+                VerticalOptions="Center"
+                MaximumWidthRequest="340">
+
+                <VerticalStackLayout Spacing="12">
+
+                    <Label
+                        Text="PILIH JAM"
+                        FontSize="10"
+                        FontAttributes="Bold"
+                        CharacterSpacing="1.6"
+                        TextColor="#A79A96" />
+
+                    <!-- Hour / minute selection + AM PM -->
+                    <HorizontalStackLayout Spacing="6" HorizontalOptions="Center">
+                        <Border
+                            WidthRequest="86"
+                            HeightRequest="62"
+                            BackgroundColor="#FAF7F5"
+                            Stroke="#F2E8E5"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 10">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding SelectHourDialCommand}" />
+                            </Border.GestureRecognizers>
+                            <Border.Triggers>
+                                <DataTrigger TargetType="Border" Binding="{Binding IsHourDial}" Value="True">
+                                    <Setter Property="BackgroundColor" Value="#FDECEC" />
+                                    <Setter Property="Stroke" Value="#F5C9C7" />
+                                </DataTrigger>
+                            </Border.Triggers>
+                            <Label
+                                Text="{Binding PickerHourText}"
+                                FontSize="34"
+                                TextColor="#8B2626"
+                                HorizontalTextAlignment="Center"
+                                VerticalTextAlignment="Center">
+                                <Label.Triggers>
+                                    <DataTrigger TargetType="Label" Binding="{Binding IsHourDial}" Value="True">
+                                        <Setter Property="TextColor" Value="#D9534F" />
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
+                        </Border>
+
+                        <Label
+                            Text=":"
+                            FontSize="30"
+                            TextColor="#8B2626"
+                            VerticalOptions="Center" />
+
+                        <Border
+                            WidthRequest="86"
+                            HeightRequest="62"
+                            BackgroundColor="#FAF7F5"
+                            Stroke="#F2E8E5"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 10">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding SelectMinuteDialCommand}" />
+                            </Border.GestureRecognizers>
+                            <Border.Triggers>
+                                <DataTrigger TargetType="Border" Binding="{Binding IsMinuteDial}" Value="True">
+                                    <Setter Property="BackgroundColor" Value="#FDECEC" />
+                                    <Setter Property="Stroke" Value="#F5C9C7" />
+                                </DataTrigger>
+                            </Border.Triggers>
+                            <Label
+                                Text="{Binding PickerMinuteText}"
+                                FontSize="34"
+                                TextColor="#8B2626"
+                                HorizontalTextAlignment="Center"
+                                VerticalTextAlignment="Center">
+                                <Label.Triggers>
+                                    <DataTrigger TargetType="Label" Binding="{Binding IsMinuteDial}" Value="True">
+                                        <Setter Property="TextColor" Value="#D9534F" />
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
+                        </Border>
+
+                        <VerticalStackLayout Spacing="4" VerticalOptions="Center">
+                            <Border
+                                WidthRequest="48"
+                                HeightRequest="29"
+                                BackgroundColor="#FFFFFF"
+                                Stroke="#EFE6E4"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 6">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectAmCommand}" />
+                                </Border.GestureRecognizers>
+                                <Border.Triggers>
+                                    <DataTrigger TargetType="Border" Binding="{Binding IsAmSelected}" Value="True">
+                                        <Setter Property="BackgroundColor" Value="#FDECEC" />
+                                        <Setter Property="Stroke" Value="#D9534F" />
+                                    </DataTrigger>
+                                </Border.Triggers>
+                                <Label
+                                    Text="AM"
+                                    FontSize="10"
+                                    TextColor="#757575"
+                                    HorizontalTextAlignment="Center"
+                                    VerticalTextAlignment="Center">
+                                    <Label.Triggers>
+                                        <DataTrigger TargetType="Label" Binding="{Binding IsAmSelected}" Value="True">
+                                            <Setter Property="TextColor" Value="#D9534F" />
+                                            <Setter Property="FontAttributes" Value="Bold" />
+                                        </DataTrigger>
+                                    </Label.Triggers>
+                                </Label>
+                            </Border>
+
+                            <Border
+                                WidthRequest="48"
+                                HeightRequest="29"
+                                BackgroundColor="#FFFFFF"
+                                Stroke="#EFE6E4"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 6">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectPmCommand}" />
+                                </Border.GestureRecognizers>
+                                <Border.Triggers>
+                                    <DataTrigger TargetType="Border" Binding="{Binding IsPmSelected}" Value="True">
+                                        <Setter Property="BackgroundColor" Value="#FDECEC" />
+                                        <Setter Property="Stroke" Value="#D9534F" />
+                                    </DataTrigger>
+                                </Border.Triggers>
+                                <Label
+                                    Text="PM"
+                                    FontSize="10"
+                                    TextColor="#757575"
+                                    HorizontalTextAlignment="Center"
+                                    VerticalTextAlignment="Center">
+                                    <Label.Triggers>
+                                        <DataTrigger TargetType="Label" Binding="{Binding IsPmSelected}" Value="True">
+                                            <Setter Property="TextColor" Value="#D9534F" />
+                                            <Setter Property="FontAttributes" Value="Bold" />
+                                        </DataTrigger>
+                                    </Label.Triggers>
+                                </Label>
+                            </Border>
+                        </VerticalStackLayout>
+                    </HorizontalStackLayout>
+
+                    <controls:ClockDialView
+                        WidthRequest="270"
+                        HeightRequest="270"
+                        HorizontalOptions="Center"
+                        Mode="{Binding ClockMode}"
+                        Hour="{Binding ClockHour12, Mode=TwoWay}"
+                        Minute="{Binding ClockMinute, Mode=TwoWay}" />
+
+                    <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="2">
+                        <Label
+                            Text="Salon buka 09.00–19.00"
+                            FontSize="9"
+                            TextColor="#A79A96"
+                            VerticalTextAlignment="Center"
+                            LineBreakMode="WordWrap" />
+
+                        <Button
+                            Grid.Column="1"
+                            Text="BATAL"
+                            Command="{Binding CloseTimePickerCommand}"
+                            BackgroundColor="Transparent"
+                            TextColor="#8B2626"
+                            FontSize="11"
+                            FontAttributes="Bold"
+                            HeightRequest="40"
+                            MinimumHeightRequest="40"
+                            Padding="10,0"
+                            CornerRadius="20"
+                            SemanticProperties.Description="Tutup pemilih jam tanpa menyimpan" />
+
+                        <Button
+                            Grid.Column="2"
+                            Text="OK"
+                            Command="{Binding ConfirmTimePickerCommand}"
+                            BackgroundColor="Transparent"
+                            TextColor="#D9534F"
+                            FontSize="11"
+                            FontAttributes="Bold"
+                            HeightRequest="40"
+                            MinimumHeightRequest="40"
+                            Padding="10,0"
+                            CornerRadius="20"
+                            SemanticProperties.Description="Simpan jam yang dipilih" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
         </Grid>
     </Grid>
 

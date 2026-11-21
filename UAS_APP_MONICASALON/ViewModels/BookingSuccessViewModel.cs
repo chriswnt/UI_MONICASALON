@@ -21,7 +21,7 @@ public partial class BookingSuccessViewModel : ObservableObject
             Services = new List<ServiceItem> { ServiceCatalog.Signature },
             Date = DateTime.Today.AddDays(1),
             Time = "10:00",
-            Status = BookingStatus.Confirmed
+            Status = BookingStatus.Pending
         };
     }
 

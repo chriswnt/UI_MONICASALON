@@ -296,7 +296,7 @@
                             TextColor="#8B2626"
                             HorizontalTextAlignment="Center" />
                         <Label
-                            Text="Pilih layanan dan slot favoritmu — booking langsung terkonfirmasi."
+                            Text="Pilih layanan serta tanggal dan jam favoritmu. Admin akan mengonfirmasi jadwalnya."
                             FontSize="12"
                             TextColor="#757575"
                             HorizontalTextAlignment="Center"

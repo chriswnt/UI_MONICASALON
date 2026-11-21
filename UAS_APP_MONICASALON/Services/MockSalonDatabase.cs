@@ -64,11 +64,50 @@ public static class MockSalonDatabase
         lock (Gate)
         {
             Bookings.Add(booking);
-            ReserveSlot(booking.Date, booking.Time);
+
+            // A pending request must not lock a slot yet. The admin decides
+            // first, then the slot is reserved when the booking is confirmed.
+            if (booking.Status == BookingStatus.Confirmed)
+            {
+                ReserveSlot(booking.Date, booking.Time);
+            }
         }
     }
 
     public static BookingRecord? CancelBooking(string bookingId)
+    {
+        lock (Gate)
+        {
+            var booking = Bookings.FirstOrDefault(item => string.Equals(
+                item.Id,
+                bookingId,
+                StringComparison.OrdinalIgnoreCase));
+
+            if (booking is null || !booking.CanCancel)
+            {
+                return booking;
+            }
+
+            if (booking.Status == BookingStatus.Confirmed)
+            {
+                ReleaseSlot(booking.Date, booking.Time);
+            }
+
+            booking.Status = BookingStatus.Cancelled;
+            return booking;
+        }
+    }
+
+    /// <summary>
+    /// Applies an admin decision to the matching customer booking. The admin
+    /// store and the customer store are separate mock layers, so this is the
+    /// bridge that keeps the customer history and slot reservations in sync.
+    /// </summary>
+    public static BookingRecord? UpdateFromAdmin(
+        string bookingId,
+        BookingStatus status,
+        DateTime? newDate = null,
+        string? newTime = null)
     {
         lock (Gate)
         {
@@ -82,10 +121,34 @@ public static class MockSalonDatabase
                 return null;
             }
 
-            if (booking.Status == BookingStatus.Confirmed)
+            var oldDate = booking.Date;
+            var oldTime = booking.Time;
+            var wasConfirmed = booking.Status == BookingStatus.Confirmed;
+            var scheduleChanged =
+                (newDate.HasValue && newDate.Value.Date != oldDate.Date) ||
+                (!string.IsNullOrWhiteSpace(newTime) && !string.Equals(newTime, oldTime, StringComparison.Ordinal));
+
+            if (newDate.HasValue)
             {
-                booking.Status = BookingStatus.Cancelled;
-                ReleaseSlot(booking.Date, booking.Time);
+                booking.Date = newDate.Value.Date;
+            }
+
+            if (!string.IsNullOrWhiteSpace(newTime))
+            {
+                booking.Time = newTime;
+            }
+
+            // Release the previous reservation before locking the new one.
+            if (wasConfirmed && (scheduleChanged || status != BookingStatus.Confirmed))
+            {
+                ReleaseSlot(oldDate, oldTime);
+            }
+
+            booking.Status = status;
+
+            if (status == BookingStatus.Confirmed)
+            {
+                ReserveSlot(booking.Date, booking.Time);
             }
 
             return booking;

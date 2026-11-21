@@ -18,6 +18,12 @@ public static class UserSession
 
     public static bool IsLoggedIn { get; private set; }
 
+    /// <summary>
+    /// True when the current session was opened with an admin identifier from
+    /// the regular login form.
+    /// </summary>
+    public static bool IsAdmin { get; private set; }
+
     public static string FirstName
     {
         get
@@ -41,9 +47,10 @@ public static class UserSession
         }
     }
 
-    public static void SignIn(string identifier)
+    public static void SignIn(string identifier, bool isAdmin = false)
     {
         IsLoggedIn = true;
+        IsAdmin = isAdmin;
 
         if (identifier.Contains('@', StringComparison.Ordinal))
         {
@@ -61,11 +68,13 @@ public static class UserSession
         Phone = phone.Trim();
         Email = email.Trim();
         IsLoggedIn = true;
+        IsAdmin = false;
     }
 
     public static void SignOut()
     {
         IsLoggedIn = false;
+        IsAdmin = false;
         CustomerId = DemoCustomerId;
         FullName = "Bella Anisa";
         Phone = "+62 812-3456-7890";

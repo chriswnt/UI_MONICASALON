@@ -28,7 +28,7 @@
             <Border
                 WidthRequest="76"
                 HeightRequest="76"
-                BackgroundColor="{StaticResource SuccessContainer}"
+                BackgroundColor="{StaticResource WarningContainer}"
                 StrokeThickness="0"
                 StrokeShape="RoundRectangle 38"
                 HorizontalOptions="Center"
@@ -41,15 +41,15 @@
                     <Image.Source>
                         <FontImageSource
                             FontFamily="MaterialOutlined"
-                            Glyph="{x:Static m:MaterialRegular.Check}"
-                            Color="{StaticResource Success}"
+                            Glyph="{x:Static m:MaterialRegular.Schedule}"
+                            Color="{StaticResource WarningText}"
                             Size="40" />
                     </Image.Source>
                 </Image>
             </Border>
 
             <Label
-                Text="BOOKING TERKONFIRMASI"
+                Text="PERMINTAAN BOOKING DIKIRIM"
                 FontSize="11"
                 FontAttributes="Bold"
                 TextColor="#D9534F"
@@ -57,7 +57,7 @@
                 HorizontalTextAlignment="Center" />
 
             <Label
-                Text="Slot kamu sudah aman!"
+                Text="Menunggu persetujuan admin"
                 FontSize="24"
                 FontAttributes="Bold"
                 TextColor="#8B2626"
@@ -67,7 +67,7 @@
                 LineHeight="1.15" />
 
             <Label
-                Text="Tidak perlu menunggu konfirmasi admin. Datang sesuai jadwal dan tunjukkan kode booking di meja resepsionis."
+                Text="Booking kamu sudah diterima. Admin akan mengecek ketersediaan jadwal dan mengonfirmasi. Pantau status terbaru di Riwayat Booking."
                 FontSize="12"
                 TextColor="#757575"
                 HorizontalTextAlignment="Center"
@@ -76,7 +76,7 @@
                 LineHeight="1.4" />
 
             <Border
-                BackgroundColor="{StaticResource SuccessContainer}"
+                BackgroundColor="{StaticResource WarningContainer}"
                 StrokeThickness="0"
                 StrokeShape="RoundRectangle 10"
                 Padding="12,5"
@@ -86,8 +86,8 @@
                         <Image.Source>
                             <FontImageSource
                                 FontFamily="MaterialOutlined"
-                                Glyph="{x:Static m:MaterialRegular.Verified}"
-                                Color="{StaticResource Success}"
+                                Glyph="{x:Static m:MaterialRegular.Warning}"
+                                Color="{StaticResource WarningText}"
                                 Size="13" />
                         </Image.Source>
                     </Image>
@@ -95,7 +95,7 @@
                         Text="{Binding Booking.StatusText}"
                         FontSize="11"
                         FontAttributes="Bold"
-                        TextColor="{StaticResource Success}"
+                        TextColor="{StaticResource WarningText}"
                         VerticalTextAlignment="Center" />
                 </HorizontalStackLayout>
             </Border>
